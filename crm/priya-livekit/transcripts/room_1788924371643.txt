@@ -1,0 +1,312 @@
+COMPLETE CALL TRANSCRIPT (room_1788924371643)
+============================================================
+Start Time: 2026-09-09 08:56:11
+Total Turns: 58
+============================================================
+
+Turn 1 [08:56:28] (en-IN):
+User:  Yes, it is a good time.
+Priya: May I know your name, please?
+(Latency: 0.00s)
+
+Turn 2 [08:56:34] (en-IN):
+User:  My name is Yash
+Priya: Nice to meet you, Yash!
+(Latency: 0.00s)
+
+Turn 3 [08:56:35] (en-IN):
+User:  
+Priya: Which program or branch are you interested in at Aditya University?
+(Latency: 0.00s)
+
+Turn 4 [08:56:46] (en-IN):
+User:  I am interested for beta computer sales.
+Priya: Yash, Aditya University does not offer a program in beta computer sales.
+(Latency: 0.00s)
+
+Turn 5 [08:56:47] (en-IN):
+User:  
+Priya: We have B.Tech in CSE, AI/ML, ECE, Pharmacy, MBA, and more.
+(Latency: 0.00s)
+
+Turn 6 [08:56:47] (en-IN):
+User:  
+Priya: Interested?
+(Latency: 0.00s)
+
+Turn 7 [08:57:05] (en-IN):
+User:  I am interested in B.Tech Computer Electronics
+Priya: Great choice, Yash! In ECE we offer top specialisations. Have you completed your 12th Board or Intermediate?
+(Latency: 0.00s)
+
+Turn 8 [08:57:05] (en-IN):
+User:  I am interested in B.Tech Computer Electronics
+Priya: Great choice, Yash!
+(Latency: 0.00s)
+
+Turn 9 [08:57:06] (en-IN):
+User:  
+Priya: You mean B.Tech in Computer Science Engineering or Electronics and Communication Engineering?
+(Latency: 0.00s)
+
+Turn 10 [08:57:16] (en-IN):
+User:  Electronics and Communication Engineering
+Priya: 
+(Latency: 0.00s)
+
+Turn 11 [08:57:16] (en-IN):
+User:  Electronics and Communication Engineering
+Priya: Excellent, Yash!
+(Latency: 0.00s)
+
+Turn 12 [08:57:17] (en-IN):
+User:  
+Priya: ECE is a popular branch here.
+(Latency: 0.00s)
+
+Turn 13 [08:57:17] (en-IN):
+User:  
+Priya: Could you please share your 12th Board marks or entrance exam scores?
+(Latency: 0.00s)
+
+Turn 14 [08:57:29] (en-IN):
+User:  I have scored 89%.
+Priya: 
+(Latency: 0.00s)
+
+Turn 15 [08:57:29] (en-IN):
+User:  I have scored 89%.
+Priya: That's a very solid score, Yash!
+(Latency: 0.00s)
+
+Turn 16 [08:57:31] (en-IN):
+User:  
+Priya: You meet our eligibility criteria well.
+(Latency: 0.00s)
+
+Turn 17 [08:57:31] (en-IN):
+User:  
+Priya: Would you like me to send the application link to your WhatsApp?
+(Latency: 0.00s)
+
+Turn 18 [08:57:42] (en-IN):
+User:  Okay, please send me.
+Priya: 
+(Latency: 0.00s)
+
+Turn 19 [08:57:42] (en-IN):
+User:  Okay, please send me.
+Priya: Sending the application link to your WhatsApp now, Yash!
+(Latency: 0.00s)
+
+Turn 20 [08:57:43] (en-IN):
+User:  
+Priya: Please check your messages to reserve your seat.
+(Latency: 0.00s)
+
+Turn 21 [08:57:43] (en-IN):
+User:  
+Priya: Anything else I can assist with?
+(Latency: 0.00s)
+
+Turn 22 [08:57:55] (en-IN):
+User:  Can you please tell me about the key structure?
+Priya: 
+(Latency: 0.00s)
+
+Turn 23 [08:57:55] (en-IN):
+User:  Can you please tell me about the key structure?
+Priya: Our 250-acre campus in Surampalem has smart classrooms, labs, library, AC hostels, sports, and Wi-Fi.
+(Latency: 0.00s)
+
+Turn 24 [08:57:56] (en-IN):
+User:  
+Priya: Would you like a campus visit?
+(Latency: 0.00s)
+
+Turn 25 [08:58:16] (en-IN):
+User:  Uh, not for now, but can you please tell me about the hostel fee?
+Priya: We provide AC and Non-AC hostel options with attached bathrooms and multi-cuisine meals. Would you like me to send the direct admission link to reserve your seat and hostel room?
+(Latency: 0.00s)
+
+Turn 26 [08:58:16] (en-IN):
+User:  Uh, not for now, but can you please tell me about the hostel fee?
+Priya: We provide AC and Non-AC hostel options with attached bathrooms and multi-cuisine meals. Would you like me to send the direct admission link to reserve your seat and hostel room?
+(Latency: 0.00s)
+
+Turn 27 [08:58:29] (en-IN):
+User:  Not now
+Priya: 
+(Latency: 0.00s)
+
+Turn 28 [08:58:29] (en-IN):
+User:  Not now
+Priya: No problem!
+(Latency: 0.00s)
+
+Turn 29 [08:58:30] (en-IN):
+User:  
+Priya: May I know your name to assist you better with other queries?
+(Latency: 0.00s)
+
+Turn 30 [08:58:32] (en-IN):
+User:  Can you please tell me more about Aditya University?
+Priya: Aditya University is situated on a 250-acre smart campus in Surampalem, Kakinada. We are NAAC A++ accredited and ranked among the top 200 by NIRF. Would you like to know more about our programs or campus facilities?
+(Latency: 0.00s)
+
+Turn 31 [08:58:33] (en-IN):
+User:  
+Priya: Aditya University is NAAC A++ accredited, NIRF ranked 151-200, with 3,800+ placements and top recruiters like Amazon and Walmart.
+(Latency: 0.00s)
+
+Turn 32 [08:58:33] (en-IN):
+User:  
+Priya: May I know your name, please?
+(Latency: 0.00s)
+
+Turn 33 [08:58:57] (en-IN):
+User:  I recently only I told you my name, then only then also you are asking my name again and again.
+Priya: 
+(Latency: 0.00s)
+
+Turn 34 [08:58:58] (en-IN):
+User:  I recently only I told you my name, then only then also you are asking my name again and again.
+Priya: I apologize for that.
+(Latency: 0.00s)
+
+Turn 35 [08:58:59] (en-IN):
+User:  
+Priya: Could you please remind me your name once more to ensure I have it correctly?
+(Latency: 0.00s)
+
+Turn 36 [08:59:07] (en-IN):
+User:  My name is Yash
+Priya: 
+(Latency: 0.00s)
+
+Turn 37 [08:59:07] (en-IN):
+User:  My name is Yash
+Priya: Nice to meet you, Yash!
+(Latency: 0.00s)
+
+Turn 38 [08:59:09] (en-IN):
+User:  
+Priya: Which program or branch are you interested in at Aditya University?
+(Latency: 0.00s)
+
+Turn 39 [08:59:20] (en-IN):
+User:  I'm not interested in your Aditya University.
+Priya: 
+(Latency: 0.00s)
+
+Turn 40 [08:59:20] (en-IN):
+User:  I'm not interested in your Aditya University.
+Priya: I understand, Yash.
+(Latency: 0.00s)
+
+Turn 41 [08:59:21] (en-IN):
+User:  
+Priya: May I ask what program or university you are considering instead?
+(Latency: 0.00s)
+
+Turn 42 [08:59:35] (en-IN):
+User:  I'm just looking for a good college, but I know that Aditya University is not good at all.
+Priya: 
+(Latency: 0.00s)
+
+Turn 43 [08:59:35] (en-IN):
+User:  I'm just looking for a good college, but I know that Aditya University is not good at all.
+Priya: Yash, Aditya University offers top recruiters like Amazon and Walmart with 3,800+ placements and up to 50% merit scholarships.
+(Latency: 0.00s)
+
+Turn 44 [08:59:36] (en-IN):
+User:  
+Priya: What course interests you?
+(Latency: 0.00s)
+
+Turn 45 [08:59:53] (en-IN):
+User:  Actually I told that Aditya University is not good at all.
+Priya: 
+(Latency: 0.00s)
+
+Turn 46 [08:59:53] (en-IN):
+User:  Actually I told that Aditya University is not good at all.
+Priya: I hear you, Yash.
+(Latency: 0.00s)
+
+Turn 47 [08:59:54] (en-IN):
+User:  
+Priya: Can I share how our 27 LPA highest package and NAAC A++ accreditation benefit your future career?
+(Latency: 0.00s)
+
+Turn 48 [09:00:07] (en-IN):
+User:  Not known
+Priya: 
+(Latency: 0.00s)
+
+Turn 49 [09:00:07] (en-IN):
+User:  Not known
+Priya: Yash, our NAAC A++ rating means excellent education quality.
+(Latency: 0.00s)
+
+Turn 50 [09:00:09] (en-IN):
+User:  
+Priya: May I know which program you are interested in at Aditya University?
+(Latency: 0.00s)
+
+Turn 51 [09:00:12] (hi-IN):
+User:  क्या आप मुझे बता सकते हो कि हॉस्टल और कॉलेज पी को मिला के कितना हो जाएगा?
+Priya: Campus mein AC aur Non-AC hostel facilities meals ke saath available hain: Non-AC 30 thousand rupees aur AC 45 thousand rupees per semester.
+(Latency: 0.00s)
+
+Turn 52 [09:00:26] (hi-IN):
+User:  अच्छा।
+Priya: 
+(Latency: 0.00s)
+
+Turn 53 [09:00:26] (hi-IN):
+User:  अच्छा।
+Priya: Yash जी, आप किस प्रोग्राम में रुचि रखते हैं?
+(Latency: 0.00s)
+
+Turn 54 [09:00:28] (hi-IN):
+User:  मेरा नाम क्या बोले आप?
+Priya: May I know your name, please?
+(Latency: 0.00s)
+
+Turn 55 [09:00:38] (hi-IN):
+User:  मैंने बताया था ना आपको मेरा नाम, तो फिर क्यों पूछ रहे हो दोबारा?
+Priya: 
+(Latency: 0.00s)
+
+Turn 56 [09:00:38] (hi-IN):
+User:  मैंने बताया था ना आपको मेरा नाम, तो फिर क्यों पूछ रहे हो दोबारा?
+Priya: मुझे आपका नाम याद नहीं आया, कृपया एक बार फिर बताएं ताकि मैं आपकी मदद कर सकूं।
+(Latency: 0.00s)
+
+Turn 57 [09:00:49] (hi-IN):
+User:  ठीक है, रहने दीजिए।
+Priya: आदित्य यूनिवर्सिटी में संपर्क करने के लिए धन्यवाद! आपके एडमिशन के लिए शुभकामनाएं। आपका दिन शुभ हो!
+(Latency: 0.00s)
+
+Turn 58 [09:00:49] (hi-IN):
+User:  ठीक है, रहने दीजिए।
+Priya: आदित्य यूनिवर्सिटी में संपर्क करने के लिए धन्यवाद! आपके एडमिशन के लिए शुभकामनाएं। आपका दिन शुभ हो!
+(Latency: 0.00s)
+
+============================================================
+CALL SUMMARY:
+- Total Duration: 277.6s
+- Turns Count: 58
+- Facts Discovered: {
+  "name": "Yash",
+  "student_name": "Yash",
+  "program": "ECE",
+  "program_of_interest": "ECE",
+  "score": "89%",
+  "class_12_score": "89%",
+  "hostel_interest": true
+}
+- Questions Asked: ['program_interest', 'program_question', 'score_question', 'student_name', 'q_program', 'q_exam', 'name_question', 'q_name', 'q_visit', 'campus_visit', 'entrance_exam', 'exam_question', 'q_score']
+- Refusals: ['score', 'score_question', 'q_score']
+============================================================

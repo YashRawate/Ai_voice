@@ -1,0 +1,151 @@
+COMPLETE CALL TRANSCRIPT (room_1788895205154)
+============================================================
+Start Time: 2026-09-09 00:50:05
+Total Turns: 26
+============================================================
+
+Turn 1 [00:50:17] (en-IN):
+User:  Yes, it is a good time.
+Priya: May I know your name, please?
+(Latency: 0.00s)
+
+Turn 2 [00:50:24] (en-IN):
+User:  My name is Yash
+Priya: Nice to meet you, Yash!
+(Latency: 0.00s)
+
+Turn 3 [00:50:25] (en-IN):
+User:  
+Priya: Which program or branch are you interested in at Aditya University?
+(Latency: 0.00s)
+
+Turn 4 [00:50:35] (en-IN):
+User:  I'm interested for B.Tech Computer Science and Engineering.
+Priya: Great choice, Yash! In CSE we offer top specialisations. Have you completed your 12th Board or Intermediate?
+(Latency: 0.00s)
+
+Turn 5 [00:50:45] (hi-IN):
+User:  साउंड बढ़ा ना। साउंड बढ़ा ना कार्तिक, बढ़ा ना।
+Priya: 
+(Latency: 0.00s)
+
+Turn 6 [00:50:46] (hi-IN):
+User:  साउंड बढ़ा ना। साउंड बढ़ा ना कार्तिक, बढ़ा ना।
+Priya: 
+(Latency: 0.00s)
+
+Turn 7 [00:50:46] (hi-IN):
+User:  और पढ़ें।
+Priya: Yes, Yash, I’m here!
+(Latency: 0.00s)
+
+Turn 8 [00:50:47] (hi-IN):
+User:  
+Priya: You mentioned B.Tech CSE.
+(Latency: 0.00s)
+
+Turn 9 [00:50:47] (hi-IN):
+User:  
+Priya: Could you please share your 12th Board percentage or entrance exam scores?
+(Latency: 0.00s)
+
+Turn 10 [00:50:48] (en-IN):
+User:  Can you please repeat the question?
+Priya: Sure, Yash!
+(Latency: 0.00s)
+
+Turn 11 [00:50:49] (en-IN):
+User:  
+Priya: Have you completed your 12th Board exams?
+(Latency: 0.00s)
+
+Turn 12 [00:50:51] (en-IN):
+User:  See
+Priya: Yes, I'm here!
+(Latency: 0.00s)
+
+Turn 13 [00:50:53] (en-IN):
+User:  
+Priya: Yash, have you completed your 12th Board or any entrance exams like JEE or ASAT?
+(Latency: 0.00s)
+
+Turn 14 [00:51:01] (en-IN):
+User:  Okay
+Priya: Hello Yash! How can I assist you with your admissions today?
+(Latency: 0.00s)
+
+Turn 15 [00:51:04] (en-IN):
+User:  Okay
+Priya: Hello Yash! How can I assist you with your admissions today?
+(Latency: 0.00s)
+
+Turn 16 [00:51:05] (en-IN):
+User:  Yes, I have completed my EAMCET exam.
+Priya: Great, Yash!
+(Latency: 0.00s)
+
+Turn 17 [00:51:06] (en-IN):
+User:  
+Priya: Could you please share your EAMCET score or percentile to check your eligibility and scholarship options?
+(Latency: 0.00s)
+
+Turn 18 [00:51:18] (en-IN):
+User:  Can you please tell me about the fee structure?
+Priya: The annual tuition fee for B.Tech Computer Science and Engineering is ₹2.75 lakh per year, with up to 50% merit scholarships available. Seats fill quickly—would you like to reserve a scholarship seat or book a campus visit with your parents?
+(Latency: 0.00s)
+
+Turn 19 [00:51:18] (en-IN):
+User:  Can you please tell me about the fee structure?
+Priya: The annual tuition fee for B.Tech Computer Science and Engineering is ₹2.75 lakh per year, with up to 50% merit scholarships available. Seats fill quickly—would you like to reserve a scholarship seat or book a campus visit with your parents?
+(Latency: 0.00s)
+
+Turn 20 [00:51:19] (en-IN):
+User:  
+Priya: Certainly, Yash.
+(Latency: 0.00s)
+
+Turn 21 [00:51:19] (en-IN):
+User:  
+Priya: B.Tech CSE fees are ₹2,75,000/year; other core branches range ₹1,00,000 to ₹1,35,000/year, plus a one-time ₹15,000 admission fee.
+(Latency: 0.00s)
+
+Turn 22 [00:51:19] (en-IN):
+User:  
+Priya: Would you like details on scholarships?
+(Latency: 0.00s)
+
+Turn 23 [00:51:33] (hi-IN):
+User:  हो मी ऐकायला नाही ना
+Priya: 
+(Latency: 0.00s)
+
+Turn 24 [00:51:36] (en-IN):
+User:  Thank you
+Priya: Thank you for reaching out to Aditya University! Wishing you all the best for your admissions. Have a wonderful day!
+(Latency: 0.00s)
+
+Turn 25 [00:51:45] (en-IN):
+User:  Okay, Bye bye.
+Priya: Thank you for reaching out to Aditya University! Wishing you all the best for your admissions. Have a wonderful day!
+(Latency: 0.00s)
+
+Turn 26 [00:51:45] (en-IN):
+User:  Okay, Bye bye.
+Priya: Thank you for reaching out to Aditya University! Wishing you all the best for your admissions. Have a wonderful day!
+(Latency: 0.00s)
+
+============================================================
+CALL SUMMARY:
+- Total Duration: 100.6s
+- Turns Count: 26
+- Facts Discovered: {
+  "name": "Yash",
+  "student_name": "Yash",
+  "program": "CSE",
+  "program_of_interest": "CSE",
+  "exam": "AP_EAPCET",
+  "entrance_exams_taken": "AP_EAPCET"
+}
+- Questions Asked: ['exam_question', 'student_name', 'entrance_exam', 'q_program', 'campus_visit', 'program_question', 'score_question', 'q_exam', 'q_score', 'program_interest']
+- Refusals: []
+============================================================

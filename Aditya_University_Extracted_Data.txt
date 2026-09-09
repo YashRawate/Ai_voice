@@ -1,0 +1,858 @@
+[UNIVERSITY]
+
+University name: Aditya University
+
+Location (full address): Aditya Nagar, ADB Road, Surampalem - 533437, Kakinada District, Andhra Pradesh, INDIA
+
+Established year: 2024 (as Aditya University; legacy since 2001 as Aditya Engineering College)
+
+Campus size: 250 acres (smart campus)
+
+NAAC grade: A++ Grade
+
+NBA accreditation (which departments): NBA Tier 1 Accredited (specific departments NOT MENTIONED in documents)
+
+NIRF ranking: NIRF 2025 Rank Band 151-200 (University category); also mentioned as 201-300 in one flyer
+
+QS rating: QS I-Gauge Diamond Rating
+
+Industry memberships (AIMA, CII etc): AIMA (All India Management Association), CII (Confederation of Indian Industry)
+
+International collaborations: University of Hull, SUNY (State University of New York), Upstate University of South Carolina, Georgia Institute of Technology, University of Salford Manchester, University of Bedfordshire, The University of Wisconsin Madison, RWTH Aachen University, South University, HUTECH University of Technology, UEA University of East Anglia, University of Memphis, and many more (exact full list NOT MENTIONED)
+
+Total students: NOT MENTIONED
+
+Students from other countries: Students from 20+ countries (exact number NOT MENTIONED)
+
+Contact numbers: +91 70360 76661, +91 70950 76663, +91 70950 76664, +91 7036036664, +91 7416739666, +91 99498 76662, +91 99897 76661
+
+Website: www.adityauniversity.in
+
+Vision: NOT MENTIONED
+
+Mission: NOT MENTIONED
+
+Times Higher Education Impact Rank: 1001-1500 Global Band; Top 50 in India
+
+Best Business School for Entrepreneurship Development: Recognized by Elets 2024
+
+Ranked #1 in Quality Education (SDG 4) in Andhra Pradesh by THE Impact Rankings
+
+
+[COURSES]
+
+Course name: B.Tech - Computer Science & Engineering
+Degree type: B.Tech
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): Minimum 60% or equivalent
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: ASAT (compulsory), JEE, EAPCET (AP & TS), BIE (AP & TS), CBSE
+Industry tie-up (if any): NOT MENTIONED
+Special features: NOT MENTIONED
+
+Course name: B.Tech - Artificial Intelligence & Machine Learning
+Degree type: B.Tech
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): Minimum 60% or equivalent
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: ASAT (compulsory), JEE, EAPCET (AP & TS), BIE (AP & TS), CBSE
+Industry tie-up (if any): NOT MENTIONED
+Special features: NOT MENTIONED
+
+Course name: B.Tech - CSE (Data Science)
+Degree type: B.Tech
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): Minimum 60% or equivalent
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: ASAT (compulsory), JEE, EAPCET (AP & TS), BIE (AP & TS), CBSE
+Industry tie-up (if any): NOT MENTIONED
+Special features: NOT MENTIONED
+
+Course name: B.Tech - Electronics & Communication Engineering
+Degree type: B.Tech
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): Minimum 60% or equivalent
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: ASAT (compulsory), JEE, EAPCET (AP & TS), BIE (AP & TS), CBSE
+Industry tie-up (if any): NOT MENTIONED
+Special features: NOT MENTIONED
+
+Course name: B.Tech - Electrical & Electronics Engineering
+Degree type: B.Tech
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): Minimum 60% or equivalent
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: ASAT (compulsory), JEE, EAPCET (AP & TS), BIE (AP & TS), CBSE
+Industry tie-up (if any): NOT MENTIONED
+Special features: NOT MENTIONED
+
+Course name: B.Tech - Civil Engineering
+Degree type: B.Tech
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): Minimum 60% or equivalent
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: ASAT (compulsory), JEE, EAPCET (AP & TS), BIE (AP & TS), CBSE
+Industry tie-up (if any): NOT MENTIONED
+Special features: NOT MENTIONED
+
+Course name: B.Tech - Mechanical Engineering
+Degree type: B.Tech
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): Minimum 60% or equivalent
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: ASAT (compulsory), JEE, EAPCET (AP & TS), BIE (AP & TS), CBSE
+Industry tie-up (if any): NOT MENTIONED
+Special features: NOT MENTIONED
+
+Course name: B.Tech - Petroleum Technology
+Degree type: B.Tech
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): Minimum 60% or equivalent
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: ASAT (compulsory), JEE, EAPCET (AP & TS), BIE (AP & TS), CBSE
+Industry tie-up (if any): NOT MENTIONED
+Special features: NOT MENTIONED
+
+Course name: B.Tech - Agricultural Engineering
+Degree type: B.Tech
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): Minimum 60% or equivalent
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: ASAT (compulsory), JEE, EAPCET (AP & TS), BIE (AP & TS), CBSE
+Industry tie-up (if any): NOT MENTIONED
+Special features: NOT MENTIONED
+
+Course name: B.Tech - Mining Engineering
+Degree type: B.Tech
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): Minimum 60% or equivalent
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: ASAT (compulsory), JEE, EAPCET (AP & TS), BIE (AP & TS), CBSE
+Industry tie-up (if any): NOT MENTIONED
+Special features: NOT MENTIONED
+
+Course name: B.Tech - CSE in association with SAP
+Degree type: B.Tech (Industry Collaborated Program)
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): Minimum 60% or equivalent
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: ASAT (compulsory), JEE, EAPCET (AP & TS), BIE (AP & TS), CBSE
+Industry tie-up (if any): SAP
+Special features: Industry relevant and customized curriculum, classes and mentorship by industry experts, globally renowned certifications, internship and career opportunities, exclusive and curated learning resources
+
+Course name: B.Tech - CSE in association with Google Cloud
+Degree type: B.Tech (Industry Collaborated Program)
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): Minimum 60% or equivalent
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: ASAT (compulsory), JEE, EAPCET (AP & TS), BIE (AP & TS), CBSE
+Industry tie-up (if any): Google Cloud
+Special features: Industry relevant and customized curriculum, classes and mentorship by industry experts, globally renowned certifications
+
+Course name: B.Tech - AIML in association with Microsoft
+Degree type: B.Tech (Industry Collaborated Program)
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): Minimum 60% or equivalent
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: ASAT (compulsory), JEE, EAPCET (AP & TS), BIE (AP & TS), CBSE
+Industry tie-up (if any): Microsoft
+Special features: Industry relevant and customized curriculum, classes and mentorship by industry experts, globally renowned certifications
+
+Course name: B.Tech - AIML in association with Google Cloud
+Degree type: B.Tech (Industry Collaborated Program)
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): Minimum 60% or equivalent
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: ASAT (compulsory), JEE, EAPCET (AP & TS), BIE (AP & TS), CBSE
+Industry tie-up (if any): Google Cloud
+Special features: Industry relevant and customized curriculum, classes and mentorship by industry experts, globally renowned certifications
+
+Course name: B.Tech - CSE (Data Science) in association with Google Cloud
+Degree type: B.Tech (Industry Collaborated Program)
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): Minimum 60% or equivalent
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: ASAT (compulsory), JEE, EAPCET (AP & TS), BIE (AP & TS), CBSE
+Industry tie-up (if any): Google Cloud
+Special features: Industry relevant and customized curriculum, classes and mentorship by industry experts, globally renowned certifications
+
+Course name: M.Tech - Structural Engineering
+Degree type: M.Tech
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): NOT MENTIONED
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: NOT MENTIONED
+Industry tie-up (if any): NOT MENTIONED
+Special features: NOT MENTIONED
+
+Course name: M.Tech - Power Electronics & Drives
+Degree type: M.Tech
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): NOT MENTIONED
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: NOT MENTIONED
+Industry tie-up (if any): NOT MENTIONED
+Special features: NOT MENTIONED
+
+Course name: M.Tech - Energy Science & Technology
+Degree type: M.Tech
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): NOT MENTIONED
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: NOT MENTIONED
+Industry tie-up (if any): NOT MENTIONED
+Special features: NOT MENTIONED
+
+Course name: M.Tech - VLSI Design
+Degree type: M.Tech
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): NOT MENTIONED
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: NOT MENTIONED
+Industry tie-up (if any): NOT MENTIONED
+Special features: NOT MENTIONED
+
+Course name: M.Tech - CSE (AI&ML)
+Degree type: M.Tech
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): NOT MENTIONED
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: NOT MENTIONED
+Industry tie-up (if any): NOT MENTIONED
+Special features: NOT MENTIONED
+
+Course name: M.Tech - Computer Science & Engineering
+Degree type: M.Tech
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): NOT MENTIONED
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: NOT MENTIONED
+Industry tie-up (if any): NOT MENTIONED
+Special features: NOT MENTIONED
+
+Course name: M.Tech - Artificial Intelligence & Data Science
+Degree type: M.Tech
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): NOT MENTIONED
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: NOT MENTIONED
+Industry tie-up (if any): NOT MENTIONED
+Special features: NOT MENTIONED
+
+Course name: BCA - Bachelor of Computer Applications
+Degree type: BCA
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): NOT MENTIONED
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: ASAT (compulsory for UG programs)
+Industry tie-up (if any): NOT MENTIONED
+Special features: NOT MENTIONED
+
+Course name: MCA - Master of Computer Applications
+Degree type: MCA
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): NOT MENTIONED
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: NOT MENTIONED
+Industry tie-up (if any): NOT MENTIONED
+Special features: NOT MENTIONED
+
+Course name: B.Pharmacy
+Degree type: B.Pharmacy
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): NOT MENTIONED
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: ASAT, EAPCET (AP & TS), NEET
+Industry tie-up (if any): NOT MENTIONED
+Special features: NOT MENTIONED
+
+Course name: Pharma D
+Degree type: Pharm. D
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): NOT MENTIONED
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: ASAT, EAPCET (AP & TS), NEET
+Industry tie-up (if any): NOT MENTIONED
+Special features: NOT MENTIONED
+
+Course name: M.Pharmacy (Pharmaceutics)
+Degree type: M.Pharmacy
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): NOT MENTIONED
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: NOT MENTIONED
+Industry tie-up (if any): NOT MENTIONED
+Special features: NOT MENTIONED
+
+Course name: M.Pharmacy (Pharmaceutical Analysis)
+Degree type: M.Pharmacy
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): NOT MENTIONED
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: NOT MENTIONED
+Industry tie-up (if any): NOT MENTIONED
+Special features: NOT MENTIONED
+
+Course name: B.Sc. - Forensic Science
+Degree type: B.Sc.
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): Minimum 55% or equivalent
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: ASAT, BIE (AP & TS), CBSE
+Industry tie-up (if any): NOT MENTIONED
+Special features: NOT MENTIONED
+
+Course name: B.Sc. - Cyber Security & Digital Forensics
+Degree type: B.Sc.
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): Minimum 55% or equivalent
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: ASAT, BIE (AP & TS), CBSE
+Industry tie-up (if any): NOT MENTIONED
+Special features: NOT MENTIONED
+
+Course name: M.Sc. - Forensic Science
+Degree type: M.Sc.
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): NOT MENTIONED
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: NOT MENTIONED
+Industry tie-up (if any): NOT MENTIONED
+Special features: NOT MENTIONED
+
+Course name: M.Sc. - Cyber Security & Digital Forensics
+Degree type: M.Sc.
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): NOT MENTIONED
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: NOT MENTIONED
+Industry tie-up (if any): NOT MENTIONED
+Special features: NOT MENTIONED
+
+Course name: M.Sc. - Real Estate Valuation
+Degree type: M.Sc.
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): NOT MENTIONED
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: NOT MENTIONED
+Industry tie-up (if any): NOT MENTIONED
+Special features: NOT MENTIONED
+
+Course name: BBA in association with Deloitte
+Degree type: BBA (Hons.)
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): Minimum 55% or equivalent
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: ASAT (compulsory), BIE (AP & TS), CBSE
+Industry tie-up (if any): Deloitte
+Special features: Harvard-Style Case Study Methodology; courses co-developed with leading corporates and start-up founders; Bajaj FinServ Certification in BFSI; TISS Certifications; faculty mentorship and leadership labs; professional skill-building from semester one; networking and industry exposure; Big 4 live projects, full-semester instruction by senior executives, industry mentorship
+
+Course name: BBA - Business Analytics (Powered by KPMG)
+Degree type: BBA (Hons.)
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): Minimum 55% or equivalent
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: ASAT (compulsory), BIE (AP & TS), CBSE
+Industry tie-up (if any): KPMG
+Special features: KPMG-curated curriculum on top data tools and frameworks; live analytics projects and simulations; course-wise KPMG certifications; real-world case studies and global data challenges; career pathways: Analytics Consulting, Business Strategy, Data-Driven Marketing, Risk and Operations Analytics; expertise in data visualization, predictive analytics, AI-driven decision-making and business intelligence
+
+Course name: BBA - Global Finance (Powered by PwC)
+Degree type: BBA (Hons.)
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): Minimum 55% or equivalent
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: ASAT (compulsory), BIE (AP & TS), CBSE
+Industry tie-up (if any): PwC
+Special features: PwC mentorship on global finance projects; international market simulations; course-wise PwC certifications; exposure to MNCs and global financial institutions; career pathways: International Finance, Global Risk Management, US Tax and Audit, Cross-Border Strategy; covers investment, international taxation, risk management and corporate financial leadership
+
+Course name: BBA - FinTech (Powered by EY)
+Degree type: BBA (Hons.)
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): Minimum 55% or equivalent
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: ASAT (compulsory), BIE (AP & TS), CBSE
+Industry tie-up (if any): EY
+Special features: EY-designed FinTech Labs with live projects; 3-year mentorship from EY professionals; course-wise EY certifications; innovation showcases with fintech start-ups; career pathways: Digital Banking, Product Innovation, Blockchain Solutions, FinTech Consulting; covers blockchain, AI in finance, digital banking and payments innovation
+
+Course name: BBA - Health Care Management (in association with Red Varsity)
+Degree type: BBA (Hons.)
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): Minimum 55% or equivalent
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: ASAT (compulsory), BIE (AP & TS), CBSE
+Industry tie-up (if any): Red Varsity
+Special features: Covers clinical operations management, patient experience improvement, finance, logistics and technology in healthcare delivery
+
+Course name: MBA in association with Deloitte (Six Majors, Five Minors)
+Degree type: MBA
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): NOT MENTIONED
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: CAT, NMAT, CMAT, XMAT, MAT
+Industry tie-up (if any): Deloitte
+Special features: Management Consulting Certification by Deloitte; six major specializations (Finance, Human Resource Management, Marketing, Digital Marketing, Digital Transformation and Innovation, Logistics and Supply Chain Management); five minor tracks (FinTech and Digital Finance, Product Strategy and Innovation, Business Sustainability and Leadership, International Business and Cross-Cultural Management, Entrepreneurship and Start-up Management); Advanced NSE Simulation Lab; Global CXO Masterclasses; live industry projects; innovation-driven bootcamps; Harvard-style case-based method; co-create and co-deliver model with industry partners
+
+Course name: MBA - Business Analytics (Powered by KPMG)
+Degree type: MBA
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): NOT MENTIONED
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: CAT, NMAT, CMAT, XMAT, MAT
+Industry tie-up (if any): KPMG
+Special features: Continuous mentorship by KPMG experts throughout the two-year program; certifications for each course; final KPMG MBA in Business Analytics credential recognized globally; immersive training in data analysis, predictive modeling, business intelligence and strategic decision-making; live projects and real-world analytics challenges
+
+Course name: MBA - FinTech (Powered by EY)
+Degree type: MBA
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): NOT MENTIONED
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: CAT, NMAT, CMAT, XMAT, MAT
+Industry tie-up (if any): EY
+Special features: EY course-wise certifications; globally recognized MBA in FinTech credential; EY professionals mentor students through live projects, simulations, and hackathons; expertise in digital banking, blockchain, AI in finance and emerging financial technologies
+
+Course name: MBA - Global Finance (Powered by PwC)
+Degree type: MBA
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): NOT MENTIONED
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: CAT, NMAT, CMAT, XMAT, MAT
+Industry tie-up (if any): PwC
+Special features: PwC certifications; MBA in Global Finance credential; global financial simulations and cross-border case studies; covers international finance, investment strategy, risk management and US Tax compliance; prepares for US Tax advisory, investment strategy and corporate finance roles
+
+Course name: MBA - Health Care Management (in association with Red Varsity)
+Degree type: MBA
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): NOT MENTIONED
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: CAT, NMAT, CMAT, XMAT, MAT
+Industry tie-up (if any): Red Varsity
+Special features: Develops executive vision and financial strategy for global healthcare systems; senior leadership skills for innovation and patient care
+
+Course name: MBA for Working Professionals (Executive MBA)
+Degree type: MBA (Executive MBA)
+Duration: 2 Years (4 Semesters), Online
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): NOT MENTIONED
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: NOT MENTIONED
+Industry tie-up (if any): SUNY (State University of New York) — joint credential: MBA from Aditya University + Post Graduate Diploma in AI from SUNY
+Special features: 100% Online; weekend classes (Saturday and Sunday); self-paced modules; blend of Industry Leaders and Academic Professors; specializations: Finance, Marketing, HR, Business Analytics, Logistics and Supply Chain; designed for working professionals with minimum 2 years full-time work experience; bachelor's degree minimum 3 years with at least 50% required; dual credential program; leadership-focused curriculum; AI-enhanced strategic decision-making; work-life-study balance
+
+Course name: Executive MBA (Management Development Programme - MDP)
+Degree type: Executive Education / MDP
+Duration: 1-day, 3-day, or 5-day intensive modules (flexible)
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): NOT MENTIONED
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: NOT MENTIONED
+Industry tie-up (if any): NOT MENTIONED
+Special features: Offered both on-site and off-site (customized for corporates or open enrolment); participants receive Certificate of Completion for each module attended; areas of expertise: Strategic Negotiation, Business Communication and Email Etiquette, Finance for Non-Finance Professionals, Digital Marketing Strategy, Power BI and Data Visualization, Financial Planning and Forecasting, and many more
+
+Course name: Ph.D. in All Disciplines
+Degree type: Ph.D.
+Duration: NOT MENTIONED
+Total seats: NOT MENTIONED
+Eligibility (10th marks required): NOT MENTIONED
+Eligibility (12th/Inter marks required): NOT MENTIONED
+Eligibility (subjects required in 12th): NOT MENTIONED
+Accepted entrance exams: NOT MENTIONED
+Industry tie-up (if any): NOT MENTIONED
+Special features: NOT MENTIONED
+
+
+[FEES]
+
+School of Engineering — Annual Tuition Fees (Academic Year 2026-27):
+
+B.Tech - Computer Science & Engineering — Annual tuition fee: Rs. 2.75 L per year
+B.Tech - Artificial Intelligence & Machine Learning — Annual tuition fee: Rs. 2.50 L per year
+B.Tech - CSE (Data Science) — Annual tuition fee: Rs. 2.00 L per year
+B.Tech - Electronics & Communication Engineering — Annual tuition fee: Rs. 2.00 L per year
+B.Tech - Electrical & Electronics Engineering — Annual tuition fee: Rs. 1.00 L per year
+B.Tech - Civil Engineering — Annual tuition fee: Rs. 1.00 L per year
+B.Tech - Mechanical Engineering — Annual tuition fee: Rs. 1.00 L per year
+B.Tech - Petroleum Technology — Annual tuition fee: Rs. 1.00 L per year
+B.Tech - Agricultural Engineering — Annual tuition fee: Rs. 1.00 L per year
+B.Tech - Mining Engineering — Annual tuition fee: Rs. 1.00 L per year
+B.Tech - CSE in association with SAP — Annual tuition fee: Rs. 2.75 L + Rs. 0.60 L per year
+B.Tech - CSE in association with Google Cloud — Annual tuition fee: Rs. 2.75 L + Rs. 0.50 L per year
+B.Tech - AIML in association with Microsoft — Annual tuition fee: Rs. 2.50 L + Rs. 0.60 L per year
+B.Tech - AIML in association with Google Cloud — Annual tuition fee: Rs. 2.50 L + Rs. 0.50 L per year
+B.Tech - CSE (Data Science) in association with Google Cloud — Annual tuition fee: Rs. 2.00 L + Rs. 0.50 L per year
+M.Tech - Structural Engineering — Annual tuition fee: Rs. 0.75 L per year
+M.Tech - Power Electronics & Drives — Annual tuition fee: Rs. 0.75 L per year
+M.Tech - Energy Science & Technology — Annual tuition fee: Rs. 0.75 L per year
+M.Tech - VLSI Design — Annual tuition fee: Rs. 0.75 L per year
+M.Tech - CSE (AI&ML) — Annual tuition fee: Rs. 0.75 L per year
+M.Tech - Computer Science & Engineering — Annual tuition fee: Rs. 0.75 L per year
+M.Tech - Artificial Intelligence & Data Science — Annual tuition fee: Rs. 0.75 L per year
+M.Sc. - Real Estate Valuation — Annual tuition fee: Rs. 0.75 L per year
+BCA - Bachelor of Computer Applications — Annual tuition fee: Rs. 1.00 L per year
+MCA - Master of Computer Applications — Annual tuition fee: Rs. 1.00 L per year
+
+School of Business — Annual Tuition Fees:
+
+BBA in association with Deloitte — Annual tuition fee: Rs. 1.40 L per year
+BBA (Business Analytics) in association with KPMG — Annual tuition fee: Rs. 1.65 L per year
+BBA (Global Finance) in association with PwC — Annual tuition fee: Rs. 1.65 L per year
+BBA (FinTech) in association with EY — Annual tuition fee: Rs. 1.65 L per year
+BBA (Health Care Management) in association with Red Varsity — Annual tuition fee: Rs. 1.65 L per year
+MBA in association with Deloitte — Annual tuition fee: Rs. 1.65 L per year
+MBA (Business Analytics) in association with KPMG — Annual tuition fee: Rs. 2.50 L per year
+MBA (Global Finance) in association with PwC — Annual tuition fee: Rs. 2.50 L per year
+MBA (FinTech) in association with EY — Annual tuition fee: Rs. 2.50 L per year
+MBA (Health Care Management) in association with Red Varsity — Annual tuition fee: Rs. 2.50 L per year
+MBA for Working Professionals — Annual tuition fee: Rs. 1.75 L per year
+
+Executive MBA Program Fees (National):
+Admission Fee + Registration + Welcome Kit: Rs. 50,000
+Tuition Fee for Full Course: Rs. 6,00,000
+After Scholarship: Rs. 3,00,000
+
+Executive MBA Program Fees (International):
+Registration + Welcome Kit: USD 500
+Tuition Fee for Full Course: USD 8,000
+After Scholarship: USD 3,500
+
+School of Pharmacy — Annual Tuition Fees:
+
+B. Pharmacy — Annual tuition fee: Rs. 1.80 L per year
+Pharma D — Annual tuition fee: Rs. 2.50 L per year
+M.Pharmacy (Pharmaceutics) — Annual tuition fee: Rs. 0.75 L per year
+M.Pharmacy (Pharmaceutical Analysis) — Annual tuition fee: Rs. 0.75 L per year
+
+School of Sciences — Annual Tuition Fees:
+
+B.Sc. (Forensic Science) — Annual tuition fee: Rs. 1.00 L per year
+B.Sc. (Cyber Security & Digital Forensics) — Annual tuition fee: Rs. 1.00 L per year
+M.Sc. (Forensic Science) — Annual tuition fee: Rs. 0.75 L per year
+M.Sc. (Cyber Security & Digital Forensics) — Annual tuition fee: Rs. 0.75 L per year
+
+Common Fees:
+
+Hostel Non-AC annual fee: Rs. 1.15 L (Laundry expenses and medical insurance up to 2 lakhs included)
+Hostel AC annual fee: Rs. 1.30 L (Laundry expenses and medical insurance up to 2 lakhs included)
+Mess vegetarian monthly: NOT MENTIONED
+Mess non-vegetarian monthly: NOT MENTIONED
+Bus fee 0-20 km annual: NOT MENTIONED
+Bus fee 20-40 km annual: NOT MENTIONED
+Bus fee 40+ km annual: NOT MENTIONED
+Development fee annual: NOT MENTIONED
+Admission fee (one time): Rs. 15,000 (Non-Refundable)
+University services fee annual: NOT MENTIONED
+Any other fees: ASAT Fee: Rs. 500 per attempt (Maximum 2 attempts)
+Fee payment schedule (installments): NOT MENTIONED
+
+
+[SCHOLARSHIPS]
+
+ASAT scholarship slabs:
+
+B.Tech — CSE, AI&ML, DS, ECE:
+ASAT > 97% — 75% scholarship
+ASAT 95-96.9% — 50% scholarship
+ASAT 92-94.9% — 25% scholarship
+ASAT 90-91.9% — 10% scholarship
+
+B.Tech — CE, EEE, ME, Ag.E, Ming.E, PT:
+ASAT > 95% — 75% scholarship
+ASAT 92-94.9% — 50% scholarship
+ASAT 90-91.9% — 25% scholarship
+ASAT 85-89.9% — 10% scholarship
+
+B.Sc (Forensic Science), B.Sc (Cyber Security & Digital Forensics), BBA (All Specializations):
+ASAT: 100% — NOT APPLICABLE
+ASAT > 95% — 20% scholarship
+ASAT 92-94.9% — 15% scholarship
+ASAT 90-91.9% — 10% scholarship
+
+B.Pharmacy, Pharma D:
+ASAT: 100% — NOT APPLICABLE
+ASAT > 97% — 70% scholarship
+ASAT 95-96.9% — 50% scholarship
+ASAT 92-94.9% — 25% scholarship
+ASAT 90-91.9% — 10% scholarship
+
+JEE Main percentile scholarship slabs:
+
+B.Tech — CSE, AI&ML, DS, ECE:
+JEE > 98 percentile — 100% scholarship
+JEE > 95 percentile — 75% scholarship
+JEE 90-94.9 percentile — 50% scholarship
+JEE 80-89.9 percentile — 25% scholarship
+JEE 70-79.9 percentile — 10% scholarship
+
+B.Tech — CE, EEE, ME, Ag.E, Ming.E, PT:
+JEE > 95 percentile — 100% scholarship
+JEE > 90 percentile — 75% scholarship
+JEE 80-89.9 percentile — 50% scholarship
+JEE 70-79.9 percentile — 25% scholarship
+JEE 65-69.9 percentile — 10% scholarship
+
+AP EAMCET / TS EAMCET rank scholarship slabs (EAPCET):
+
+B.Tech — CSE, AI&ML, DS, ECE:
+EAPCET Rank 1-5000 — 75% scholarship
+EAPCET Rank 5001-10000 — 50% scholarship
+EAPCET Rank 10001-25000 — 25% scholarship
+EAPCET Rank 25001-50000 — 10% scholarship
+
+B.Tech — CE, EEE, ME, Ag.E, Ming.E, PT:
+EAPCET Rank 1-10000 — 75% scholarship
+EAPCET Rank 10001-25000 — 50% scholarship
+EAPCET Rank 25001-50000 — 25% scholarship
+EAPCET Rank 50001-75000 — 10% scholarship
+
+B.Pharmacy, Pharma D:
+EAPCET Rank 1-4000 — 70% scholarship
+EAPCET Rank 4001-10000 — 50% scholarship
+EAPCET Rank 10001-25000 — 25% scholarship
+EAPCET Rank 25001-35000 — 10% scholarship
+
+BIE percentage scholarship slabs (AP & TS):
+
+B.Tech — CSE, AI&ML, DS, ECE:
+BIE > 98% — 75% scholarship
+BIE 96-97.9% — 50% scholarship
+BIE 94-95.9% — 25% scholarship
+BIE 92-93.9% — 10% scholarship
+
+B.Tech — CE, EEE, ME, Ag.E, Ming.E, PT:
+BIE > 95% — 75% scholarship
+BIE 93-94.9% — 50% scholarship
+BIE 90-92.9% — 25% scholarship
+BIE 85-89.9% — 10% scholarship
+
+B.Sc (Forensic Science), B.Sc (Cyber Security & Digital Forensics), BBA (All Specializations):
+BIE > 95% — 20% scholarship
+BIE 85-94.9% — 15% scholarship
+BIE 75-84.9% — 10% scholarship
+
+CBSE marks scholarship slabs:
+
+B.Tech — CSE, AI&ML, DS, ECE:
+CBSE > 450 marks — 75% scholarship
+CBSE 425-449 marks — 50% scholarship
+CBSE 400-424 marks — 25% scholarship
+CBSE 375-399 marks — 10% scholarship
+
+B.Tech — CE, EEE, ME, Ag.E, Ming.E, PT:
+CBSE > 425 marks — 75% scholarship
+CBSE 400-425 marks — 50% scholarship
+CBSE 375-399 marks — 25% scholarship
+CBSE 350-374 marks — 10% scholarship
+
+BBA (All Specializations):
+CBSE > 475 marks — 20% scholarship
+CBSE 425-474 marks — 15% scholarship
+CBSE 375-424 marks — 10% scholarship
+
+CAT/CMAT/MAT percentile scholarship slabs (for MBA):
+
+CAT (Percentile):
+CAT > 94 percentile — 50% scholarship
+CAT 85-94 percentile — 25% scholarship
+CAT 70-84.9 percentile — 15% scholarship
+CAT 60-69.9 percentile — 10% scholarship
+
+NMAT, CMAT, XMAT, MAT (Percentile):
+> 94 percentile — 25% scholarship
+85-94 percentile — 15% scholarship
+75-84.9 percentile — 10% scholarship
+
+NEET scholarship slabs (B.Pharmacy, Pharma D):
+NEET Rank 1-10000 — 70% scholarship
+NEET Rank 10001-15000 — 50% scholarship
+NEET Rank 15001-25000 — 25% scholarship
+NEET Rank 25001-35000 — 10% scholarship
+
+Sports scholarship:
+75% scholarship for National level participation
+100% scholarship for International level participation
+(Availment subject to successful scrutiny by University constituted committee)
+
+Lateral entry ECET scholarship (B.Tech Lateral Entry, A.Y. 2026-27):
+ECET-2026 Rank 1-25 — 100% scholarship
+ECET-2026 Rank 26-50 — 75% scholarship
+ECET-2026 Rank 51-100 — 50% scholarship
+ECET-2026 Rank 101-150 — 25% scholarship
+(Scholarship applicable for second year only; to continue for upcoming years, 8.0 CGPA with no backlogs in every semester is mandatory)
+(For students seeking admission in same diploma branch, Branch Rank in ECET-2026 is considered; for other branch, Integrated Rank is considered)
+Lateral Entry Admission Fee: Rs. 15,000 (Non-Refundable)
+Lateral Entry Tuition Fee: Rs. 1,00,000 per year
+
+SC/ST/OBC government scheme: NOT MENTIONED
+EWS scheme: NOT MENTIONED
+Minority scholarship: NOT MENTIONED
+Early admission concession: NOT MENTIONED
+
+Scholarship renewal criteria:
+Scholarship applicable for first year only.
+To avail the same scholarship for upcoming years, 8.0 CGPA with no backlogs in every semester is mandatory.
+To avail scholarship via CBSE/+2 marks, English, Maths/Biology, Physics and Chemistry need to be included while calculating the percentage.
+
+
+[FACILITIES]
+
+Hostel details (boys): AC and Non-AC options available; Gym facility with trainer for Boys
+Hostel details (girls): AC and Non-AC options available; In-house Beauty parlour for Girls
+Room configuration: Triple Sharing Accommodation
+Room furnishings: Attached Bath and Balcony
+Hostel timings (weekdays): NOT MENTIONED
+Hostel timings (weekends): NOT MENTIONED
+Visitor rules: NOT MENTIONED
+Mess timings: NOT MENTIONED
+Mess menu highlights: NOT MENTIONED
+
+Bus routes (list every city/town covered): NOT MENTIONED
+Bus timings: NOT MENTIONED
+Bus pass registration process: NOT MENTIONED
+
+Library — number of books: NOT MENTIONED
+Library — e-journals and platforms: NOT MENTIONED
+Library — timings: NOT MENTIONED
+Library — borrow limit: NOT MENTIONED
+Digital library access: NOT MENTIONED
+
+Computing labs — number of computers: NOT MENTIONED
+Computing labs — software available: NOT MENTIONED
+Labs open timing: NOT MENTIONED
+
+Special labs: Advanced NSE Simulation Lab (recreates real-time trading environments; hands-on experience in equity, derivatives, commodities and currency markets; simulated trading, portfolio management and risk analysis; NSE-certified modules); AI-enabled smart classrooms and advanced labs (mentioned); EY-designed FinTech Labs (mentioned)
+
+Medical centre — timings: NOT MENTIONED
+Medical centre — facilities: Apollo Dispensary functioning 24/7
+Ambulance: 24/7 Ambulance facility available
+Health insurance: Free Health Insurance (medical insurance up to Rs. 2 lakhs included in hostel fee)
+
+Sports facilities (list all): Indoor Sports Arena; 75% and 100% Sports Scholarships offered for National and International level participation (specific sports NOT MENTIONED)
+Gymnasium: Gym facility with trainer for Boys
+WiFi details: Wi-Fi Facility available on campus (details NOT MENTIONED)
+
+Placement statistics — year 2026:
+Total placements: 3832+ (still counting)
+Top package (domestic): Rs. 27.00 Lakhs per Annum (Walmart, 6 Selections)
+Other notable 2026 packages: Philips Rs. 14.50 LPA (1 Selection), Turing Rs. 12.53 LPA (1 Selection), Lavendel Consulting Rs. 12 LPA (3 Selections), Maersk Rs. 10.83 LPA (10 Selections), Infosys 181 Selections
+
+Placement statistics — year 2026 International:
+C.I. Takiron Rs. 39.60 LPA (2 Selections), TigerChiyoda Materials Rs. 27.79 LPA (1 Selection), Shinsei Electronics Group Rs. 27.81 LPA (1 Selection), Nagano Sankoh Rs. 26.31 LPA (1 Selection); still counting
+
+Placement statistics — year 2025:
+Total placements: 3455+ (still counting)
+Walmart Rs. 22.60 LPA (5 Selections), UiPath Rs. 17 LPA (1 Selection), Darwinbox Rs. 16.30 LPA (2 Selections), Cisco Rs. 16 LPA (1 Selection), Increff Rs. 13.44 LPA (1 Selection), GE Vernova Rs. 13.20 LPA (1 Selection)
+
+Placement statistics — year 2025 International:
+Hitachi Rs. 35.36 LPA (2 Selections), JHC Co. Ltd Rs. 34.95 LPA (1 Selection), Toyota Rs. 34.12 LPA (1 Selection), Aisan Rs. 33.51 LPA (1 Selection), JEMS Rs. 32.84 LPA (1 Selection), Daiseki Rs. 31.70 LPA (3 Selections), and many more
+
+Internship offers — 2027:
+Visa Rs. 90,000/month (2 Selections), Flipkart Rs. 50,000/month (1 Selection), Airbus Rs. 30,000/month (4 Selections), Andinolabs Rs. 25,000/month (1 Selection)
+
+Internship offers — 2026:
+Google Rs. 1.23 Lakh/month (1 Selection), Amazon Rs. 1.10 Lakh/month (1 Selection), Walmart Rs. 1 Lakh/month (16 Selections), Maersk Rs. 50,000/month (10 Selections), Philips Rs. 45,000/month (1 Selection), Myntra Rs. 40,000/month (1 Selection), LG Rs. 30,000/month (9 Selections), Lumen Technologies Rs. 30,000/month (3 Selections), Conglomerate IT Rs. 25,000/month (4 Selections), iQ Rs. 25,000/month (1 Selection), and many more
+
+Internship offers — 2025:
+Rs. 40,000/month, Rs. 30,000/month, Rs. 30,000/month, Rs. 25,000/month, Rs. 25,000/month (specific companies for 2025 internships NOT MENTIONED by name for all)
+
+Top recruiters (domestic): Walmart, Infosys, Philips, Turing, Lavendel Consulting, Maersk, UiPath, Darwinbox, Cisco, GE Vernova, Increff, and many more
+
+Top recruiters (international): C.I. Takiron, TigerChiyoda Materials, Shinsei Electronics Group, Nagano Sankoh, Hitachi, JHC Co. Ltd, Toyota, Aisan, JEMS, Daiseki, and many more
+
+Highest domestic package: Rs. 27.00 Lakhs per Annum (2026, Walmart)
+Highest international package: Rs. 39.60 Lakhs per Annum (2026, C.I. Takiron)
+
+Placement cell name: NOT MENTIONED
+Placement season: NOT MENTIONED
+
+Additional hostel amenities:
+Banking Facility on Campus
+24/7 CCTV Surveillance and Security
+Uninterrupted Power Supply
+Laundry service included in hostel fee

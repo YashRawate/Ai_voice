@@ -1,0 +1,625 @@
+[
+  {
+    "type": "llm_reply",
+    "t": 4.969,
+    "text": "Hello! This",
+    "stage": "GENERAL",
+    "facts_snapshot": null
+  },
+  {
+    "type": "stt",
+    "t": 4.995,
+    "text": "Hmm",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 7.71,
+    "text": "May I know your name, please?",
+    "stage": "GENERAL",
+    "facts_snapshot": null
+  },
+  {
+    "type": "stt",
+    "t": 10.984,
+    "text": "My name is Yash",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 17.407,
+    "text": "Nice to meet you, Yash! Which program or branch are you interested in at Aditya University?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 22.796,
+    "text": "I'm interested for B.Tech Computer Science Artificial Intelligence.",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 30.006,
+    "text": "Great choice, Yash! In CSE we offer top specialisations. Have you completed your 12th Board or Intermediate?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech AI/ML",
+      "specialization": "CSE"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 32.978,
+    "text": "Yes, I have completed.",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 42.416,
+    "text": "Congratulations, Yash! Could you please share your 12th Board marks or any entrance exam scores like JEE or ASAT?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech AI/ML",
+      "specialization": "CSE"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 49.299,
+    "text": "In 12th I got 89% and in JEE I got 2000 rank.",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 60.116,
+    "text": "That's a very solid score, Yash! With JEE 2000 rank, you have excellent eligibility. Would you like me to send the application link to your WhatsApp?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech AI/ML",
+      "specialization": "CSE",
+      "class_12_score": "89.0%",
+      "entrance_exams_taken": "JEE",
+      "score": "89%",
+      "exam": "JEE"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 64.633,
+    "text": "Now don't send me please",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 71.105,
+    "text": "No problem, Yash! Are you interested in booking a campus visit with your parents this Saturday to explore more?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech AI/ML",
+      "specialization": "CSE",
+      "class_12_score": "89.0%",
+      "entrance_exams_taken": "JEE",
+      "score": "89%",
+      "exam": "JEE"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 77.643,
+    "text": "Not this Saturday, but I will tell you later. Can you please tell me about the fee structure?",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 95.309,
+    "text": "Let me check the fee details... Certainly, Yash! B.Tech CSE fees are ₹2.75 lakh/year; core branches range ₹1 to 1.35 lakh/year. Admission fee is ₹15,000 one-time. Any specific branch?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech AI/ML",
+      "specialization": "CSE",
+      "class_12_score": "89.0%",
+      "entrance_exams_taken": "JEE",
+      "score": "89%",
+      "exam": "JEE"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 99.59,
+    "text": "AIML",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 108.416,
+    "text": "B.Tech CSE offers specialized tracks in AI & ML, Data Science, and industry programs with SAP, Google Cloud, and Microsoft.",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech AI/ML",
+      "specialization": "CSE",
+      "class_12_score": "89.0%",
+      "entrance_exams_taken": "JEE",
+      "score": "89%",
+      "exam": "JEE"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 112.295,
+    "text": "What is the fee of AIML?",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 125.21,
+    "text": "One moment, checking tuition... The fee for B.Tech AI & ML specialization is ₹2.75 lakh per year, Yash. Would you like me to send the application link to your WhatsApp?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech AI/ML",
+      "specialization": "CSE",
+      "class_12_score": "89.0%",
+      "entrance_exams_taken": "JEE",
+      "score": "89%",
+      "exam": "JEE"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 130.301,
+    "text": "Wait a second, can you please tell me about the hostel?",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 139.613,
+    "text": "We provide AC and Non-AC hostel options with attached bathrooms and multi-cuisine meals. Would you like me to send the direct admission link to reserve your seat and hostel room?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech AI/ML",
+      "specialization": "CSE",
+      "class_12_score": "89.0%",
+      "entrance_exams_taken": "JEE",
+      "score": "89%",
+      "exam": "JEE",
+      "hostel_interest": "Yes"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 144.648,
+    "text": "No, please. Can you please tell me about the placements?",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 162.411,
+    "text": "Getting the recruitment information... Aditya University had 3,832+ placements with a highest package of ₹27 LPA this year, Yash. Top recruiters include Amazon, Walmart, and Infosys. Would you like to book a campus visit this Saturday?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech AI/ML",
+      "specialization": "CSE",
+      "class_12_score": "89.0%",
+      "entrance_exams_taken": "JEE",
+      "score": "89%",
+      "exam": "JEE",
+      "hostel_interest": "Yes"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 167.052,
+    "text": "Yes, can you please book it for me?",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 178.612,
+    "text": "Let me check that for you... Your campus visit is confirmed for this Saturday, Yash! Excited to welcome you and your parents to Aditya University. Anything else I can assist with?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech AI/ML",
+      "specialization": "CSE",
+      "class_12_score": "89.0%",
+      "entrance_exams_taken": "JEE",
+      "score": "89%",
+      "exam": "JEE",
+      "hostel_interest": "Yes"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 183.55,
+    "text": "Can you please tell me about hostel ragging and all?",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 193.51,
+    "text": "We provide AC and Non-AC hostel options with attached bathrooms and multi-cuisine meals. Would you like me to send the direct admission link to reserve your seat and hostel room?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech AI/ML",
+      "specialization": "CSE",
+      "class_12_score": "89.0%",
+      "entrance_exams_taken": "JEE",
+      "score": "89%",
+      "exam": "JEE",
+      "hostel_interest": "Yes"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 196.153,
+    "text": "No please",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 208.113,
+    "text": "Our 250-acre campus is fully gated with 24/7 CCTV and strict anti-ragging policies for your safety, Yash. May I know your 12th marks or entrance scores?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech AI/ML",
+      "specialization": "CSE",
+      "class_12_score": "89.0%",
+      "entrance_exams_taken": "JEE",
+      "score": "89%",
+      "exam": "JEE",
+      "hostel_interest": "Yes"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 214.646,
+    "text": "For this, why do you want 12th marks and address code?",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 224.695,
+    "text": "One moment... Knowing your 12th marks helps confirm eligibility and scholarship options, Yash. Could you please share your board or entrance exam scores for",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech AI/ML",
+      "specialization": "CSE",
+      "class_12_score": "89.0%",
+      "entrance_exams_taken": "JEE",
+      "score": "89%",
+      "exam": "JEE",
+      "hostel_interest": "Yes"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 224.71,
+    "text": "At the starting only I told you",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 233.108,
+    "text": "Sorry, Yash! Could you please remind me your 12th marks or entrance scores to proceed with your admission guidance?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech AI/ML",
+      "specialization": "CSE",
+      "class_12_score": "89.0%",
+      "entrance_exams_taken": "JEE",
+      "score": "89%",
+      "exam": "JEE",
+      "hostel_interest": "Yes"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 238.801,
+    "text": "I have scored 89% with 2000 rank in JEE.",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 249.004,
+    "text": "That's a very solid score, Yash! You qualify for up to 30% merit scholarship. Which program are you interested in at Aditya University?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech AI/ML",
+      "specialization": "CSE",
+      "class_12_score": "89.0%",
+      "entrance_exams_taken": "JEE",
+      "score": "89%",
+      "exam": "JEE",
+      "hostel_interest": "Yes"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 255.786,
+    "text": "I am interested for nothing.",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 261.1,
+    "text": "Aditya University offers top programs like B.Tech",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech AI/ML",
+      "specialization": "CSE",
+      "class_12_score": "89.0%",
+      "entrance_exams_taken": "JEE",
+      "score": "89%",
+      "exam": "JEE",
+      "hostel_interest": "Yes"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 261.115,
+    "text": "क्या मुझे आप बता सकते हो कि हॉस्टल में कैसे खाना मिलता है?",
+    "language": "hi-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 271.208,
+    "text": "Campus mein AC aur Non-AC hostel facilities meals ke saath available hain: Non-AC 30 thousand rupees aur AC 45 thousand rupees per semester.",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech AI/ML",
+      "specialization": "CSE",
+      "class_12_score": "89.0%",
+      "entrance_exams_taken": "JEE",
+      "score": "89%",
+      "exam": "JEE",
+      "hostel_interest": "Yes"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 274.211,
+    "text": "खाना वगैरह कैसा है वहां का?",
+    "language": "hi-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 283.052,
+    "text": "एक पल रुकिए... Our campus offers hygienic North & South Indian meals daily, freshly prepared to suit diverse tastes and ensure",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech AI/ML",
+      "specialization": "CSE",
+      "class_12_score": "89.0%",
+      "entrance_exams_taken": "JEE",
+      "score": "89%",
+      "exam": "JEE",
+      "hostel_interest": "Yes"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 283.073,
+    "text": "हिंदी में बोलो।",
+    "language": "hi-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 292.208,
+    "text": "हमारे कैंपस में स्वच्छ और स्वादिष्ट उत्तर और दक्षिण भारतीय भोजन नियमित रूप से मिलता है, जो सभी छात्रों को पसंद आता है।",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech AI/ML",
+      "specialization": "CSE",
+      "class_12_score": "89.0%",
+      "entrance_exams_taken": "JEE",
+      "score": "89%",
+      "exam": "JEE",
+      "hostel_interest": "Yes"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 294.541,
+    "text": "अच्छा।",
+    "language": "hi-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 298.407,
+    "text": "क्या मैं आपका नाम जान सकता हूँ, कृपया?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech AI/ML",
+      "specialization": "CSE",
+      "class_12_score": "89.0%",
+      "entrance_exams_taken": "JEE",
+      "score": "89%",
+      "exam": "JEE",
+      "hostel_interest": "Yes"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 301.872,
+    "text": "फिर से क्यों जानना है आपको?",
+    "language": "hi-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 310.912,
+    "text": "एक मिनट रुकिए, चेक कर रही हूँ... आपका नाम अभी तक नहीं मिला, इसलिए जानना जरूरी है ताकि आपकी मदद कर सकूं। कृपया नाम बताएं।",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech AI/ML",
+      "specialization": "CSE",
+      "class_12_score": "89.0%",
+      "entrance_exams_taken": "JEE",
+      "score": "89%",
+      "exam": "JEE",
+      "hostel_interest": "Yes"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 314.818,
+    "text": "मैंने आपको ऑलरेडी नाम बता चुका है।",
+    "language": "hi-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 322.712,
+    "text": "माफ़ कीजिए, मुझे आपका नाम अभी तक याद नहीं आया। कृपया एक बार फिर से बताएं, ताकि आपकी मदद कर सकूं।",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech AI/ML",
+      "specialization": "CSE",
+      "class_12_score": "89.0%",
+      "entrance_exams_taken": "JEE",
+      "score": "89%",
+      "exam": "JEE",
+      "hostel_interest": "Yes"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 325.543,
+    "text": "मेरा नाम यश है।",
+    "language": "hi-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 333.42,
+    "text": "यश जी, आप से मिलकर खुशी हुई! आप किस प्रोग्राम या ब्रांच में रुचि रखते हैं आदित्य यूनिवर्सिटी में?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech AI/ML",
+      "specialization": "CSE",
+      "class_12_score": "89.0%",
+      "entrance_exams_taken": "JEE",
+      "score": "89%",
+      "exam": "JEE",
+      "hostel_interest": "Yes"
+    }
+  }
+]

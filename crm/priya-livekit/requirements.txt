@@ -1,0 +1,13 @@
+# LiveKit Agents + the Sarvam (STT/TTS) and OpenAI-compatible (Groq/Ollama) plugins.
+# silero is included as a VAD fallback; with turn_detection="stt" Sarvam handles it.
+livekit-agents[sarvam,silero,openai]
+livekit-plugins-noise-cancellation
+python-dotenv
+# Async HTTP — the reporter POSTs live transcript/collected/status to the dashboard.
+aiohttp
+mcp>=1.0.0
+# Audio quality & signal analysis for 6-Layer Advanced Language Detection System
+webrtcvad-wheels>=2.0.14
+librosa>=1.0.0
+pytest>=8.0.0
+pytest-asyncio>=0.23.0

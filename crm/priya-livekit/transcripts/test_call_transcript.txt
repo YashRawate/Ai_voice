@@ -1,0 +1,34 @@
+COMPLETE CALL TRANSCRIPT (test_call_transcript)
+============================================================
+Start Time: 2026-09-04 18:06:57
+Total Turns: 3
+============================================================
+
+Turn 1 [18:06:57] (en-IN):
+User:  Hi, I want CSE
+Priya: Great! CSE is our top program.
+(Latency: 0.30s)
+
+Turn 2 [18:06:57] (en-IN):
+User:  I scored 92% in 12th
+Priya: With 92%, you qualify for a 50% scholarship!
+(Latency: 0.40s)
+
+Turn 3 [18:06:57] (en-IN):
+User:  Thank you, that's all
+Priya: Thank you for contacting Aditya University! Have a great day!
+(Latency: 0.20s)
+
+============================================================
+CALL SUMMARY:
+- Total Duration: 0.0s
+- Turns Count: 3
+- Facts Discovered: {
+  "program": "CSE",
+  "program_of_interest": "CSE",
+  "score": "92%",
+  "class_12_score": "92%"
+}
+- Questions Asked: []
+- Refusals: []
+============================================================
