@@ -35,6 +35,7 @@ from direct_sarvam_stt import DirectSarvamSTT
 from direct_sarvam_tts import DirectSarvamTTS
 from agent import PatternRouter, _normalize_numbers_for_speech, INSTRUCTIONS
 from test_session_logger import TestSessionLogger, get_or_create_logger
+from priya.audio.acoustic_pipeline import AcousticPipeline
 
 load_dotenv()
 logger = logging.getLogger("priya.direct_server")
@@ -121,6 +122,9 @@ class DirectCallSession:
             output_audio_codec="mulaw",
         )
 
+        # 7-Step Anti-Barge-In Acoustic Pipeline (AEC -> NS -> SNR -> 2-Tier VAD -> Debounce -> Semantic)
+        self.acoustic_pipeline = AcousticPipeline(sample_rate=8000)
+
         self.is_speaking = False
         self.current_tts_task: Optional[asyncio.Task] = None
         self.is_closed = False
@@ -167,15 +171,28 @@ class DirectCallSession:
 
     async def _handle_user_speech_start(self):
         """Barge-in: caller started speaking while Priya is playing audio."""
-        if self.is_speaking:
-            logger.info(f"[{self.session_id}] Barge-in detected — interrupting Priya")
-            self.test_logger.log_interruption(reason="caller_barge_in", detail="Caller spoke over TTS")
-            await self.stop_speaking()
+        if not self.is_speaking:
+            return
+
+        # Debounce gate check: require consecutive speech frames, reject single-frame noise bursts
+        if not self.acoustic_pipeline.barge_in_gate.triggered:
+            logger.info(f"[{self.session_id}] Pre-debounce speech start ignored (protecting against noise burst)")
+            return
+
+        logger.info(f"[{self.session_id}] Barge-in confirmed by acoustic pipeline — interrupting Priya")
+        self.test_logger.log_interruption(reason="caller_barge_in", detail="Caller spoke over TTS (debounced)")
+        await self.stop_speaking()
 
     async def _handle_stt_final(self, transcript: str, language_code: str):
         """User finished an utterance."""
         if not transcript.strip():
             return
+
+        # Semantic confirmation: if Priya was speaking, filter out junk fillers and coughs
+        if (self.is_speaking or self.acoustic_pipeline.is_assistant_speaking) and not self.acoustic_pipeline.confirm_barge_in(transcript):
+            logger.info(f"[{self.session_id}] Semantic gate filtered false barge-in: '{transcript}'")
+            return
+
         logger.info(f"[{self.session_id}] Caller ({language_code}): {transcript}")
         self.test_logger.log_stt(text=transcript, language=language_code)
         if language_code and language_code in {"te-IN", "hi-IN", "en-IN", "ta-IN"}:
@@ -204,12 +221,18 @@ class DirectCallSession:
 
         text = _normalize_numbers_for_speech(text, lang=self.active_language)
         self.is_speaking = True
+        self.acoustic_pipeline.set_assistant_speaking(True)
         self.reporter.push_assistant_message(text)
 
         try:
             async for chunk in self.tts.synthesize_stream(text, language=self.active_language):
                 if not self.is_speaking or self.is_closed:
                     break
+
+                # Feed outgoing TTS chunk to AEC adaptive filter (converted to PCM)
+                pcm_ref = mulaw_to_pcm16(chunk)
+                self.acoustic_pipeline.feed_tts_reference(pcm_ref)
+
                 payload = base64.b64encode(chunk).decode("utf-8")
                 await self.ws.send_json({
                     "event": "media",
@@ -225,6 +248,7 @@ class DirectCallSession:
             self.test_logger.log_error("TTS synthesis failed", exc=e)
         finally:
             self.is_speaking = False
+            self.acoustic_pipeline.set_assistant_speaking(False)
 
     async def _turn_worker(self):
         """Background worker that pulls user utterances and triggers responses."""
@@ -447,9 +471,20 @@ async def media_stream(ws: WebSocket):
                 media_payload = message.get("media", {}).get("payload", "")
                 if media_payload:
                     mulaw_chunk = base64.b64decode(media_payload)
-                    # Forward telephony mulaw bytes straight to Sarvam STT
+                    # Decode telephony mulaw to 16-bit PCM for acoustic pipeline
+                    pcm_chunk = mulaw_to_pcm16(mulaw_chunk)
+
+                    # 7-step acoustic pipeline: AEC -> NS -> SNR Gate -> 2-Tier VAD -> Debounce
+                    clean_pcm, barge_in_fired, vad_prob = session.acoustic_pipeline.process_frame(pcm_chunk)
+
+                    if session.is_speaking and barge_in_fired:
+                        logger.info(f"[{session.session_id}] Acoustic pipeline triggered debounced barge-in (prob={vad_prob:.2f})")
+                        asyncio.create_task(session._handle_user_speech_start())
+
+                    # Encode clean PCM back to mulaw before passing to STT
+                    clean_mulaw = pcm16_to_mulaw(clean_pcm)
                     if session.stt:
-                        await session.stt.send_audio(mulaw_chunk)
+                        await session.stt.send_audio(clean_mulaw)
 
             elif event == "stop":
                 logger.info(f"Carrier sent stop event for stream {stream_sid}")

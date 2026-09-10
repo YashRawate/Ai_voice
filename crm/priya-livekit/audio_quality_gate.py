@@ -250,3 +250,23 @@ class AudioQualityGate:
             reason=f"Valid speech detected ({noise_level}, SNR: {snr_db:.1f} dB)",
             has_speech=True
         )
+
+
+# ── Acoustic Pipeline Re-Exports ─────────────────────────────────────────────
+try:
+    from priya.audio.acoustic_pipeline import (
+        AdaptiveEchoCanceller,
+        SpectralNoiseSuppressor,
+        SNRGate,
+        BargeInGate,
+        SemanticConfirmationGate,
+        AcousticPipeline,
+    )
+except ImportError:
+    # Graceful fallback if relative path lookup
+    AdaptiveEchoCanceller = None  # type: ignore
+    SpectralNoiseSuppressor = None  # type: ignore
+    SNRGate = None  # type: ignore
+    BargeInGate = None  # type: ignore
+    SemanticConfirmationGate = None  # type: ignore
+    AcousticPipeline = None  # type: ignore

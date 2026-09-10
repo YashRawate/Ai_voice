@@ -47,6 +47,7 @@ except ImportError:
 
 # 6-Layer Advanced Language Detection System Modules
 from audio_quality_gate import AudioQualityGate
+from priya.audio.acoustic_pipeline import AcousticPipeline
 from conversation_context import ConversationContext
 from language_detector import LanguageDetector
 from explicit_switch_detector import ExplicitLanguageSwitchDetector
@@ -1479,6 +1480,7 @@ class Priya(Agent):
         self._pattern_enabled = PATTERN_MATCH
         # 6-Layer Advanced Language Detection System
         self.audio_quality_gate = AudioQualityGate(sample_rate=16000)
+        self.acoustic_pipeline = AcousticPipeline(sample_rate=16000)
         self.lang_conversation_context = ConversationContext(default_language=self._lang)
         self.language_detector = _LANG_DETECTOR
         self.explicit_switch_detector = _EXPLICIT_DETECTOR
@@ -2367,13 +2369,13 @@ async def entrypoint(ctx: JobContext):
                   collected=prior_collected, followup=is_followup, last_summary=last_summary)
     agent._session_id = test_session_id
 
-    # Low-latency Silero Neural VAD with tight silence detection and fast endpointing
+    # Low-latency Silero Neural VAD with two-tier threshold and anti-barge-in debounce
     session = AgentSession(
         vad=silero.VAD.load(
-            activation_threshold=0.70,
-            min_speech_duration=0.15,
-            min_silence_duration=0.18,
-            prefix_padding_duration=0.10
+            activation_threshold=0.75,
+            min_speech_duration=0.20,
+            min_silence_duration=0.25,
+            prefix_padding_duration=0.15
         ),
         conn_options=SessionConnectOptions(
             llm_conn_options=APIConnectOptions(max_retry=1, retry_interval=0.5, timeout=4.0),
@@ -2388,9 +2390,9 @@ async def entrypoint(ctx: JobContext):
             "interruption": {
                 "enabled": True,
                 "mode": "vad",
-                "min_duration": float(os.getenv("INTERRUPTION_MIN_DURATION", "0.20")),
+                "min_duration": float(os.getenv("INTERRUPTION_MIN_DURATION", "0.30")),
                 "min_words": 1,
-                "resume_false_interruption": False,
+                "resume_false_interruption": True,
                 "discard_audio_if_uninterruptible": True,
             },
         },
