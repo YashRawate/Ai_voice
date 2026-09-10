@@ -5,6 +5,10 @@ from .acoustic_pipeline import (
     SpectralNoiseSuppressor,
     SemanticConfirmationGate,
 )
+from .delay_calibration import (
+    estimate_delay_ms,
+    estimate_delay_samples,
+)
 
 __all__ = [
     "AcousticPipeline",
@@ -12,4 +16,6 @@ __all__ = [
     "AdaptiveEchoCanceller",
     "SpectralNoiseSuppressor",
     "SemanticConfirmationGate",
+    "estimate_delay_ms",
+    "estimate_delay_samples",
 ]

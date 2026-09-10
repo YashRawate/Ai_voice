@@ -2390,8 +2390,8 @@ async def entrypoint(ctx: JobContext):
             "interruption": {
                 "enabled": True,
                 "mode": "vad",
-                "min_duration": float(os.getenv("INTERRUPTION_MIN_DURATION", "0.30")),
-                "min_words": 1,
+                "min_duration": float(os.getenv("INTERRUPTION_MIN_DURATION", "0.0")),  # BargeInGate owns timing decision
+                "min_words": 0,
                 "resume_false_interruption": True,
                 "discard_audio_if_uninterruptible": True,
             },

@@ -29,6 +29,8 @@ try:
 except ImportError:
     WEBRTCVAD_AVAILABLE = False
 
+from .delay_calibration import estimate_delay_samples, estimate_delay_ms
+
 logger = logging.getLogger("priya.acoustic_pipeline")
 
 
@@ -36,17 +38,43 @@ logger = logging.getLogger("priya.acoustic_pipeline")
 
 class AdaptiveEchoCanceller:
     """
-    Normalized Least Mean Squares (NLMS) Adaptive Filter for Echo Cancellation.
+    Normalized Least Mean Squares (NLMS) Adaptive Filter with Delay Calibration for Echo Cancellation.
     Cancels Priya's TTS playback output from leaking into the microphone during speakerphone calls.
+    Aligns reference signal using cross-correlation delay estimation before echo subtraction.
     """
 
-    def __init__(self, filter_length: int = 128, mu: float = 0.05):
+    def __init__(self, filter_length: int = 128, mu: float = 0.05, initial_delay_ms: float = 50.0):
         self.filter_length = filter_length
         self.mu = mu  # Step size / adaptation rate
         self.weights = np.zeros(filter_length, dtype=np.float32)
         # Reference buffer holds recent TTS output samples
         self.ref_history = collections.deque(maxlen=48000)  # ~3s of 16kHz audio
         self.is_active = True
+        self.delay_ms = initial_delay_ms
+        self.delay_samples = int(initial_delay_ms * 16)  # Default assuming 16kHz
+        self.is_calibrated = False
+
+    def calibrate(self, reference_bytes: bytes, mic_bytes: bytes, sample_rate: int = 16000) -> float:
+        """
+        Calibrate echo delay via cross-correlation of reference against mic input.
+        Sets delay_samples and delay_ms for precise time alignment.
+        """
+        if not reference_bytes or not mic_bytes:
+            return self.delay_ms
+
+        try:
+            ref_samples = np.frombuffer(reference_bytes, dtype=np.int16).astype(np.float32) / 32768.0
+            mic_samples = np.frombuffer(mic_bytes, dtype=np.int16).astype(np.float32) / 32768.0
+
+            lag_samples = estimate_delay_samples(ref_samples, mic_samples)
+            self.delay_samples = lag_samples
+            self.delay_ms = (lag_samples / sample_rate) * 1000.0
+            self.is_calibrated = True
+            logger.info(f"[AEC] Delay calibrated: {self.delay_ms:.2f} ms ({self.delay_samples} samples at {sample_rate}Hz)")
+            return self.delay_ms
+        except Exception as e:
+            logger.warning(f"[AEC] Delay calibration failed ({e}), keeping default {self.delay_ms} ms")
+            return self.delay_ms
 
     def feed_reference(self, ref_bytes: bytes):
         """Feeds audio frames currently being output by Priya's TTS."""
@@ -60,7 +88,8 @@ class AdaptiveEchoCanceller:
 
     def cancel_echo(self, mic_bytes: bytes) -> bytes:
         """Subtracts estimated speaker echo from incoming microphone frame."""
-        if not mic_bytes or len(self.ref_history) < self.filter_length:
+        required_len = self.filter_length + self.delay_samples
+        if not mic_bytes or len(self.ref_history) < required_len:
             return mic_bytes
 
         try:
@@ -69,12 +98,17 @@ class AdaptiveEchoCanceller:
             if n == 0:
                 return mic_bytes
 
-            # Recent reference signal segment
+            # Recent reference signal segment aligned with calibrated delay
             ref_arr = np.array(self.ref_history, dtype=np.float32)
-            if len(ref_arr) < n + self.filter_length:
+            total_needed = n + self.filter_length + self.delay_samples
+            if len(ref_arr) < total_needed:
                 return mic_bytes
 
-            ref_segment = ref_arr[-(n + self.filter_length):]
+            if self.delay_samples > 0:
+                ref_segment = ref_arr[-total_needed : -self.delay_samples]
+            else:
+                ref_segment = ref_arr[-(n + self.filter_length):]
+
             clean_samples = np.zeros(n, dtype=np.float32)
 
             for i in range(n):
@@ -283,6 +317,15 @@ class AcousticPipeline:
 
         self.audio_buffer = bytearray()
         self.is_assistant_speaking = False
+
+    def calibrate_delay(self, reference_bytes: bytes, mic_bytes: bytes) -> float:
+        """Calibrate echo cancellation delay alignment using reference and mic frames."""
+        return self.aec.calibrate(reference_bytes, mic_bytes, sample_rate=self.sample_rate)
+
+    @property
+    def is_delay_calibrated(self) -> bool:
+        """Returns True if AEC delay has been calibrated."""
+        return self.aec.is_calibrated
 
     def feed_tts_reference(self, reference_frame: bytes):
         """Pass Priya's outgoing TTS audio frames to AEC."""

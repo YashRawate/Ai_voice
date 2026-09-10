@@ -167,6 +167,52 @@ class TestAcousticPipeline(unittest.TestCase):
         self.assertFalse(pipeline.confirm_barge_in("um"))
         self.assertTrue(pipeline.confirm_barge_in("Tell me about scholarships"))
 
+    # ── 7. Delay Calibration & Pre-Filter Noise Floor Tests ──────────────────
+    def test_delay_calibration_cross_correlation(self):
+        """Verifies that cross-correlation accurately detects echo lag."""
+        from priya.audio.delay_calibration import estimate_delay_samples, estimate_delay_ms
+
+        t = np.linspace(0, 0.1, 1600, endpoint=False)
+        ref = np.sin(2 * np.pi * (200 + 1500 * t) * t).astype(np.float32)
+        delay_expected = 160  # 10ms at 16kHz
+        mic = np.zeros_like(ref)
+        mic[delay_expected:] = ref[:-delay_expected] * 0.7
+
+        detected_lag = estimate_delay_samples(ref, mic)
+        detected_ms = estimate_delay_ms(ref, mic, sample_rate=16000)
+
+        self.assertAlmostEqual(detected_lag, delay_expected, delta=2)
+        self.assertAlmostEqual(detected_ms, 10.0, delta=0.5)
+
+        # Test calibration on AdaptiveEchoCanceller
+        aec = AdaptiveEchoCanceller()
+        ref_bytes = (ref * 32767).astype(np.int16).tobytes()
+        mic_bytes = (mic * 32767).astype(np.int16).tobytes()
+        calibrated_ms = aec.calibrate(ref_bytes, mic_bytes, sample_rate=16000)
+
+        self.assertTrue(aec.is_calibrated)
+        self.assertAlmostEqual(calibrated_ms, 10.0, delta=0.5)
+
+    def test_thresholds_exceed_calibrated_noise_floor(self):
+        """Fails loudly if someone lowers thresholds below what real background noise produces."""
+        # Barge-in threshold must be strictly elevated above normal turn-taking threshold
+        gate = BargeInGate()
+        self.assertGreater(gate.BARGE_IN_THRESHOLD, gate.NORMAL_THRESHOLD)
+        self.assertGreaterEqual(gate.BARGE_IN_THRESHOLD, 0.75)
+        self.assertGreaterEqual(gate.REQUIRED_FRAMES, 6)
+        self.assertGreaterEqual(SNRGate.MIN_SNR_DB, 8.0)
+
+    def test_single_owner_debounce_gate(self):
+        """Verifies single-owner debounce: BargeInGate enforces consecutive frames without double-stacking."""
+        gate = BargeInGate()
+        for _ in range(5):
+            self.assertFalse(gate.update(0.85, is_assistant_speaking=True))
+        self.assertTrue(gate.update(0.85, is_assistant_speaking=True))
+        self.assertFalse(gate.update(0.85, is_assistant_speaking=True))  # once triggered, stays triggered
+        gate.reset()
+        self.assertEqual(gate.consecutive_speech, 0)
+        self.assertFalse(gate.triggered)
+
 
 if __name__ == "__main__":
     unittest.main()
