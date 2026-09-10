@@ -42,3 +42,22 @@ def build_prompt_template() -> ChatPromptTemplate:
          "\n\nLANGUAGE STYLE (respond in this language — all facts and history still apply):\n{language_style}"),
         MessagesPlaceholder("messages"),
     ])
+
+
+def format_system_prompt(facts: dict, stage: str, next_field: str, language_code: str = "en-IN") -> str:
+    """Format single unified system prompt string for any LLM caller."""
+    facts_str = "\n".join(f"• {k}: {v}" for k, v in facts.items() if v and not str(k).startswith("_")) if facts else "(none yet)"
+    lang_style = LANGUAGE_STYLE.get(language_code, LANGUAGE_STYLE.get("en-IN", ""))
+    return (
+        CORE_IDENTITY_AND_RULES +
+        f"\n\nKNOWN FACTS (never re-ask these):\n{facts_str}\n\n"
+        f"CURRENT STAGE: {stage}\nFIELD TO COLLECT THIS TURN: {next_field or '(all required fields collected)'}\n\n"
+        f"UNIVERSITY FACT SHEET:\n{FACT_SHEET}\n\n"
+        f"LANGUAGE STYLE (respond in this language — all facts and history still apply):\n{lang_style}\n\n"
+        "ANTI-REPETITION MANDATE:\n"
+        "Never ask for information already present in KNOWN FACTS above.\n"
+        "If student name is known, address them by name and NEVER ask for their name.\n"
+        "If program is known, do not ask what branch/program they want.\n"
+        "If marks or exam scores are known, do not ask for them again."
+    )
+

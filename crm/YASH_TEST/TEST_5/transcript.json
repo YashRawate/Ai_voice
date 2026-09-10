@@ -1,0 +1,368 @@
+[
+  {
+    "type": "llm_reply",
+    "t": 18.767,
+    "text": "Hello! This is Priya from Aditya University, calling about your admission enquiry. Is this a good time?",
+    "stage": "GENERAL",
+    "facts_snapshot": null
+  },
+  {
+    "type": "stt",
+    "t": 22.224,
+    "text": "Yes, it is a good time.",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 26.271,
+    "text": "May I know your name, please?",
+    "stage": "GENERAL",
+    "facts_snapshot": null
+  },
+  {
+    "type": "stt",
+    "t": 29.162,
+    "text": "भावनेमित यश",
+    "language": "hi-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 36.865,
+    "text": "Nice to meet you, भावनेमित यश! Which program or branch are you interested in at Aditya University?",
+    "stage": "GENERAL",
+    "facts_snapshot": null
+  },
+  {
+    "type": "stt",
+    "t": 41.059,
+    "text": "I am interested for B.Tech Computer Science.",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 48.657,
+    "text": "Great choice! In CSE we offer top specialisations. Have you completed your 12th Board or Intermediate?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 56.209,
+    "text": "हाँ, मैंने 12th कंप्लीट कर लिया है और मुझे 12th में 78% और जेईई की रैंक है 2000।",
+    "language": "hi-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 66.664,
+    "text": "That's a very solid score, भावनेमित यश! With JEE rank 2000, you're eligible. Would you like to book a campus visit this Saturday?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "class_12_score": "78.0%",
+      "score": "78%"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 70.686,
+    "text": "Yes, I want to visit this Saturday.",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 82.466,
+    "text": "Wonderful! Your VIP campus tour is confirmed for this Saturday at 10 AM. I have sent the GPS location and counselor pass to your WhatsApp. We look forward to welcoming you and your parents!",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "class_12_score": "78.0%",
+      "score": "78%",
+      "visit_datetime": "Saturday 10:00 AM",
+      "engagement_choice": "campus_visit",
+      "counselling_mode": "offline",
+      "call_outcome": "interested"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 84.906,
+    "text": "Okay",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 89.099,
+    "text": "Is there anything else I can assist you with",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "class_12_score": "78.0%",
+      "score": "78%",
+      "visit_datetime": "Saturday 10:00 AM",
+      "engagement_choice": "campus_visit",
+      "counselling_mode": "offline",
+      "call_outcome": "interested"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 89.23,
+    "text": "Can you tell me about",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 93.678,
+    "text": "Looking that up... Yes, I'm here! Please complete",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "class_12_score": "78.0%",
+      "score": "78%",
+      "visit_datetime": "Saturday 10:00 AM",
+      "engagement_choice": "campus_visit",
+      "counselling_mode": "offline",
+      "call_outcome": "interested"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 93.712,
+    "text": "Can you tell me about college facilities?",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 102.266,
+    "text": "Our campus provides smart classrooms, advanced research labs, central library, sports complex, and medical centre.",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "class_12_score": "78.0%",
+      "score": "78%",
+      "visit_datetime": "Saturday 10:00 AM",
+      "engagement_choice": "campus_visit",
+      "counselling_mode": "offline",
+      "call_outcome": "interested"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 104.786,
+    "text": "What about the horses?",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 119.368,
+    "text": "One moment... We don’t have horses on campus, but our 250-acre green campus offers excellent academic and sports facilities. Are you interested in a campus visit?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "class_12_score": "78.0%",
+      "score": "78%",
+      "visit_datetime": "Saturday 10:00 AM",
+      "engagement_choice": "campus_visit",
+      "counselling_mode": "offline",
+      "call_outcome": "interested"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 125.262,
+    "text": "No Can you",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "stt",
+    "t": 125.905,
+    "text": "Please tell me about the hostel facilities.",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 135.571,
+    "text": "We provide AC and Non-AC hostel options with attached bathrooms and multi-cuisine meals. Would you like me to send the direct admission link to reserve your seat and hostel room?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "class_12_score": "78.0%",
+      "score": "78%",
+      "visit_datetime": "Saturday 10:00 AM",
+      "engagement_choice": "campus_visit",
+      "counselling_mode": "offline",
+      "call_outcome": "interested",
+      "hostel_interest": "Yes"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 139.547,
+    "text": "How many, how much price it is?",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 145.625,
+    "text": "The annual tuition fee for B.Tech CSE is 2 lakh 75 thousand rupees, and core",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "class_12_score": "78.0%",
+      "score": "78%",
+      "visit_datetime": "Saturday 10:00 AM",
+      "engagement_choice": "campus_visit",
+      "counselling_mode": "offline",
+      "call_outcome": "interested",
+      "hostel_interest": "Yes"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 145.654,
+    "text": "I'm asking about hostel",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 153.947,
+    "text": "We provide AC and Non-AC hostel options with attached bathrooms and multi-cuisine meals. Would you like me to send the direct admission link",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "class_12_score": "78.0%",
+      "score": "78%",
+      "visit_datetime": "Saturday 10:00 AM",
+      "engagement_choice": "campus_visit",
+      "counselling_mode": "offline",
+      "call_outcome": "interested",
+      "hostel_interest": "Yes"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 153.974,
+    "text": "ఆ మా.",
+    "language": "te-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 158.209,
+    "text": "ధన్యవాదాలు! మీ పేరు చెప్పగలరా, దయచేసి?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "class_12_score": "78.0%",
+      "score": "78%",
+      "visit_datetime": "Saturday 10:00 AM",
+      "engagement_choice": "campus_visit",
+      "counselling_mode": "offline",
+      "call_outcome": "interested",
+      "hostel_interest": "Yes"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 158.24,
+    "text": "हॉस्टल की फीस के बारे में बताइए।",
+    "language": "hi-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 167.667,
+    "text": "Campus mein AC aur Non-AC hostel facilities meals ke saath available hain: Non-AC 30 thousand rupees aur AC 45 thousand rupees per semester.",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "class_12_score": "78.0%",
+      "score": "78%",
+      "visit_datetime": "Saturday 10:00 AM",
+      "engagement_choice": "campus_visit",
+      "counselling_mode": "offline",
+      "call_outcome": "interested",
+      "hostel_interest": "Yes"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 171.263,
+    "text": "Okay, fine.",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 177.061,
+    "text": "Nice! Which program or branch are you interested in at Aditya University?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "class_12_score": "78.0%",
+      "score": "78%",
+      "visit_datetime": "Saturday 10:00 AM",
+      "engagement_choice": "campus_visit",
+      "counselling_mode": "offline",
+      "call_outcome": "interested",
+      "hostel_interest": "Yes"
+    }
+  }
+]

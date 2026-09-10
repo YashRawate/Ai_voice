@@ -1,0 +1,110 @@
+[
+  {
+    "type": "session_init",
+    "t": 0.004,
+    "reason": "first_inbound_call_start",
+    "is_first_call": true,
+    "call_stack": [
+      "  File \"C:\\Users\\yashr\\OneDrive\\Desktop\\Ai_voice-main\\crm\\priya-livekit\\test_session_lifecycle_and_regreet_patch.py\", line 97, in <module>\n    unittest.main()\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\main.py\", line 104, in __init__\n    self.runTests()\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\main.py\", line 270, in runTests\n    self.result = testRunner.run(self.test)\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\runner.py\", line 240, in run\n    test(result)\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\suite.py\", line 84, in __call__\n    return self.run(*args, **kwds)\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\suite.py\", line 122, in run\n    test(result)\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\suite.py\", line 84, in __call__\n    return self.run(*args, **kwds)\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\suite.py\", line 122, in run\n    test(result)\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\case.py\", line 707, in __call__\n    return self.run(*args, **kwds)\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\case.py\", line 651, in run\n    self._callTestMethod(testMethod)\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\case.py\", line 606, in _callTestMethod\n    if method() is not None:\n",
+      "  File \"C:\\Users\\yashr\\OneDrive\\Desktop\\Ai_voice-main\\crm\\priya-livekit\\test_session_lifecycle_and_regreet_patch.py\", line 63, in test_language_switch_does_not_reset_facts_or_history\n    ctx = start_new_call(phone=self.phone, session_id=self.session_id, initial_language=\"en-IN\")\n",
+      "  File \"C:\\Users\\yashr\\OneDrive\\Desktop\\Ai_voice-main\\crm\\priya-livekit\\session_lifecycle.py\", line 52, in start_new_call\n    test_logger.log_session_init(reason=\"first_inbound_call_start\", is_first_call=True)\n",
+      "  File \"C:\\Users\\yashr\\OneDrive\\Desktop\\Ai_voice-main\\crm\\priya-livekit\\test_session_logger.py\", line 184, in log_session_init\n    \"call_stack\": traceback.format_stack(),\n"
+    ]
+  },
+  {
+    "type": "language_switch",
+    "t": 0.007,
+    "from": "en-IN",
+    "to": "hi-IN",
+    "confidence": null
+  },
+  {
+    "type": "language_switch",
+    "t": 0.009,
+    "from": "hi-IN",
+    "to": "te-IN",
+    "confidence": null
+  },
+  {
+    "type": "session_init",
+    "t": 0.024,
+    "reason": "first_inbound_call_start",
+    "is_first_call": true,
+    "call_stack": [
+      "  File \"C:\\Users\\yashr\\OneDrive\\Desktop\\Ai_voice-main\\crm\\priya-livekit\\test_session_lifecycle_and_regreet_patch.py\", line 97, in <module>\n    unittest.main()\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\main.py\", line 104, in __init__\n    self.runTests()\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\main.py\", line 270, in runTests\n    self.result = testRunner.run(self.test)\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\runner.py\", line 240, in run\n    test(result)\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\suite.py\", line 84, in __call__\n    return self.run(*args, **kwds)\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\suite.py\", line 122, in run\n    test(result)\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\suite.py\", line 84, in __call__\n    return self.run(*args, **kwds)\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\suite.py\", line 122, in run\n    test(result)\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\case.py\", line 707, in __call__\n    return self.run(*args, **kwds)\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\case.py\", line 651, in run\n    self._callTestMethod(testMethod)\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\case.py\", line 606, in _callTestMethod\n    if method() is not None:\n",
+      "  File \"C:\\Users\\yashr\\OneDrive\\Desktop\\Ai_voice-main\\crm\\priya-livekit\\test_session_lifecycle_and_regreet_patch.py\", line 28, in test_session_init_called_exactly_once\n    ctx1 = start_new_call(phone=self.phone, session_id=self.session_id, initial_language=\"en-IN\")\n",
+      "  File \"C:\\Users\\yashr\\OneDrive\\Desktop\\Ai_voice-main\\crm\\priya-livekit\\session_lifecycle.py\", line 52, in start_new_call\n    test_logger.log_session_init(reason=\"first_inbound_call_start\", is_first_call=True)\n",
+      "  File \"C:\\Users\\yashr\\OneDrive\\Desktop\\Ai_voice-main\\crm\\priya-livekit\\test_session_logger.py\", line 184, in log_session_init\n    \"call_stack\": traceback.format_stack(),\n"
+    ]
+  },
+  {
+    "type": "session_init",
+    "t": 0.028,
+    "reason": "duplicate_call_start_attempt",
+    "is_first_call": false,
+    "call_stack": [
+      "  File \"C:\\Users\\yashr\\OneDrive\\Desktop\\Ai_voice-main\\crm\\priya-livekit\\test_session_lifecycle_and_regreet_patch.py\", line 97, in <module>\n    unittest.main()\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\main.py\", line 104, in __init__\n    self.runTests()\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\main.py\", line 270, in runTests\n    self.result = testRunner.run(self.test)\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\runner.py\", line 240, in run\n    test(result)\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\suite.py\", line 84, in __call__\n    return self.run(*args, **kwds)\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\suite.py\", line 122, in run\n    test(result)\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\suite.py\", line 84, in __call__\n    return self.run(*args, **kwds)\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\suite.py\", line 122, in run\n    test(result)\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\case.py\", line 707, in __call__\n    return self.run(*args, **kwds)\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\case.py\", line 651, in run\n    self._callTestMethod(testMethod)\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\case.py\", line 606, in _callTestMethod\n    if method() is not None:\n",
+      "  File \"C:\\Users\\yashr\\OneDrive\\Desktop\\Ai_voice-main\\crm\\priya-livekit\\test_session_lifecycle_and_regreet_patch.py\", line 37, in test_session_init_called_exactly_once\n    ctx2 = start_new_call(phone=self.phone, session_id=self.session_id)\n",
+      "  File \"C:\\Users\\yashr\\OneDrive\\Desktop\\Ai_voice-main\\crm\\priya-livekit\\session_lifecycle.py\", line 45, in start_new_call\n    test_logger.log_session_init(reason=\"duplicate_call_start_attempt\", is_first_call=False)\n",
+      "  File \"C:\\Users\\yashr\\OneDrive\\Desktop\\Ai_voice-main\\crm\\priya-livekit\\test_session_logger.py\", line 184, in log_session_init\n    \"call_stack\": traceback.format_stack(),\n"
+    ]
+  },
+  {
+    "type": "session_init",
+    "t": 0.035,
+    "reason": "first_inbound_call_start",
+    "is_first_call": true,
+    "call_stack": [
+      "  File \"C:\\Users\\yashr\\OneDrive\\Desktop\\Ai_voice-main\\crm\\priya-livekit\\test_session_lifecycle_and_regreet_patch.py\", line 97, in <module>\n    unittest.main()\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\main.py\", line 104, in __init__\n    self.runTests()\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\main.py\", line 270, in runTests\n    self.result = testRunner.run(self.test)\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\runner.py\", line 240, in run\n    test(result)\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\suite.py\", line 84, in __call__\n    return self.run(*args, **kwds)\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\suite.py\", line 122, in run\n    test(result)\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\suite.py\", line 84, in __call__\n    return self.run(*args, **kwds)\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\suite.py\", line 122, in run\n    test(result)\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\case.py\", line 707, in __call__\n    return self.run(*args, **kwds)\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\case.py\", line 651, in run\n    self._callTestMethod(testMethod)\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\case.py\", line 606, in _callTestMethod\n    if method() is not None:\n",
+      "  File \"C:\\Users\\yashr\\OneDrive\\Desktop\\Ai_voice-main\\crm\\priya-livekit\\test_session_lifecycle_and_regreet_patch.py\", line 81, in test_transport_reconnect_preserves_session_identity\n    ctx = start_new_call(phone=self.phone, session_id=self.session_id, initial_language=\"en-IN\")\n",
+      "  File \"C:\\Users\\yashr\\OneDrive\\Desktop\\Ai_voice-main\\crm\\priya-livekit\\session_lifecycle.py\", line 52, in start_new_call\n    test_logger.log_session_init(reason=\"first_inbound_call_start\", is_first_call=True)\n",
+      "  File \"C:\\Users\\yashr\\OneDrive\\Desktop\\Ai_voice-main\\crm\\priya-livekit\\test_session_logger.py\", line 184, in log_session_init\n    \"call_stack\": traceback.format_stack(),\n"
+    ]
+  },
+  {
+    "type": "reconnect",
+    "t": 0.036,
+    "transport": "websocket_telephony",
+    "reason": "websocket_packet_loss_reconnect"
+  }
+]

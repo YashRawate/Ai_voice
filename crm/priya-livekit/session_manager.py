@@ -333,7 +333,10 @@ class DialogueSlotManager:
         "platform", "first", "which", "what", "how", "why", "where", "you", "me",
         "done", "doing", "passed", "studying", "yes", "yeah", "yep", "no", "nah",
         "okay", "ok", "sure", "fine", "hello", "hi", "hey", "alright", "sare", "theek",
-        "like", "that", "this", "there", "then", "want", "visit", "visiting", "book"
+        "like", "that", "this", "there", "then", "want", "visit", "visiting", "book",
+        "feel", "feeling", "role", "position", "treasury", "thunder", "situation", "status",
+        "know", "knowing", "tell", "said", "say", "saying", "actually", "right", "wrong",
+        "these", "those", "some", "any", "every"
     }
 
     INVALID_CITIES = {
@@ -350,10 +353,11 @@ class DialogueSlotManager:
         Extract all details from user's message.
         Called EVERY TURN before LLM is invoked.
         """
+        current_dict = dict(current_slots) if isinstance(current_slots, dict) else {}
         if not text:
-            return current_slots
+            return current_dict
 
-        updated = dict(current_slots)
+        updated = dict(current_dict)
         t_low = text.lower().strip()
 
         # 1. EXTRACT SCORES
@@ -386,17 +390,49 @@ class DialogueSlotManager:
                     logger.info(f"[SLOT] Extracted program: {prog_name}")
                     break
 
-        # 4. EXTRACT NAMES
-        if not updated.get("student_name"):
-            name_match = re.search(
-                r'(?:my\s*name\s*is|i\s*am|i\'m|this\s*is|call\s*me|naa\s*peru|mera\s*naam)\s+([a-zA-Z]{3,20})',
-                t_low
+        # 4. EXTRACT NAMES & SUPPORT CORRECTIONS
+        explicit_match = re.search(
+            r'(?:my\s*name\s*is|myself|i\s*am|i\'m|this\s*is|call\s*me|naa\s*peru|mera\s*naam|naam|peru)\s*[:=]?\s*([^\W\d_]+(?:\s+[^\W\d_]+)?)(?:,?\s*(?:not|no|lekapothe)\s*([^\W\d_]+)?)?',
+            text,
+            re.UNICODE | re.IGNORECASE
+        )
+        if not explicit_match:
+            explicit_match = re.search(
+                r'\bnot\s+[^\W\d_]+,?\s*(?:my\s*name\s*is|i\s*am|i\'m|it\'s|its|call\s*me)\s+([^\W\d_]+)',
+                text,
+                re.UNICODE | re.IGNORECASE
             )
-            if name_match:
-                candidate = name_match.group(1).capitalize()
-                if candidate.lower() not in cls.INVALID_NAMES and not candidate.lower().endswith("ing"):
-                    updated["student_name"] = candidate
-                    logger.info(f"[SLOT] Extracted name: {candidate}")
+
+        if explicit_match:
+            candidate = explicit_match.group(1).strip()
+            parts = candidate.split()
+            if len(parts) > 1 and parts[-1].lower() in {"and", "aur", "ani", "from", "here", "speaking", "calling", "interested", "looking", "for", "to", "in", "is", "not", "no"}:
+                candidate = parts[0]
+            cand_low = candidate.lower()
+            if (
+                len(candidate) >= 2
+                and cand_low not in cls.INVALID_NAMES
+                and not any(w in cls.INVALID_NAMES for w in cand_low.split())
+                and not cand_low.endswith("ing")
+            ):
+                # Explicit statement or correction overrides any previous slot guess
+                updated["student_name"] = candidate
+                logger.info(f"[SLOT] Extracted explicit/corrected name: {candidate}")
+        elif not updated.get("student_name") and not updated.get("program_of_interest") and len(text.strip().split()) in (1, 2, 3):
+            # Standalone candidate
+            cand = text.strip().strip(".,!?:;\"'")
+            cand_low = cand.lower()
+            words = [w.strip(".,!?:;\"'") for w in cand_low.split()]
+            if (
+                cand
+                and not re.search(r'\d', cand)
+                and cand_low not in cls.INVALID_NAMES
+                and not any(w in cls.INVALID_NAMES for w in words)
+                and not re.search(r'\b(btech|b\.tech|cse|ece|fee|fees|hostel|campus|visit|college|aditya|scholarship|exam|marks)\b', cand_low)
+                and not cand_low.endswith("ing")
+            ):
+                updated["student_name"] = cand
+                logger.info(f"[SLOT] Extracted standalone name: {cand}")
 
         # 5. EXTRACT CITY / LOCATION
         if not updated.get("current_city"):

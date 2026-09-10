@@ -1,0 +1,128 @@
+[
+  {
+    "type": "llm_reply",
+    "t": 12.104,
+    "text": "Hello! This is Priya from Aditya University, calling about your admission enquiry. Is this a good time?",
+    "stage": "GENERAL",
+    "facts_snapshot": null
+  },
+  {
+    "type": "stt",
+    "t": 19.008,
+    "text": "Hello",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 24.311,
+    "text": "Yes, I'm here! May I know your name, please?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "_name_asked": true
+    }
+  },
+  {
+    "type": "stt",
+    "t": 32.035,
+    "text": "Hello",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 36.52,
+    "text": "Yes, I'm here! May I know your name, please?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "_name_asked": true
+    }
+  },
+  {
+    "type": "stt",
+    "t": 39.689,
+    "text": "My name is Yash",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 45.817,
+    "text": "Nice to meet you, Yash! Which program or branch are you interested in at Aditya University?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "_name_asked": true,
+      "student_name": "Yash",
+      "name": "Yash"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 49.993,
+    "text": "I am interested for B.Tech Computer Science",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 58.419,
+    "text": "B.Tech CSE offers specialized tracks in AI & ML, Data Science, and industry programs with SAP, Google Cloud, and Microsoft.",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "_name_asked": true,
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 62.545,
+    "text": "Can you please tell me about the college fee?",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 75.109,
+    "text": "One moment, checking tuition... B.Tech CSE fees are ₹2,75,000 per year, plus a one-time ₹15,000 admission fee. Do you want details on scholarships too, Yash?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "_name_asked": true,
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 79.778,
+    "text": "Yes, can you please tell me the details?",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 85.657,
+    "text": "Looking that up... Yash, we offer up to 50% merit",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "_name_asked": true,
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE"
+    }
+  }
+]

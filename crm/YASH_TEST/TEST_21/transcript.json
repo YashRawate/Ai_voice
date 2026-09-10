@@ -1,0 +1,325 @@
+[
+  {
+    "type": "llm_reply",
+    "t": 10.906,
+    "text": "Hello! This is Priya from Aditya University, calling about your admission enquiry. Is this a good time?",
+    "stage": "GENERAL",
+    "facts_snapshot": null
+  },
+  {
+    "type": "stt",
+    "t": 14.006,
+    "text": "Yes, it is a good time.",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 16.907,
+    "text": "May I know your name, please?",
+    "stage": "GENERAL",
+    "facts_snapshot": null
+  },
+  {
+    "type": "stt",
+    "t": 19.206,
+    "text": "My name is Yash",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 22.104,
+    "text": "Nice to meet you, Yash! Which program",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 22.121,
+    "text": "Hmm",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 27.811,
+    "text": "Yash, which program or branch are you interested in at Aditya University?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 32.749,
+    "text": "I am interested for computer science.",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 41.709,
+    "text": "B.Tech CSE offers specialized tracks in AI & ML, Data Science, and industry programs with SAP, Google Cloud, and Microsoft.",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 47.116,
+    "text": "Okay, can you please tell me about the hostel fee?",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 58.21,
+    "text": "We provide AC and Non-AC hostel options with attached bathrooms and multi-cuisine meals. Would you like me to send the direct admission link to reserve your seat and hostel room?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "hostel_interest": "Yes"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 60.999,
+    "text": "Yes, can you please send a link?",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 70.812,
+    "text": "Let me get that information... Great, Yash! I’m sending the direct application link to your WhatsApp now to reserve your seat. Anything else you’d like to know?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "hostel_interest": "Yes",
+      "engagement_choice": "application_link",
+      "call_outcome": "interested"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 79.46,
+    "text": "क्या आप मुझे बता सकते हो कि हॉस्टल फी और कॉलेज फी दोनों मिला के एक साल में कितना देना होगा?",
+    "language": "hi-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 89.31,
+    "text": "Campus mein AC aur Non-AC hostel facilities meals ke saath available hain: Non-AC 30 thousand rupees aur AC 45 thousand rupees per semester.",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "hostel_interest": "Yes",
+      "engagement_choice": "application_link",
+      "call_outcome": "interested"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 93.598,
+    "text": "और एक साल में कितना देना होगा?",
+    "language": "hi-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 105.311,
+    "text": "जी, जानकारी देख रही हूँ... Yash ji, AC hostel ₹1,30,000 per year, Non-AC ₹1,15,000 per year. Tuition fees alag hain, aapko program batayein?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "hostel_interest": "Yes",
+      "engagement_choice": "application_link",
+      "call_outcome": "interested"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 111.876,
+    "text": "अच्छा।",
+    "language": "hi-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "stt",
+    "t": 112.449,
+    "text": "आप कॉलेज फी के बारे में बता सकते हो?",
+    "language": "hi-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 122.645,
+    "text": "एक मिनट रुकिए, चेक कर रही हूँ... Yash ji, B.Tech CSE fees ₹2,75,000 per year; core branches ₹1,00,000 to ₹1,35,000",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "hostel_interest": "Yes",
+      "engagement_choice": "application_link",
+      "call_outcome": "interested"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 122.701,
+    "text": "per year.",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 128.11,
+    "text": "जी हाँ, Yash ji, ये फीस सालाना है। आपके 12वीं के मार्क्स क्या हैं?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "hostel_interest": "Yes",
+      "engagement_choice": "application_link",
+      "call_outcome": "interested"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 131.848,
+    "text": "79%",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 136.937,
+    "text": "बहुत बढ़िया, Yash ji! आपकी स्कोर 79% है, जो हमारे",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "hostel_interest": "Yes",
+      "engagement_choice": "application_link",
+      "call_outcome": "interested",
+      "class_12_score": "79.0%",
+      "score": "79%"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 136.982,
+    "text": "बहुत बढ़िया यश जी।",
+    "language": "hi-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 142.311,
+    "text": "धन्यवाद, Yash जी! कौन सा प्रोग्राम या ब्रांच में रुचि रखते हैं आप?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "hostel_interest": "Yes",
+      "engagement_choice": "application_link",
+      "call_outcome": "interested",
+      "class_12_score": "79.0%",
+      "score": "79%"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 146.679,
+    "text": "Okay, bye bye.",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 152.383,
+    "text": "Thank you for reaching out to Aditya University! Wishing you all the best for your admissions.",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "hostel_interest": "Yes",
+      "engagement_choice": "application_link",
+      "call_outcome": "interested",
+      "class_12_score": "79.0%",
+      "score": "79%"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 152.423,
+    "text": "Wishing you all the best for your future.",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "stt",
+    "t": 164.855,
+    "text": "University calling about your admission inquiry. Yes, it's a good time. Yes, it is a good time.",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  }
+]

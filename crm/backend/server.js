@@ -85,8 +85,12 @@ app.use(errorHandler)
 const PORT       = process.env.PORT || 5000
 const httpServer = http.createServer(app)
 
-// Attach WebSocket server for Twilio Media Streams (real-time audio pipeline)
-mediaStream.setup(httpServer)
+// Attach WebSocket server for Twilio Media Streams only if explicitly enabled (Python agent is primary)
+if (process.env.ENABLE_NODE_MEDIA_STREAM === 'true') {
+  mediaStream.setup(httpServer)
+} else {
+  console.log('ℹ️ Node.js mediaStream pipeline disabled — using Python Priya voice agent (primary)')
+}
 
 
 httpServer.listen(PORT, () => console.log(`Enrolo + Priya backend running on port ${PORT}`))

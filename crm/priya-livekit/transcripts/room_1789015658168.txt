@@ -1,0 +1,143 @@
+COMPLETE CALL TRANSCRIPT (room_1789015658168)
+============================================================
+Start Time: 2026-09-10 10:17:38
+Total Turns: 24
+============================================================
+
+Turn 1 [10:17:54] (hi-IN):
+User:  हां।
+Priya: Thank you!
+(Latency: 0.00s)
+
+Turn 2 [10:17:55] (hi-IN):
+User:  
+Priya: May I know your name, please?
+(Latency: 0.00s)
+
+Turn 3 [10:18:00] (en-IN):
+User:  My name is Yash
+Priya: Nice to meet you, Yash!
+(Latency: 0.00s)
+
+Turn 4 [10:18:01] (en-IN):
+User:  
+Priya: Which program or branch are you interested in at Aditya University?
+(Latency: 0.00s)
+
+Turn 5 [10:18:11] (en-IN):
+User:  I am interested for B.Tech Computer Science.
+Priya: Great choice, Yash! In CSE we offer top specialisations. Have you completed your 12th Board or Intermediate?
+(Latency: 0.00s)
+
+Turn 6 [10:18:14] (en-IN):
+User:  and choice yes
+Priya: Perfect, Yash!
+(Latency: 0.00s)
+
+Turn 7 [10:18:15] (en-IN):
+User:  
+Priya: Could you please share your 12th Board marks or any entrance exam scores like JEE or ASAT?
+(Latency: 0.00s)
+
+Turn 8 [10:18:29] (en-IN):
+User:  In JEE I got 2000 rank and in 12th I got 90%.
+Priya: 
+(Latency: 0.00s)
+
+Turn 9 [10:18:29] (en-IN):
+User:  In JEE I got 2000 rank and in 12th I got 90%.
+Priya: That's exceptional, Yash!
+(Latency: 0.00s)
+
+Turn 10 [10:18:30] (en-IN):
+User:  
+Priya: With 90% and JEE 2000 rank, you are well eligible.
+(Latency: 0.00s)
+
+Turn 11 [10:18:30] (en-IN):
+User:  
+Priya: Would you like me to send the application link to your WhatsApp?
+(Latency: 0.00s)
+
+Turn 12 [10:18:35] (en-IN):
+User:  Exceptional Yes
+Priya: Yash, you’re an exceptional candidate!
+(Latency: 0.00s)
+
+Turn 13 [10:18:36] (en-IN):
+User:  
+Priya: We have 50% merit scholarships for top scores like yours.
+(Latency: 0.00s)
+
+Turn 14 [10:18:36] (en-IN):
+User:  
+Priya: Would you like me to send the application link to your WhatsApp?
+(Latency: 0.00s)
+
+Turn 15 [10:18:49] (en-IN):
+User:  Yes
+Priya: Certainly Yash! What other questions do you have regarding B.Tech CSE or admissions?
+(Latency: 0.00s)
+
+Turn 16 [10:18:49] (en-IN):
+User:  Yes
+Priya: Certainly Yash! What other questions do you have regarding B.Tech CSE or admissions?
+(Latency: 0.00s)
+
+Turn 17 [10:18:59] (en-IN):
+User:  What is the process of admission?
+Priya: B.Tech admission requires 60% in 12th Board or Intermediate with ASAT, JEE, or EAPCET.
+(Latency: 0.00s)
+
+Turn 18 [10:18:59] (en-IN):
+User:  What is the process of admission?
+Priya: B.Tech admission requires 60% in 12th Board or Intermediate with ASAT, JEE, or EAPCET.
+(Latency: 0.00s)
+
+Turn 19 [10:19:09] (hi-IN):
+User:  ये भी चाहिए।
+Priya: 
+(Latency: 0.00s)
+
+Turn 20 [10:19:09] (hi-IN):
+User:  ये भी चाहिए।
+Priya: आपको कौन-से प्रोग्राम या ब्रांच में रुचि है?
+(Latency: 0.00s)
+
+Turn 21 [10:19:13] (hi-IN):
+User:  अरे मतलब कि क्या क्या डॉक्यूमेंट लगेंगे?
+Priya: 
+(Latency: 0.00s)
+
+Turn 22 [10:19:14] (hi-IN):
+User:  अरे मतलब कि क्या क्या डॉक्यूमेंट लगेंगे?
+Priya: आपको 12वीं मार्क्स, जाति प्रमाण पत्र (अगर लागू हो), पासपोर्ट साइज फोटो, और पहचान पत्र चाहिए होंगे।
+(Latency: 0.00s)
+
+Turn 23 [10:19:15] (hi-IN):
+User:  
+Priya: कोई और सवाल?
+(Latency: 0.00s)
+
+Turn 24 [10:19:19] (hi-IN):
+User:  ठीक है, चेक कर रही हूँ।
+Priya: आदित्य यूनिवर्सिटी में संपर्क करने के लिए धन्यवाद! आपके एडमिशन के लिए शुभकामनाएं। आपका दिन शुभ हो!
+(Latency: 0.00s)
+
+============================================================
+CALL SUMMARY:
+- Total Duration: 101.3s
+- Turns Count: 24
+- Facts Discovered: {
+  "name": "Yash",
+  "student_name": "Yash",
+  "program": "CSE",
+  "program_of_interest": "CSE",
+  "score": "90%",
+  "class_12_score": "90%",
+  "exam": "JEE",
+  "entrance_exams_taken": "JEE"
+}
+- Questions Asked: ['program_question', 'score_question', 'q_score', 'student_name', 'q_program', 'q_exam', 'program_interest', 'entrance_exam', 'name_question', 'q_name', 'exam_question']
+- Refusals: []
+============================================================

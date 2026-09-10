@@ -1,0 +1,58 @@
+[
+  {
+    "type": "session_init",
+    "t": 0.001,
+    "reason": "livekit_agent_entrypoint",
+    "is_first_call": true,
+    "call_stack": [
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\threading.py\", line 1012, in _bootstrap\n    self._bootstrap_inner()\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\threading.py\", line 1041, in _bootstrap_inner\n    self.run()\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\threading.py\", line 992, in run\n    self._target(*self._args, **self._kwargs)\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\livekit\\agents\\ipc\\job_proc_lazy_main.py\", line 479, in thread_main\n    client.run()\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\livekit\\agents\\ipc\\proc_client.py\", line 70, in run\n    loop.run_until_complete(self._task)\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\asyncio\\base_events.py\", line 712, in run_until_complete\n    self.run_forever()\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\asyncio\\base_events.py\", line 683, in run_forever\n    self._run_once()\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\asyncio\\base_events.py\", line 2040, in _run_once\n    handle._run()\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\asyncio\\events.py\", line 89, in _run\n    self._context.run(self._callback, *self._args)\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\opentelemetry\\util\\_decorator.py\", line 61, in async_wrapper\n    return await func(*args, **kwargs)  # type: ignore\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\livekit\\agents\\ipc\\job_proc_lazy_main.py\", line 335, in _traceable_entrypoint\n    await self._job_entrypoint_fnc(job_ctx)\n",
+      "  File \"C:\\Users\\yashr\\OneDrive\\Desktop\\Ai_voice-main\\crm\\priya-livekit\\agent.py\", line 2329, in entrypoint\n    session_logger.log_session_init(reason=\"livekit_agent_entrypoint\", is_first_call=True)\n",
+      "  File \"C:\\Users\\yashr\\OneDrive\\Desktop\\Ai_voice-main\\crm\\priya-livekit\\test_session_logger.py\", line 184, in log_session_init\n    \"call_stack\": traceback.format_stack(),\n"
+    ]
+  },
+  {
+    "type": "language_switch",
+    "t": 21.411,
+    "from": "en-IN",
+    "to": "hi-IN",
+    "confidence": null
+  },
+  {
+    "type": "language_switch",
+    "t": 27.813,
+    "from": "hi-IN",
+    "to": "en-IN",
+    "confidence": null
+  },
+  {
+    "type": "language_switch",
+    "t": 96.733,
+    "from": "en-IN",
+    "to": "hi-IN",
+    "confidence": null
+  },
+  {
+    "type": "language_switch",
+    "t": 117.42,
+    "from": "hi-IN",
+    "to": "en-IN",
+    "confidence": null
+  },
+  {
+    "type": "language_switch",
+    "t": 119.912,
+    "from": "en-IN",
+    "to": "hi-IN",
+    "confidence": null
+  }
+]

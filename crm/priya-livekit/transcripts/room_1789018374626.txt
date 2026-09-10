@@ -1,0 +1,197 @@
+COMPLETE CALL TRANSCRIPT (room_1789018374626)
+============================================================
+Start Time: 2026-09-10 11:02:54
+Total Turns: 35
+============================================================
+
+Turn 1 [11:03:06] (en-IN):
+User:  Yes, it is a good time.
+Priya: May I know your name, please?
+(Latency: 0.00s)
+
+Turn 2 [11:03:11] (en-IN):
+User:  My name is Yash
+Priya: Nice to meet you, Yash!
+(Latency: 0.00s)
+
+Turn 3 [11:03:12] (en-IN):
+User:  
+Priya: Which program or branch are you interested in at Aditya University?
+(Latency: 0.00s)
+
+Turn 4 [11:03:14] (en-IN):
+User:  Hmm
+Priya: Yash, which program or branch are you interested in at Aditya University?
+(Latency: 0.00s)
+
+Turn 5 [11:03:25] (en-IN):
+User:  I am interested for computer science.
+Priya: Great choice, Yash! In CSE we offer top specialisations. Have you completed your 12th Board or Intermediate?
+(Latency: 0.00s)
+
+Turn 6 [11:03:25] (en-IN):
+User:  I am interested for computer science.
+Priya: B.Tech CSE offers specialized tracks in AI & ML, Data Science, and industry programs with SAP, Google Cloud, and Microsoft.
+(Latency: 0.00s)
+
+Turn 7 [11:03:39] (en-IN):
+User:  Okay, can you please tell me about the hostel fee?
+Priya: We provide AC and Non-AC hostel options with attached bathrooms and multi-cuisine meals. Would you like me to send the direct admission link to reserve your seat and hostel room?
+(Latency: 0.00s)
+
+Turn 8 [11:03:39] (en-IN):
+User:  Okay, can you please tell me about the hostel fee?
+Priya: We provide AC and Non-AC hostel options with attached bathrooms and multi-cuisine meals. Would you like me to send the direct admission link to reserve your seat and hostel room?
+(Latency: 0.00s)
+
+Turn 9 [11:03:53] (en-IN):
+User:  Yes, can you please send a link?
+Priya: Done, Yash! I have sent the direct provisional application link to your WhatsApp to lock your seat and scholarship. Would you also like to visit our campus with your parents this Saturday?
+(Latency: 0.00s)
+
+Turn 10 [11:03:53] (en-IN):
+User:  Yes, can you please send a link?
+Priya: Done, Yash! I have sent the direct provisional application link to your WhatsApp to lock your seat and scholarship. Would you also like to visit our campus with your parents this Saturday?
+(Latency: 0.00s)
+
+Turn 11 [11:03:54] (en-IN):
+User:  
+Priya: Great, Yash!
+(Latency: 0.00s)
+
+Turn 12 [11:03:54] (en-IN):
+User:  
+Priya: I’m sending the direct application link to your WhatsApp now to reserve your seat.
+(Latency: 0.00s)
+
+Turn 13 [11:03:54] (en-IN):
+User:  
+Priya: Anything else you’d like to know?
+(Latency: 0.00s)
+
+Turn 14 [11:04:11] (hi-IN):
+User:  क्या आप मुझे बता सकते हो कि हॉस्टल फी और कॉलेज फी दोनों मिला के एक साल में कितना देना होगा?
+Priya: Campus mein AC aur Non-AC hostel facilities meals ke saath available hain: Non-AC 30 thousand rupees aur AC 45 thousand rupees per semester.
+(Latency: 0.00s)
+
+Turn 15 [11:04:11] (hi-IN):
+User:  क्या आप मुझे बता सकते हो कि हॉस्टल फी और कॉलेज फी दोनों मिला के एक साल में कितना देना होगा?
+Priya: Campus mein AC aur Non-AC hostel facilities meals ke saath available hain: Non-AC 30 thousand rupees aur AC 45 thousand rupees per semester.
+(Latency: 0.00s)
+
+Turn 16 [11:04:26] (hi-IN):
+User:  और एक साल में कितना देना होगा?
+Priya: 
+(Latency: 0.00s)
+
+Turn 17 [11:04:26] (hi-IN):
+User:  और एक साल में कितना देना होगा?
+Priya: Yash ji, AC hostel ₹1,30,000 per year, Non-AC ₹1,15,000 per year.
+(Latency: 0.00s)
+
+Turn 18 [11:04:27] (hi-IN):
+User:  
+Priya: Tuition fees alag hain, aapko program batayein?
+(Latency: 0.00s)
+
+Turn 19 [11:04:41] (hi-IN):
+User:  अच्छा।
+Priya: Yash ji, aapne computer science bataya tha.
+(Latency: 0.00s)
+
+Turn 20 [11:04:43] (hi-IN):
+User:  
+Priya: Tuition fees ₹2,75,000 per year hai.
+(Latency: 0.00s)
+
+Turn 21 [11:04:43] (hi-IN):
+User:  
+Priya: Total fees AC hostel ke saath ₹4,05,000 hogi.
+(Latency: 0.00s)
+
+Turn 22 [11:04:43] (hi-IN):
+User:  
+Priya: Aapko koi aur madad chahiye?
+(Latency: 0.00s)
+
+Turn 23 [11:04:44] (hi-IN):
+User:  अच्छा।
+Priya: 
+(Latency: 0.00s)
+
+Turn 24 [11:04:44] (hi-IN):
+User:  आप कॉलेज फी के बारे में बता सकते हो?
+Priya: Yash ji, B.Tech CSE fees ₹2,75,000 per year; core branches ₹1,00,000 to ₹1,35,000 per year.
+(Latency: 0.00s)
+
+Turn 25 [11:04:46] (hi-IN):
+User:  
+Priya: Aapka program konsa hai?
+(Latency: 0.00s)
+
+Turn 26 [11:04:55] (en-IN):
+User:  per year.
+Priya: जी हाँ, Yash ji, ये फीस सालाना है।
+(Latency: 0.00s)
+
+Turn 27 [11:04:56] (en-IN):
+User:  
+Priya: आपके 12वीं के मार्क्स क्या हैं?
+(Latency: 0.00s)
+
+Turn 28 [11:05:04] (en-IN):
+User:  79%
+Priya: 
+(Latency: 0.00s)
+
+Turn 29 [11:05:04] (en-IN):
+User:  79%
+Priya: बहुत बढ़िया, Yash ji!
+(Latency: 0.00s)
+
+Turn 30 [11:05:05] (en-IN):
+User:  
+Priya: आपकी स्कोर 79% है, जो हमारे लिए अच्छी योग्यता है।
+(Latency: 0.00s)
+
+Turn 31 [11:05:05] (hi-IN):
+User:  
+Priya: आप किस प्रोग्राम में रुचि रखते हैं?
+(Latency: 0.00s)
+
+Turn 32 [11:05:09] (hi-IN):
+User:  बहुत बढ़िया यश जी।
+Priya: धन्यवाद, Yash जी!
+(Latency: 0.00s)
+
+Turn 33 [11:05:10] (hi-IN):
+User:  
+Priya: कौन सा प्रोग्राम या ब्रांच में रुचि रखते हैं आप?
+(Latency: 0.00s)
+
+Turn 34 [11:05:19] (en-IN):
+User:  Okay, bye bye.
+Priya: Thank you for reaching out to Aditya University! Wishing you all the best for your admissions. Have a wonderful day!
+(Latency: 0.00s)
+
+Turn 35 [11:05:19] (en-IN):
+User:  Okay, bye bye.
+Priya: Thank you for reaching out to Aditya University! Wishing you all the best for your admissions. Have a wonderful day!
+(Latency: 0.00s)
+
+============================================================
+CALL SUMMARY:
+- Total Duration: 144.5s
+- Turns Count: 35
+- Facts Discovered: {
+  "name": "Yash",
+  "student_name": "Yash",
+  "program": "CSE",
+  "program_of_interest": "CSE",
+  "hostel_interest": true,
+  "score": "79%",
+  "class_12_score": "79%"
+}
+- Questions Asked: ['q_program', 'program_question', 'campus_visit', 'program_interest', 'student_name']
+- Refusals: []
+============================================================

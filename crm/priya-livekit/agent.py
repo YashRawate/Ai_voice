@@ -972,8 +972,18 @@ class PatternRouter:
 
         # ── 1. Greeting / Availability / Affirmation fast-path (e.g. "Hello", "Yes", "Yes?") ───
         if cls._AFFIRM_RE.match(t):
-            name = collected.get("student_name")
-            if name:
+            name = collected.get("student_name") or collected.get("name")
+            prog = collected.get("program_of_interest") or collected.get("program")
+            if name and prog:
+                # Mid-call affirmation when name and program are already known
+                cls._hit += 1
+                logger.info(f"[FAST] pattern hit: mid-call acknowledgment for {name} ({cls._hit}/{cls._hit + cls._miss})")
+                if lang == "te-IN":
+                    return f"ఖచ్చితంగా {name} గారు! {prog} ఫీజు లేదా క్యాంపస్ విజిట్ గురించి ఇంకేమైనా వివరాలు కావాలా?"
+                if lang == "hi-IN":
+                    return f"ज़रूर {name} जी! {prog} की फीस या कैंपस विजिट के बारे में और क्या जानना चाहते हैं?"
+                return f"Certainly {name}! What other questions do you have regarding {prog} or admissions?"
+            elif name:
                 cls._hit += 1
                 logger.info(f"[FAST] pattern hit: greeting for {name} ({cls._hit}/{cls._hit + cls._miss})")
                 if lang == "te-IN":
@@ -1437,7 +1447,13 @@ class Priya(Agent):
         # already learned last time, so Priya knows the caller and the "KNOWN ABOUT THIS CALLER"
         # note is populated from turn one (she never re-asks name/program/scores).
         room_name = getattr(job_ctx, "room_name", None) or f"room_{int(time.time()*1000)}"
-        self.conv_session: SessionContext = GLOBAL_SESSION_STORE.get_or_create(room_name)
+        self._session_id = room_name
+        from session_lifecycle import start_new_call, apply_language_switch
+        self.conv_session: SessionContext = start_new_call(
+            session_id=room_name,
+            initial_facts=collected,
+            initial_language=TTS_START_LANG
+        )
         if collected:
             self.conv_session.collected.update({k: v for k, v in collected.items() if v})
         self.collected = self.conv_session.collected
@@ -1477,7 +1493,8 @@ class Priya(Agent):
             return
         old_lang = self._lang
         self._lang = code
-        self.conv_session.active_language = code
+        from session_lifecycle import apply_language_switch
+        apply_language_switch(self.conv_session, code, reason=reason)
         if hasattr(self, "lang_conversation_context"):
             self.lang_conversation_context.update_dominant_language(code)
         if hasattr(self, "_session_id") and self._session_id:
@@ -1799,6 +1816,46 @@ class Priya(Agent):
 
             # Consolidate dynamic turn instructions into ONE compact system message (prevents token bloat)
             turn_prompts = []
+
+            # ── 1. Canonical State & Shared Prompt Template (LangChain/LangGraph architecture) ──
+            try:
+                from prompts import format_system_prompt
+                facts_snapshot = {k: v for k, v in self.collected.items() if v and not str(k).startswith("_")}
+                if hasattr(self, "conv_history") and self.conv_history and hasattr(self.conv_history, "facts"):
+                    facts_snapshot.update({k: v for k, v in self.conv_history.facts.items() if v and not str(k).startswith("_")})
+
+                # Compute canonical stage and next field (monotonic progression — never regress backwards)
+                has_booking = bool(facts_snapshot.get("visit_datetime") or facts_snapshot.get("engagement_choice"))
+                has_exam = bool(facts_snapshot.get("entrance_exams_taken") or facts_snapshot.get("exam"))
+                has_score = bool(facts_snapshot.get("class_12_score") or facts_snapshot.get("marks_12") or facts_snapshot.get("score"))
+                has_program = bool(facts_snapshot.get("program") or facts_snapshot.get("program_of_interest"))
+                has_name = bool(facts_snapshot.get("student_name") or facts_snapshot.get("name"))
+
+                if has_booking:
+                    c_stage = "CONVERT"
+                    c_field = "(campus visit booked)"
+                elif has_score or has_exam:
+                    c_stage = "CONVERT"
+                    c_field = "campus_visit"
+                elif has_program:
+                    c_stage = "ELIGIBILITY"
+                    c_field = "marks_12"
+                elif has_name:
+                    c_stage = "PROGRAM"
+                    c_field = "program"
+                else:
+                    c_stage = "GREETING"
+                    c_field = "student_name"
+
+                shared_prompt = format_system_prompt(
+                    facts=facts_snapshot,
+                    stage=c_stage,
+                    next_field=c_field,
+                    language_code=self._lang
+                )
+                turn_prompts.append(shared_prompt)
+            except Exception as e:
+                logger.debug(f"shared prompt build error: {e}")
 
             # ── Full Conversation History & Intelligent Directives ──
             if hasattr(self, "conv_session") and getattr(self.conv_session, "long_mgr", None):
@@ -2590,7 +2647,7 @@ async def process_turn(
     if memory is not None:
         memory.add_turn(transcript, response, lang_code)
 
-    return {"response": response, "audio": audio, "language": lang_code}
+    return {"response": response, "audio": audio, "language": lang_code, "language_used": lang_code}
 
 class FullConversationAgent:
     """Agent that maintains full conversation history from start to end with zero repetition."""

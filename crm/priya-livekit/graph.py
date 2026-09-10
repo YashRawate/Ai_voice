@@ -43,13 +43,52 @@ def extract_slots(state: CallState) -> Dict[str, Any]:
     import re
     t_low = text.lower()
 
-    # Extract name if not known
-    if "student_name" not in existing_facts:
-        m_name = re.search(r'\b(?:my name is|i am|this is|name is|peru|naam)\s+([A-Za-z]+)', text, re.I)
-        if m_name:
-            cand = m_name.group(1).title()
-            if cand.lower() not in {"interested", "calling", "speaking", "here", "fine"}:
-                existing_facts["student_name"] = cand
+    invalid_names = {
+        "interested", "calling", "speaking", "here", "fine", "yes", "sure", "hello", "hi", "ok", "okay",
+        "feel", "feeling", "role", "position", "treasury", "thunder", "situation", "status", "just",
+        "know", "knowing", "tell", "said", "say", "saying", "actually", "right", "wrong", "good"
+    }
+
+    # Explicit name intro or correction: always update
+    m_name = re.search(
+        r'\b(?:my name is|myself|i am|i\'m|this is|name is|peru|naam)\s*[:=]?\s*([^\W\d_]+(?:\s+[^\W\d_]+)?)(?:,?\s*(?:not|no)\s*([^\W\d_]+)?)?',
+        text,
+        re.I | re.U
+    )
+    if not m_name:
+        m_name = re.search(
+            r'\bnot\s+[^\W\d_]+,?\s*(?:my\s*name\s*is|i\s*am|i\'m|it\'s|its|call\s*me)\s+([^\W\d_]+)',
+            text,
+            re.I | re.U
+        )
+
+    if m_name:
+        cand = m_name.group(1).strip()
+        parts = cand.split()
+        if len(parts) > 1 and parts[-1].lower() in {"and", "aur", "ani", "from", "here", "speaking", "calling", "interested", "looking", "for", "to", "in", "is", "not", "no"}:
+            cand = parts[0]
+        cand_low = cand.lower()
+        if (
+            len(cand) >= 2
+            and cand_low not in invalid_names
+            and not any(w in invalid_names for w in cand_low.split())
+            and not cand_low.endswith("ing")
+        ):
+            existing_facts["student_name"] = cand
+    elif "student_name" not in existing_facts and "name" not in existing_facts and "program" not in existing_facts and len(text.strip().split()) in (1, 2, 3):
+        cand = text.strip().strip(".,!?:;\"'")
+        cand_low = cand.lower()
+        words = [w.strip(".,!?:;\"'") for w in cand_low.split()]
+        if (
+            cand
+            and not re.search(r'\d', cand)
+            and cand_low not in invalid_names
+            and not any(w in invalid_names for w in words)
+            and not re.search(r'\b(btech|cse|ece|fee|fees|hostel|campus|visit|college|aditya)\b', cand_low)
+            and not cand_low.endswith("ing")
+        ):
+            existing_facts["student_name"] = cand
+
 
     # Extract program with strict word boundaries
     if re.search(r'\b(cse|computer science|ai/ml|data science|ece|eee|mech|civil|mba|bba|pharmacy)\b', t_low) or re.search(r'\b(ai|ml)\b', t_low):
@@ -87,19 +126,29 @@ def extract_slots(state: CallState) -> Dict[str, Any]:
 def route_stage(state: CallState) -> Dict[str, Any]:
     """
     Compute current conversation stage and next field to collect.
+    Monotonic forward progression: never regresses back to GREETING when other facts are known.
     """
     facts = state.get("facts", {})
 
-    if "student_name" not in facts:
-        return {"stage": "GREETING", "next_field": "student_name"}
-    elif "program" not in facts:
-        return {"stage": "PROGRAM", "next_field": "program"}
-    elif "marks_12" not in facts:
-        return {"stage": "ELIGIBILITY", "next_field": "marks_12"}
-    elif "entrance_exam" not in facts:
+    has_booking = bool(facts.get("visit_datetime") or facts.get("engagement_choice"))
+    has_exam = bool(facts.get("entrance_exam") or facts.get("entrance_exams_taken"))
+    has_score = bool(facts.get("marks_12") or facts.get("class_12_score") or facts.get("score"))
+    has_program = bool(facts.get("program") or facts.get("program_of_interest"))
+    has_name = bool(facts.get("student_name") or facts.get("name"))
+
+    if has_booking:
+        return {"stage": "CONVERT", "next_field": "(campus visit booked)"}
+    elif has_score and not has_exam:
         return {"stage": "ELIGIBILITY", "next_field": "entrance_exam"}
-    else:
+    elif has_score or has_exam:
         return {"stage": "CONVERT", "next_field": "campus_visit"}
+    elif has_program:
+        return {"stage": "ELIGIBILITY", "next_field": "marks_12"}
+    elif has_name:
+        return {"stage": "PROGRAM", "next_field": "program"}
+    else:
+        return {"stage": "GREETING", "next_field": "student_name"}
+
 
 
 def create_reply_generator(llm: Optional[Any] = None):

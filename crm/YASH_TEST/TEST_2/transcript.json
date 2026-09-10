@@ -1,0 +1,434 @@
+[
+  {
+    "type": "llm_reply",
+    "t": 22.751,
+    "text": "Hello! This is Priya from Aditya University, calling about your admission enquiry. Is this a good time?",
+    "stage": "GENERAL",
+    "facts_snapshot": null
+  },
+  {
+    "type": "stt",
+    "t": 25.925,
+    "text": "Yes, it is a good time.",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 29.051,
+    "text": "May I know your name, please?",
+    "stage": "GENERAL",
+    "facts_snapshot": null
+  },
+  {
+    "type": "stt",
+    "t": 31.753,
+    "text": "My name is Yash",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 38.95,
+    "text": "Nice to meet you, Yash! Which program or branch are you interested in at Aditya University?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 42.051,
+    "text": "B.Tech Computer Science",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 48.852,
+    "text": "Great choice, Yash! In CSE we offer top specialisations. Have you completed your 12th Board or Intermediate?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 51.509,
+    "text": "Yes, I have completed.",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 57.45,
+    "text": "Could you please share your 12th Board marks or entrance exam scores, Yash?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 63.782,
+    "text": "In 12th I got 90% and in JEE I got 82 rank.",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 75.15,
+    "text": "That's exceptional, Yash! With 90% and JEE 82 rank, you qualify for up to 50% merit scholarships. Would you like to book a campus visit this Saturday?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "class_12_score": "90.0%",
+      "entrance_exams_taken": "JEE",
+      "score": "90%",
+      "exam": "JEE"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 78.579,
+    "text": "No, not now.",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 84.272,
+    "text": "No problem, Yash! Shall I send the direct application link to your WhatsApp to reserve",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "class_12_score": "90.0%",
+      "entrance_exams_taken": "JEE",
+      "score": "90%",
+      "exam": "JEE"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 84.305,
+    "text": "Direct communication",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 87.619,
+    "text": "I will send the",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "class_12_score": "90.0%",
+      "entrance_exams_taken": "JEE",
+      "score": "90%",
+      "exam": "JEE"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 87.685,
+    "text": "Not now",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 95.248,
+    "text": "Understood, Yash. Would you like me to register you for the ASAT scholarship exam to secure your fee waiver?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "class_12_score": "90.0%",
+      "entrance_exams_taken": "JEE",
+      "score": "90%",
+      "exam": "JEE"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 97.54,
+    "text": "No no",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 105.453,
+    "text": "Thank you for letting me know, Yash. If you have any questions later, feel free to call anytime. May I know your name, please?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "class_12_score": "90.0%",
+      "entrance_exams_taken": "JEE",
+      "score": "90%",
+      "exam": "JEE"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 108.123,
+    "text": "My name is Yash",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 113.304,
+    "text": "Nice to meet you, Yash! Which program or branch are you interested in at",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "class_12_score": "90.0%",
+      "entrance_exams_taken": "JEE",
+      "score": "90%",
+      "exam": "JEE"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 113.339,
+    "text": "आप मुझे कॉलेज के बारे में बता सकते हो?",
+    "language": "hi-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 131.255,
+    "text": "एक मिनट रुकिए, चेक कर रही हूँ... Absolutely, Yash जी! Aditya University has a 250-acre smart campus in Surampalem, AP, NAAC A++ and NIRF ranked. Interested in placements or facilities details?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "class_12_score": "90.0%",
+      "entrance_exams_taken": "JEE",
+      "score": "90%",
+      "exam": "JEE"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 135.774,
+    "text": "आप हॉस्टल फी के बारे में बताइए।",
+    "language": "hi-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 145.151,
+    "text": "Campus mein AC aur Non-AC hostel facilities meals ke saath available hain: Non-AC 30 thousand rupees aur AC 45 thousand rupees per semester.",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "class_12_score": "90.0%",
+      "entrance_exams_taken": "JEE",
+      "score": "90%",
+      "exam": "JEE"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 147.887,
+    "text": "अच्छा",
+    "language": "hi-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 152.333,
+    "text": "Yash जी, आपकी 12वीं बोर्ड या एंट्रेंस एग्जाम के marks क्या",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "class_12_score": "90.0%",
+      "entrance_exams_taken": "JEE",
+      "score": "90%",
+      "exam": "JEE"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 153.243,
+    "text": "ਜੇ ਅਸੀਂ ਆਪਣੀ ਬਾਰਵੀਂ ਹੋਣੀ ਹੈ।",
+    "language": "hi-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 156.848,
+    "text": "ਤੁਹਾਡੇ 12ਵੀਂ ਦੇ ਨੰਬਰ ਕਿੰਨੇ ਹਨ?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "class_12_score": "90.0%",
+      "entrance_exams_taken": "JEE",
+      "score": "90%",
+      "exam": "JEE"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 160.742,
+    "text": "నేను నేను ప్రేమస్త నేను.",
+    "language": "te-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 162.853,
+    "text": "మీరెవరు?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "class_12_score": "90.0%",
+      "entrance_exams_taken": "JEE",
+      "score": "90%",
+      "exam": "JEE"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 165.605,
+    "text": "ఏంటి?",
+    "language": "te-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 170.552,
+    "text": "ఒక్క క్షణం అండీ... Yes, I’m here! May I know your name, please?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "class_12_score": "90.0%",
+      "entrance_exams_taken": "JEE",
+      "score": "90%",
+      "exam": "JEE"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 171.423,
+    "text": "Okkam moment alli Yes",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 174.253,
+    "text": "May I know your name, please?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "class_12_score": "90.0%",
+      "entrance_exams_taken": "JEE",
+      "score": "90%",
+      "exam": "JEE"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 175.396,
+    "text": "चुसुरा लेंगे देंगे मुका",
+    "language": "hi-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 178.254,
+    "text": "Could you please tell me your name?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yash",
+      "name": "Yash",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "class_12_score": "90.0%",
+      "entrance_exams_taken": "JEE",
+      "score": "90%",
+      "exam": "JEE"
+    }
+  }
+]

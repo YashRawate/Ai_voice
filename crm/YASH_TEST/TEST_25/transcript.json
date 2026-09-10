@@ -1,0 +1,348 @@
+[
+  {
+    "type": "stt",
+    "t": 14.466,
+    "text": "Priority",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 18.08,
+    "text": "Hello! May I know your name, please?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Priority",
+      "name": "Priority"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 20.714,
+    "text": "आदित्य",
+    "language": "hi-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 26.968,
+    "text": "Nice to meet you, आदित्य जी! Which program or branch are you interested in at Aditya University?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Priority",
+      "name": "Priority"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 34.622,
+    "text": "I am interested in something called like EC and electrical.",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 42.276,
+    "text": "Great choice, Priority! In EEE we offer top specialisations. Have you completed your 12th Board or Intermediate?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Priority",
+      "name": "Priority",
+      "program_of_interest": "B.Tech EEE",
+      "program": "B.Tech EEE",
+      "specialization": "EEE"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 48.592,
+    "text": "I want triple not triple E, I want ECE.",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 57.075,
+    "text": "Thanks for clarifying, आदित्य जी! ECE is a flagship branch here. What are your 12th Board marks or entrance exam scores?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Priority",
+      "name": "Priority",
+      "program_of_interest": "B.Tech EEE",
+      "program": "B.Tech EEE",
+      "specialization": "EEE"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 61.814,
+    "text": "In 12th I have scored 70%",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 71.777,
+    "text": "Good, आदित्य, you meet our eligibility criteria with 70%! Would you like me to share details on scholarships and placements in ECE?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Priority",
+      "name": "Priority",
+      "program_of_interest": "B.Tech EEE",
+      "program": "B.Tech EEE",
+      "specialization": "EEE",
+      "class_12_score": "70.0%",
+      "score": "70%"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 72.135,
+    "text": "Hello",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 75.392,
+    "text": "Certainly Priority! What other questions do you have regarding",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Priority",
+      "name": "Priority",
+      "program_of_interest": "B.Tech EEE",
+      "program": "B.Tech EEE",
+      "specialization": "EEE",
+      "class_12_score": "70.0%",
+      "score": "70%"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 75.441,
+    "text": "Yes",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 81.54,
+    "text": "Certainly Priority! What other questions do you have regarding B.Tech EEE or admissions?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Priority",
+      "name": "Priority",
+      "program_of_interest": "B.Tech EEE",
+      "program": "B.Tech EEE",
+      "specialization": "EEE",
+      "class_12_score": "70.0%",
+      "score": "70%"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 81.591,
+    "text": "Okay",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 86.674,
+    "text": "Certainly Priority! What other questions do you have regarding B.Tech EEE or admissions?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Priority",
+      "name": "Priority",
+      "program_of_interest": "B.Tech EEE",
+      "program": "B.Tech EEE",
+      "specialization": "EEE",
+      "class_12_score": "70.0%",
+      "score": "70%"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 93.076,
+    "text": "Like how much scholarship I will get?",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 102.772,
+    "text": "Let me look up the scholarship slabs... May I know your 12th Board percentage or entrance exam scores to determine your exact scholarship amount?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Priority",
+      "name": "Priority",
+      "program_of_interest": "B.Tech EEE",
+      "program": "B.Tech EEE",
+      "specialization": "EEE",
+      "class_12_score": "70.0%",
+      "score": "70%",
+      "scholarship_interest": "Yes"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 107.728,
+    "text": "I already told you I have 70%",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 111.571,
+    "text": "Thank you for sharing your 70%, that's good! You",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Priority",
+      "name": "Priority",
+      "program_of_interest": "B.Tech EEE",
+      "program": "B.Tech EEE",
+      "specialization": "EEE",
+      "class_12_score": "70.0%",
+      "score": "70%",
+      "scholarship_interest": "Yes"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 111.618,
+    "text": "હા.",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 121.771,
+    "text": "With 70%, you qualify for our eligibility but no merit scholarship. Would you like me to share details on fee installments or education loans?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Priority",
+      "name": "Priority",
+      "program_of_interest": "B.Tech EEE",
+      "program": "B.Tech EEE",
+      "specialization": "EEE",
+      "class_12_score": "70.0%",
+      "score": "70%",
+      "scholarship_interest": "Yes"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 124.668,
+    "text": "Both",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 136.629,
+    "text": "We offer 0% interest SBI/HDFC education loans and semester-wise fee installments for your convenience. Would you like me to send detailed fee and loan info to your WhatsApp?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Priority",
+      "name": "Priority",
+      "program_of_interest": "B.Tech EEE",
+      "program": "B.Tech EEE",
+      "specialization": "EEE",
+      "class_12_score": "70.0%",
+      "score": "70%",
+      "scholarship_interest": "Yes"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 141.809,
+    "text": "Just tell me here what is the fee structure?",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "stt",
+    "t": 144.041,
+    "text": "নেই।",
+    "language": "hi-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 155.969,
+    "text": "For your 70% score, B.Tech core branches cost ₹1,00,000 to ₹1,35,000/year plus ₹15,000 admission fee. Would you like hostel details too?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Priority",
+      "name": "Priority",
+      "program_of_interest": "B.Tech EEE",
+      "program": "B.Tech EEE",
+      "specialization": "EEE",
+      "class_12_score": "70.0%",
+      "score": "70%",
+      "scholarship_interest": "Yes"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 156.825,
+    "text": "Bye",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 159.417,
+    "text": "Thank you for reaching out to Aditya University!",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Priority",
+      "name": "Priority",
+      "program_of_interest": "B.Tech EEE",
+      "program": "B.Tech EEE",
+      "specialization": "EEE",
+      "class_12_score": "70.0%",
+      "score": "70%",
+      "scholarship_interest": "Yes"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 159.467,
+    "text": "Can you repeat?",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 163.189,
+    "text": "Let me check that for you... Thank you for reaching",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Priority",
+      "name": "Priority",
+      "program_of_interest": "B.Tech EEE",
+      "program": "B.Tech EEE",
+      "specialization": "EEE",
+      "class_12_score": "70.0%",
+      "score": "70%",
+      "scholarship_interest": "Yes"
+    }
+  }
+]

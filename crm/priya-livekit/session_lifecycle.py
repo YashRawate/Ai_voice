@@ -36,17 +36,18 @@ def start_new_call(
     sid = session_id or str(uuid.uuid4())
     test_logger = get_or_create_logger(sid)
 
+    stack_str = "".join(traceback.format_stack()[-6:])
     if sid in _ACTIVE_CALL_REGISTRY:
         logger.warning(
-            "[SESSION_INIT] Session %s already exists in registry — duplicate call detected!",
-            sid
+            "[SESSION_INIT] Session %s already exists in registry — duplicate call detected! stack=%s",
+            sid, stack_str
         )
         test_logger.log_session_init(reason="duplicate_call_start_attempt", is_first_call=False)
         return _ACTIVE_CALL_REGISTRY[sid]
 
-    logger.info(
-        "[SESSION_INIT] Called exactly once for sid=%s | phone=%s",
-        sid, phone or "unknown"
+    logger.warning(
+        "[SESSION_INIT] Called for phone=%s | sid=%s | stack=%s",
+        phone or "unknown", sid, stack_str
     )
     test_logger.log_session_init(reason="first_inbound_call_start", is_first_call=True)
 

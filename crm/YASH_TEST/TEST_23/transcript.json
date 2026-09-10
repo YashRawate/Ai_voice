@@ -1,0 +1,176 @@
+[
+  {
+    "type": "llm_reply",
+    "t": 24.101,
+    "text": "Hello! This is Priya from Aditya University, calling about your admission enquiry. Is this a good time?",
+    "stage": "GENERAL",
+    "facts_snapshot": null
+  },
+  {
+    "type": "stt",
+    "t": 26.985,
+    "text": "Yes",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 29.907,
+    "text": "May I know your name, please?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "_name_asked": true
+    }
+  },
+  {
+    "type": "stt",
+    "t": 33.336,
+    "text": "Aditya है मेरा नाम।",
+    "language": "hi-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 38.123,
+    "text": "Nice to meet you, Aditya! Which program or branch are you interested",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "_name_asked": true
+    }
+  },
+  {
+    "type": "stt",
+    "t": 38.446,
+    "text": "to be your ideal",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 45.603,
+    "text": "Aditya garu, could you please specify which program or branch interests you at Aditya University?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "_name_asked": true
+    }
+  },
+  {
+    "type": "stt",
+    "t": 47.054,
+    "text": "S.U.M. Aditya University",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 51.263,
+    "text": "Aditya garu, we have B.Tech, MBA, BBA,",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "_name_asked": true
+    }
+  },
+  {
+    "type": "stt",
+    "t": 52.294,
+    "text": "मेरे को सीएससी और",
+    "language": "hi-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 59.974,
+    "text": "Aditya garu, B.Tech CSE is a great choice! Could you please share your 12th Board or entrance exam marks?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "_name_asked": true
+    }
+  },
+  {
+    "type": "stt",
+    "t": 60.014,
+    "text": "अरे गारु गारु मत बोलो।",
+    "language": "hi-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 64.102,
+    "text": "Thank you for letting me know! May I know your name, please?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "_name_asked": true
+    }
+  },
+  {
+    "type": "stt",
+    "t": 66.69,
+    "text": "ಆದ್ಯ",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 71.714,
+    "text": "Nice to meet you, Aadya! Which program or branch are you interested in at",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "_name_asked": true,
+      "student_name": "ಆದ್ಯ",
+      "name": "ಆದ್ಯ"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 71.755,
+    "text": "Nice to meet you aa gaya",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 75.19,
+    "text": "Aadya garu, which program or branch",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "_name_asked": true,
+      "student_name": "ಆದ್ಯ",
+      "name": "ಆದ್ಯ"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 75.228,
+    "text": "I'm interested.",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 77.753,
+    "text": "Thank you,",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "_name_asked": true,
+      "student_name": "ಆದ್ಯ",
+      "name": "ಆದ್ಯ"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 77.976,
+    "text": "अरे बहुत सुंदर है ना।",
+    "language": "hi-IN",
+    "confidence": null,
+    "snr": null
+  }
+]

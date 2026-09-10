@@ -9,10 +9,10 @@ import re
 from typing import Optional, Dict, Any, List
 
 LANGUAGE_STYLE_BLOCKS = {
-    "en-IN": "Respond in simple, clear, conversational Indian English. Keep under 25 words.",
-    "hi-IN": "Respond in natural conversational Hindi/Hinglish (हिंदी / Hinglish). Use respectful 'आप' / 'जी'. Keep under 25 words.",
-    "te-IN": "Respond in natural conversational Telugu/Telugish (తెలుగు / Teluglish). Use respectful 'మీరు' / 'అండి' / 'గారు'. Keep under 25 words.",
-    "ta-IN": "Respond in natural conversational Tamil/Tanglish (தமிழ் / Tanglish). Keep under 25 words.",
+    "en-IN": "Respond ONLY in ENGLISH (simple, clear, conversational Indian English). Keep under 25 words.",
+    "hi-IN": "Respond ONLY in HINDI / Hinglish (हिंदी / Hinglish). Use respectful 'आप' / 'जी'. Keep under 25 words.",
+    "te-IN": "Respond ONLY in TELUGU / Telugish (తెలుగు / Teluglish). Use respectful 'మీరు' / 'అండి' / 'గారు'. Keep under 25 words.",
+    "ta-IN": "Respond ONLY in TAMIL / Tanglish (தமிழ் / Tanglish). Keep under 25 words.",
 }
 
 CORE_IDENTITY_AND_RULES = """# ROLE & MISSION
@@ -223,7 +223,15 @@ class LanguageHandler:
             if cls._TAMIL_SCRIPT.search(t):
                 return "ta-IN"
 
-            # 4. Romanized dialect keywords
+        # 4. Check STT detected language (resolves code-mixing when Romanized text is ambiguous)
+        if stt_detected_language and stt_detected_language.lower().strip() not in ("unknown", ""):
+            code = cls.normalize_language(stt_detected_language)
+            if code:
+                return code
+
+        if transcript_text and transcript_text.strip():
+            t = transcript_text.strip()
+            # 5. Romanized dialect keywords
             if cls._TELUGU_WORDS.search(t):
                 return "te-IN"
             if cls._HINDI_WORDS.search(t):
@@ -231,15 +239,9 @@ class LanguageHandler:
             if cls._TAMIL_WORDS.search(t):
                 return "ta-IN"
 
-            # 5. English phrasing detection
+            # 6. English phrasing detection
             if cls._ENGLISH_WORDS.search(t):
                 return "en-IN"
-
-        # 6. Check STT detected language if non-default
-        if stt_detected_language and stt_detected_language.lower().strip() not in ("unknown", "", "en-in", "en", "english"):
-            code = cls.normalize_language(stt_detected_language)
-            if code:
-                return code
 
         return current_language or "en-IN"
 

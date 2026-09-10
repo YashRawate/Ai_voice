@@ -109,6 +109,83 @@ class TestLangGraphPipeline(unittest.TestCase):
         self.assertEqual(res_en["facts"].get("program"), "B.Tech ECE")
         self.assertGreater(len(res_en["messages"]), 4)
 
+    def test_yash_test_2_dialogue_zero_repetition(self):
+        """Replay exact dialogue from TEST_2.md and verify zero question repetition."""
+        thread_id = "test-call-yash-dialogue-003"
+        config = {"configurable": {"thread_id": thread_id}}
+
+        # Turn 1: Caller introduces name
+        r1 = self.graph.invoke(
+            {
+                "session_id": thread_id,
+                "last_user_text": "My name is Yash",
+                "language_code": "en-IN",
+                "facts": {},
+                "messages": [],
+                "stage": "GREETING",
+                "next_field": "student_name",
+            },
+            config=config,
+        )
+        self.assertEqual(r1["facts"].get("student_name"), "Yash")
+        self.assertNotIn("May I know your name", r1["messages"][-1].content)
+
+        # Turn 2: Program of interest
+        r2 = self.graph.invoke(
+            {"last_user_text": "B.Tech Computer Science"},
+            config=config,
+        )
+        self.assertEqual(r2["facts"].get("student_name"), "Yash")
+        self.assertIn("CSE", r2["facts"].get("program", ""))
+        self.assertNotIn("May I know your name", r2["messages"][-1].content)
+
+        # Turn 3: 12th score and JEE rank
+        r3 = self.graph.invoke(
+            {"last_user_text": "In 12th I got 90% and in JEE I got 82 rank."},
+            config=config,
+        )
+        self.assertEqual(r3["facts"].get("marks_12"), "90%")
+        self.assertEqual(r3["facts"].get("entrance_exam"), "JEE Main")
+        self.assertEqual(r3["stage"], "CONVERT")
+        self.assertNotIn("May I know your name", r3["messages"][-1].content)
+
+        # Turn 4: Declined booking
+        r4 = self.graph.invoke(
+            {"last_user_text": "No, not now."},
+            config=config,
+        )
+        self.assertNotIn("May I know your name", r4["messages"][-1].content)
+        self.assertNotIn("Which program", r4["messages"][-1].content)
+
+        # Turn 5: Language switch to Hindi asking about college
+        r5 = self.graph.invoke(
+            {"last_user_text": "आप मुझे कॉलेज के बारे में बता सकते हो?"},
+            config=config,
+        )
+        self.assertEqual(r5["language_code"], "hi-IN")
+        self.assertEqual(r5["facts"].get("student_name"), "Yash")
+        self.assertNotIn("नाम", r5["messages"][-1].content)
+        self.assertNotIn("12वीं", r5["messages"][-1].content)
+
+        # Turn 6: Asked about hostel in Hindi
+        r6 = self.graph.invoke(
+            {"last_user_text": "आप हॉस्टल फी के बारे में बताइए।"},
+            config=config,
+        )
+        self.assertEqual(r6["facts"].get("student_name"), "Yash")
+        self.assertNotIn("नाम", r6["messages"][-1].content)
+
+        # Turn 7: Mid-call Telugu switch
+        r7 = self.graph.invoke(
+            {"last_user_text": "Hostel gurinchi cheppandi"},
+            config=config,
+        )
+        self.assertEqual(r7["language_code"], "te-IN")
+        self.assertEqual(r7["facts"].get("student_name"), "Yash")
+        self.assertNotIn("Mee peru", r7["messages"][-1].content)
+        self.assertNotIn("May I know your name", r7["messages"][-1].content)
+
 
 if __name__ == "__main__":
     unittest.main()
+

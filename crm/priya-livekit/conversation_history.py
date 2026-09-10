@@ -152,17 +152,54 @@ class ConversationHistory:
             "just", "now", "not", "talking", "with", "from", "in", "at", "for", "about",
             "platform", "first", "which", "what", "how", "why", "where", "you", "me",
             "done", "doing", "passed", "studying", "yes", "yeah", "yep", "no", "nah",
-            "okay", "ok", "sure", "fine", "hello", "hi", "hey", "alright", "sare", "theek"
+            "okay", "ok", "sure", "fine", "hello", "hi", "hey", "alright", "sare", "theek",
+            "like", "that", "this", "there", "then", "want", "visit", "visiting", "book",
+            "feel", "feeling", "role", "position", "treasury", "thunder", "situation", "status",
+            "know", "knowing", "tell", "said", "say", "saying", "actually", "right", "wrong",
+            "these", "those", "some", "any", "every"
         }
+        # 3. Extract Student Name (supports Hindi, Telugu, Tamil, Latin, and corrections)
         name_match = re.search(
-            r'(?:my\s*name\s*is|i\s*am|i\'m|this\s*is|call\s*me|naa\s*peru|mera\s*naam)\s+([a-zA-Z]{3,20})',
-            text_lower
+            r'(?:my\s*name\s*is|myself|i\s*am|i\'m|this\s*is|call\s*me|naa\s*peru|mera\s*naam|naam|peru)\s*[:=]?\s*([^\W\d_]+(?:\s+[^\W\d_]+)?)(?:,?\s*(?:not|no|lekapothe)\s*([^\W\d_]+)?)?',
+            text,
+            re.UNICODE | re.IGNORECASE
         )
+        if not name_match:
+            name_match = re.search(
+                r'\bnot\s+[^\W\d_]+,?\s*(?:my\s*name\s*is|i\s*am|i\'m|it\'s|its|call\s*me)\s+([^\W\d_]+)',
+                text,
+                re.UNICODE | re.IGNORECASE
+            )
+
         if name_match:
-            candidate = name_match.group(1).capitalize()
-            if candidate.lower() not in invalid_names and not candidate.lower().endswith("ing"):
+            candidate = name_match.group(1).strip()
+            parts = candidate.split()
+            if len(parts) > 1 and parts[-1].lower() in {"and", "aur", "ani", "from", "here", "speaking", "calling", "interested", "looking", "for", "to", "in", "is", "not", "no"}:
+                candidate = parts[0]
+            cand_low = candidate.lower()
+            if (
+                len(candidate) >= 2
+                and cand_low not in invalid_names
+                and not any(w in invalid_names for w in cand_low.split())
+                and not cand_low.endswith("ing")
+            ):
                 new_facts['name'] = candidate
                 new_facts['student_name'] = candidate
+        elif not self.has_fact('program') and not self.has_fact('name') and len(text.strip().split()) in (1, 2, 3):
+            cand = text.strip().strip(".,!?:;\"'")
+            cand_low = cand.lower()
+            words = [w.strip(".,!?:;\"'") for w in cand_low.split()]
+            if (
+                cand
+                and not re.search(r'\d', cand)
+                and cand_low not in invalid_names
+                and not any(w in invalid_names for w in words)
+                and not re.search(r'\b(btech|b\.tech|cse|ece|fee|fees|hostel|campus|visit|college|aditya|scholarship|exam|marks)\b', cand_low)
+                and not cand_low.endswith("ing")
+            ):
+                new_facts['name'] = cand
+                new_facts['student_name'] = cand
+
 
         # 4. Extract entrance exams
         exams_map = {

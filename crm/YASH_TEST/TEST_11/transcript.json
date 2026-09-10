@@ -1,0 +1,515 @@
+[
+  {
+    "type": "llm_reply",
+    "t": 19.573,
+    "text": "Hello! This is Priya from Aditya University, calling about your admission enquiry. Is this a good time?",
+    "stage": "GENERAL",
+    "facts_snapshot": null
+  },
+  {
+    "type": "stt",
+    "t": 22.81,
+    "text": "स्थिति की भूमिका है।",
+    "language": "hi-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 27.071,
+    "text": "नमस्ते! कृपया बताएं, आपका नाम क्या है?",
+    "stage": "GENERAL",
+    "facts_snapshot": null
+  },
+  {
+    "type": "stt",
+    "t": 31.182,
+    "text": "Yeah, just feel.",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 34.48,
+    "text": "May I know your name, please?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yeah, just feel",
+      "name": "Yeah, just feel"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 37.377,
+    "text": "My name is Riyaz",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 43.289,
+    "text": "Nice to meet you, Riyaz! Which program or branch are you interested in at Aditya",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yeah, just feel",
+      "name": "Yeah, just feel"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 43.316,
+    "text": "I said yes",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 49.582,
+    "text": "Thank you, Riyaz. Which program or branch are you interested in at Aditya",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yeah, just feel",
+      "name": "Yeah, just feel"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 49.618,
+    "text": "I said yes",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 57.373,
+    "text": "Riyaz garu, to assist you best, may I know which program or branch you are interested in at Aditya University?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yeah, just feel",
+      "name": "Yeah, just feel"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 61.734,
+    "text": "My name is Yash, not Riyaz.",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 68.082,
+    "text": "Nice to meet you, Yash! Which program or branch are you interested in at Aditya University?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yeah, just feel",
+      "name": "Yeah, just feel"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 72.431,
+    "text": "I'm interested for B.Tech Computer Science.",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 80.377,
+    "text": "B.Tech CSE offers specialized tracks in AI & ML, Data Science, and industry programs with SAP, Google Cloud, and Microsoft.",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yeah, just feel",
+      "name": "Yeah, just feel",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 84.584,
+    "text": "Okay",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 90.669,
+    "text": "Certainly Yeah, just feel! What other questions do you have regarding B.Tech CSE or admissions?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yeah, just feel",
+      "name": "Yeah, just feel",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 95.147,
+    "text": "What is the placement in the Aditya University?",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 111.675,
+    "text": "Checking our placement records... Yash, we had 3,832+ placements last year with a top package of ₹27 LPA at Walmart. Top recruiters include Amazon, TCS, and Infosys.",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yeah, just feel",
+      "name": "Yeah, just feel",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 116.865,
+    "text": "Okay",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "stt",
+    "t": 118.114,
+    "text": "Can you please tell me about the hostel fee?",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 128.272,
+    "text": "We provide AC and Non-AC hostel options with attached bathrooms and multi-cuisine meals. Would you like me to send the direct admission link to reserve your seat and hostel room?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yeah, just feel",
+      "name": "Yeah, just feel",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "hostel_interest": "Yes"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 131.985,
+    "text": "What are the securities in the wholesale?",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 144.374,
+    "text": "Let me check that for you... Our 250-acre gated campus has 24/7 CCTV surveillance and secure access to ensure safety for all residents and students.",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yeah, just feel",
+      "name": "Yeah, just feel",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "hostel_interest": "Yes"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 149.396,
+    "text": "What, what are, how many guards are working there?",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 162.469,
+    "text": "One moment... I don't have exact guard numbers, but our campus security is robust with 24/7 CCTV and controlled access for your safety. Shall I send you the application link?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yeah, just feel",
+      "name": "Yeah, just feel",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "hostel_interest": "Yes"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 167.637,
+    "text": "नो, क्या आप मुझे बता सकते हो हॉस्टल का फी कितना है?",
+    "language": "hi-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 176.472,
+    "text": "Campus mein AC aur Non-AC hostel facilities meals ke saath available hain: Non-AC 30 thousand rupees aur AC 45 thousand rupees per semester.",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yeah, just feel",
+      "name": "Yeah, just feel",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "hostel_interest": "Yes"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 179.577,
+    "text": "और वन ईयर का?",
+    "language": "hi-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 193.673,
+    "text": "एक पल रुकिए... Hostel fees for one year: Non-AC ₹1,15,000 and AC ₹1,30,000 with attached baths and multi-cuisine meals. Interested in booking a campus visit?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yeah, just feel",
+      "name": "Yeah, just feel",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "hostel_interest": "Yes"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 198.044,
+    "text": "बहुत ज़्यादा पैसा है, थोड़ा कम नहीं हो सकता क्या?",
+    "language": "hi-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 212.57,
+    "text": "जी, जानकारी देख रही हूँ... We offer up to 50% merit scholarships, semester installments, and 0% interest SBI/HDFC education loans for your ease. Would you like to know scholarship details?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yeah, just feel",
+      "name": "Yeah, just feel",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "hostel_interest": "Yes"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 215.914,
+    "text": "आप हिंदी में बात कीजिए तो।",
+    "language": "hi-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 227.375,
+    "text": "जी बिल्कुल, हम 50% तक की मेरिट स्कॉलरशिप, सेमेस्टर इंस्टॉलमेंट और 0% ब्याज वाले शिक्षा लोन देते हैं। स्कॉलरशिप जानना चाहेंगे?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yeah, just feel",
+      "name": "Yeah, just feel",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "hostel_interest": "Yes"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 231.244,
+    "text": "हां, बताइए स्कॉलरशिप के बारे में।",
+    "language": "hi-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 240.681,
+    "text": "12th Board marks, JEE, aur ASAT score ke basis par 10% se 50% tak merit scholarship milti hai.",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yeah, just feel",
+      "name": "Yeah, just feel",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "hostel_interest": "Yes"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 243.508,
+    "text": "अच्छा।",
+    "language": "hi-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 247.395,
+    "text": "क्या आप ASAT स्कॉलरशिप परीक्षा के लिए रजिस्टर",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yeah, just feel",
+      "name": "Yeah, just feel",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "hostel_interest": "Yes"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 247.423,
+    "text": "और बताइए अपने कैंपस के बारे में।",
+    "language": "hi-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 255.074,
+    "text": "Aditya University Surampalem mein 250-acre ke smart campus mein world-class facilities ke saath hai.",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yeah, just feel",
+      "name": "Yeah, just feel",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "hostel_interest": "Yes"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 263.196,
+    "text": "अच्छा फिर और सिक्योरिटीज़ वगैरह क्या होते हैं मतलब जैसे कि अगर रैगिंग वगैरह हो रहा है तो?",
+    "language": "hi-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 274.67,
+    "text": "एक पल रुकिए... Hamare campus mein 24/7 CCTV surveillance aur strict anti-ragging policies hain, bilkul suraksha aur shanti ka poora dhyan rakha jata hai.",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yeah, just feel",
+      "name": "Yeah, just feel",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "hostel_interest": "Yes"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 279.37,
+    "text": "और फेस्टिवल्स कैसे कैसे मनाए जाते हैं?",
+    "language": "hi-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 291.675,
+    "text": "एक पल रुकिए... Aditya University mein vibrant cultural festivals aur events hote hain, jahan aap apni talents dikhakar campus life ka maza le sakte hain. Aapko kaunsa program pasand hai?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yeah, just feel",
+      "name": "Yeah, just feel",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "hostel_interest": "Yes"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 292.044,
+    "text": "In that",
+    "language": "en-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 295.002,
+    "text": "May I know your name, please?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yeah, just feel",
+      "name": "Yeah, just feel",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "hostel_interest": "Yes"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 295.028,
+    "text": "Thunder Treasury क्या होता है?",
+    "language": "hi-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 304.975,
+    "text": "एक पल रुकिए... Aditya University में Thunder Treasury कोई प्रोग्राम नहीं है। आप B.Tech, MBA, Pharmacy, या Forensic Science में रुचि रखते हैं?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yeah, just feel",
+      "name": "Yeah, just feel",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "hostel_interest": "Yes"
+    }
+  },
+  {
+    "type": "stt",
+    "t": 312.009,
+    "text": "अच्छा, आप ऐसा समझिए। मैंने पूछा कल्चरल इवेंट क्या-क्या होते हैं वहां में?",
+    "language": "hi-IN",
+    "confidence": null,
+    "snr": null
+  },
+  {
+    "type": "llm_reply",
+    "t": 319.194,
+    "text": "एक पल रुकिए... धन्यवाद! Aditya University में वार्षिक सांस्कृतिक उत्सव, संगीत, नृत्य, और खेल प्रतियोगिताएं होती हैं। कौन सा प्रोग्राम आप लेना चाहते हैं?",
+    "stage": "GENERAL",
+    "facts_snapshot": {
+      "student_name": "Yeah, just feel",
+      "name": "Yeah, just feel",
+      "program_of_interest": "B.Tech CSE",
+      "program": "B.Tech CSE",
+      "specialization": "CSE",
+      "hostel_interest": "Yes"
+    }
+  }
+]

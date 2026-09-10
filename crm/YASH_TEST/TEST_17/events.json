@@ -1,0 +1,65 @@
+[
+  {
+    "type": "session_init",
+    "t": 0.001,
+    "reason": "livekit_agent_entrypoint",
+    "is_first_call": true,
+    "call_stack": [
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\threading.py\", line 1012, in _bootstrap\n    self._bootstrap_inner()\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\threading.py\", line 1041, in _bootstrap_inner\n    self.run()\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\threading.py\", line 992, in run\n    self._target(*self._args, **self._kwargs)\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\livekit\\agents\\ipc\\job_proc_lazy_main.py\", line 479, in thread_main\n    client.run()\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\livekit\\agents\\ipc\\proc_client.py\", line 70, in run\n    loop.run_until_complete(self._task)\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\asyncio\\base_events.py\", line 712, in run_until_complete\n    self.run_forever()\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\asyncio\\base_events.py\", line 683, in run_forever\n    self._run_once()\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\asyncio\\base_events.py\", line 2040, in _run_once\n    handle._run()\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\asyncio\\events.py\", line 89, in _run\n    self._context.run(self._callback, *self._args)\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\opentelemetry\\util\\_decorator.py\", line 61, in async_wrapper\n    return await func(*args, **kwargs)  # type: ignore\n",
+      "  File \"C:\\Users\\yashr\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\livekit\\agents\\ipc\\job_proc_lazy_main.py\", line 335, in _traceable_entrypoint\n    await self._job_entrypoint_fnc(job_ctx)\n",
+      "  File \"C:\\Users\\yashr\\OneDrive\\Desktop\\Ai_voice-main\\crm\\priya-livekit\\agent.py\", line 2342, in entrypoint\n    session_logger.log_session_init(reason=\"livekit_agent_entrypoint\", is_first_call=True)\n",
+      "  File \"C:\\Users\\yashr\\OneDrive\\Desktop\\Ai_voice-main\\crm\\priya-livekit\\test_session_logger.py\", line 184, in log_session_init\n    \"call_stack\": traceback.format_stack(),\n"
+    ]
+  },
+  {
+    "type": "error",
+    "t": 8.098,
+    "message": "LiveKit session error: type='tts_error' timestamp=1789018179.6875157 label='livekit.plugins.sarvam.tts.TTS' error=APIStatusError('TTS API error from Sarvam: {\"type\":\"error\",\"data\":{\"request_id\":\"20260910_dad9c429-c710-457a-8019-ef2f3b7044ea\",\"message\":\"Credits exhausted. Add credits in the API Dashboard.\",\"code\":402}}', status_code=500, request_id=None, body={'type': 'error', 'data': {'request_id': '20260910_dad9c429-c710-457a-8019-ef2f3b7044ea', 'message': 'Credits exhausted. Add credits in the API Dashboard.', 'code': 402}}, retryable=True) recoverable=True",
+    "traceback": null
+  },
+  {
+    "type": "error",
+    "t": 8.313,
+    "message": "LiveKit session error: type='stt_error' timestamp=1789018179.9015832 label='livekit.plugins.sarvam.stt.STT' error=APIStatusError('Sarvam STT WebSocket closed unexpectedly: {\"msg_type\": \"CLOSE\", \"close_code\": 1003, \"close_reason\": \"Credits exhausted. Add credits in the API Dashboard. (request_id: 20260910_8abb2244-33ad-47ea-9759-007ea6db5906)\"}', status_code=1003, request_id=None, body={'msg_type': 'CLOSE', 'close_code': 1003, 'close_reason': 'Credits exhausted. Add credits in the API Dashboard. (request_id: 20260910_8abb2244-33ad-47ea-9759-007ea6db5906)'}, retryable=True) recoverable=False",
+    "traceback": null
+  },
+  {
+    "type": "error",
+    "t": 8.605,
+    "message": "LiveKit session error: type='tts_error' timestamp=1789018180.194232 label='livekit.plugins.sarvam.tts.TTS' error=APIStatusError('TTS API error from Sarvam: {\"type\":\"error\",\"data\":{\"request_id\":\"20260910_4db8cc55-0a0b-4da8-af7a-495b682bed45\",\"message\":\"Credits exhausted. Add credits in the API Dashboard.\",\"code\":402}}', status_code=500, request_id=None, body={'type': 'error', 'data': {'request_id': '20260910_4db8cc55-0a0b-4da8-af7a-495b682bed45', 'message': 'Credits exhausted. Add credits in the API Dashboard.', 'code': 402}}, retryable=True) recoverable=True",
+    "traceback": null
+  },
+  {
+    "type": "error",
+    "t": 9.278,
+    "message": "LiveKit session error: type='stt_error' timestamp=1789018180.8674762 label='livekit.plugins.sarvam.stt.STT' error=APIStatusError('Sarvam STT WebSocket closed unexpectedly: {\"msg_type\": \"CLOSE\", \"close_code\": 1003, \"close_reason\": \"Credits exhausted. Add credits in the API Dashboard. (request_id: 20260910_f5cd04db-798e-4e6c-91c4-1cdd4df179cd)\"}', status_code=1003, request_id=None, body={'msg_type': 'CLOSE', 'close_code': 1003, 'close_reason': 'Credits exhausted. Add credits in the API Dashboard. (request_id: 20260910_f5cd04db-798e-4e6c-91c4-1cdd4df179cd)'}, retryable=True) recoverable=False",
+    "traceback": null
+  },
+  {
+    "type": "error",
+    "t": 10.105,
+    "message": "LiveKit session error: type='stt_error' timestamp=1789018181.694094 label='livekit.plugins.sarvam.stt.STT' error=APIStatusError('Sarvam STT WebSocket closed unexpectedly: {\"msg_type\": \"CLOSE\", \"close_code\": 1003, \"close_reason\": \"Credits exhausted. Add credits in the API Dashboard. (request_id: 20260910_8558c4d2-a58e-4e38-b921-2e33627043e3)\"}', status_code=1003, request_id=None, body={'msg_type': 'CLOSE', 'close_code': 1003, 'close_reason': 'Credits exhausted. Add credits in the API Dashboard. (request_id: 20260910_8558c4d2-a58e-4e38-b921-2e33627043e3)'}, retryable=True) recoverable=False",
+    "traceback": null
+  },
+  {
+    "type": "error",
+    "t": 10.979,
+    "message": "LiveKit session error: type='tts_error' timestamp=1789018182.5680678 label='livekit.plugins.sarvam.tts.TTS' error=APIStatusError('TTS API error from Sarvam: {\"type\":\"error\",\"data\":{\"request_id\":\"20260910_e24f6340-8680-459f-8161-6b5b25bdd3eb\",\"message\":\"Credits exhausted. Add credits in the API Dashboard.\",\"code\":402}}', status_code=500, request_id=None, body={'type': 'error', 'data': {'request_id': '20260910_e24f6340-8680-459f-8161-6b5b25bdd3eb', 'message': 'Credits exhausted. Add credits in the API Dashboard.', 'code': 402}}, retryable=True) recoverable=True",
+    "traceback": null
+  },
+  {
+    "type": "error",
+    "t": 11.283,
+    "message": "LiveKit session error: type='stt_error' timestamp=1789018182.872704 label='livekit.plugins.sarvam.stt.STT' error=APIStatusError('Sarvam STT WebSocket closed unexpectedly: {\"msg_type\": \"CLOSE\", \"close_code\": 1003, \"close_reason\": \"Credits exhausted. Add credits in the API Dashboard. (request_id: 20260910_7ec0d22c-1a27-48a7-8312-89b6d88f70a4)\"}', status_code=1003, request_id=None, body={'msg_type': 'CLOSE', 'close_code': 1003, 'close_reason': 'Credits exhausted. Add credits in the API Dashboard. (request_id: 20260910_7ec0d22c-1a27-48a7-8312-89b6d88f70a4)'}, retryable=True) recoverable=False",
+    "traceback": null
+  }
+]

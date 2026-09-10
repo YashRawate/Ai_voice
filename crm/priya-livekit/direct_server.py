@@ -50,6 +50,18 @@ SARVAM_KEY = os.getenv("SARVAM_API_KEY", "")
 SARVAM_SPEAKER = os.getenv("SARVAM_SPEAKER", "shreya")
 TTS_PACE = float(os.getenv("TTS_PACE", "1.12"))
 DEFAULT_LANG = os.getenv("DEFAULT_LANGUAGE", "en-IN")
+USE_LANGGRAPH = os.getenv("USE_LANGGRAPH", "true").lower() == "true"
+
+# ── LangGraph Pipeline Initialization ─────────────────────────────────────────
+_LANGGRAPH_APP = None
+try:
+    from graph import build_call_graph
+    from llm_failover import build_langchain_llm
+    _LANGGRAPH_LLM = build_langchain_llm()
+    _LANGGRAPH_APP = build_call_graph(llm=_LANGGRAPH_LLM)
+    logger.info("LangGraph pipeline successfully initialized for direct audio server")
+except Exception as _ex:
+    logger.warning(f"LangGraph initialization deferred or running in fallback: {_ex}")
 
 
 def get_llm_client():
@@ -72,6 +84,7 @@ def get_llm_client():
             api_key=os.getenv("OPENAI_API_KEY", "dummy"),
             timeout=4.0,
         ), "gpt-4o-mini"
+
 
 
 # ── Active Call Session Context ───────────────────────────────────────────────
@@ -293,7 +306,30 @@ class DirectCallSession:
             await self.speak_phrase(reply)
 
     async def _generate_llm_response(self, user_text: str, lang: str) -> str:
-        """Call LLM with dynamic conversion directives."""
+        """Call LLM with dynamic conversion directives or LangGraph state machine."""
+        if USE_LANGGRAPH and _LANGGRAPH_APP is not None:
+            try:
+                config = {"configurable": {"thread_id": self.session_id}}
+                graph_input = {
+                    "session_id": self.session_id,
+                    "last_user_text": user_text,
+                    "language_code": lang,
+                    "facts": dict(self.long_mgr.fact_memory.facts),
+                    "stage": "GREETING",
+                    "next_field": "student_name",
+                }
+                res = _LANGGRAPH_APP.invoke(graph_input, config=config)
+                if "facts" in res:
+                    for k, v in res["facts"].items():
+                        self.long_mgr.record_fact(k, v)
+                ai_msg = res["messages"][-1]
+                content = getattr(ai_msg, "content", str(ai_msg)).strip()
+                content = content.replace("*", "").replace("#", "").strip()
+                if content:
+                    return content
+            except Exception as e:
+                logger.warning(f"LangGraph execution exception, falling back to direct LLM: {e}")
+
         prov, client, model_name = get_llm_client()
         directives = self.long_mgr.build_turn_prompt(user_text, language=lang)
 
