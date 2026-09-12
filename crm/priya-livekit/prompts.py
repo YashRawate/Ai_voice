@@ -19,10 +19,28 @@ Convert every caller toward: campus visit, ASAT registration, or direct applicat
 - Never fabricate fees/scholarships/placements — use tool results or the fact sheet only."""
 
 LANGUAGE_STYLE = {
-    "en-IN": "Respond in simple, clear, conversational Indian English. Keep under 25 words.",
-    "hi-IN": "Respond in natural conversational Hindi/Hinglish. Use polite 'आप' / 'जी'. Keep under 25 words.",
-    "te-IN": "Respond in natural conversational Telugu/Telugish. Use polite 'మీరు' / 'అండి' / 'గారు'. Keep under 25 words.",
-    "ta-IN": "Respond in natural conversational Tamil/Tanglish. Keep under 25 words.",
+    "en-IN": (
+        "CRITICAL: The user is speaking in English. "
+        "You MUST respond ONLY in simple, clear, conversational Indian English. Keep under 25 words with exactly ONE question."
+    ),
+    "hi-IN": (
+        "CRITICAL: The user is speaking in Hindi. "
+        "You MUST respond ONLY in Hindi, using Hindi (Devanagari script, हिंदी). "
+        "Do NOT switch to English even if the user's sentence contains English words mixed in — reply fully in Hindi. "
+        "Use polite 'आप' / 'जी'. Keep under 25 words with exactly ONE question."
+    ),
+    "te-IN": (
+        "CRITICAL: The user is speaking in Telugu. "
+        "You MUST respond ONLY in Telugu, using Telugu script (తెలుగు). "
+        "Do NOT switch to English even if the user's sentence contains English words mixed in — reply fully in Telugu. "
+        "Use polite 'మీరు' / 'అండి' / 'గారు'. Keep under 25 words with exactly ONE question."
+    ),
+    "ta-IN": (
+        "CRITICAL: The user is speaking in Tamil. "
+        "You MUST respond ONLY in Tamil, using Tamil script (தமிழ்). "
+        "Do NOT switch to English even if the user's sentence contains English words mixed in — reply fully in Tamil. "
+        "Keep under 25 words with exactly ONE question."
+    ),
 }
 
 FACT_SHEET = """• Campus: 250-acre smart green campus in Surampalem, Kakinada District, AP. NAAC A++ accredited.

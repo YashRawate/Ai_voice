@@ -1,0 +1,49 @@
+COMPLETE CALL TRANSCRIPT (room_1789062762180)
+============================================================
+Start Time: 2026-09-10 23:22:42
+Total Turns: 7
+============================================================
+
+Turn 1 [23:22:59] (en-IN):
+User:  Yes
+Priya: Hello! May I know your name, please?
+(Latency: 0.00s)
+
+Turn 2 [23:23:00] (en-IN):
+User:  
+Priya: May I know your name, please?
+(Latency: 0.00s)
+
+Turn 3 [23:23:05] (en-IN):
+User:  My money is washed.
+Priya: I'm here to help!
+(Latency: 0.00s)
+
+Turn 4 [23:23:06] (en-IN):
+User:  
+Priya: Could you please share your name so I can assist you better?
+(Latency: 0.00s)
+
+Turn 5 [23:23:13] (hi-IN):
+User:  मेरा नाम यश है।
+Priya: Nice to meet you, Yash!
+(Latency: 0.00s)
+
+Turn 6 [23:23:14] (hi-IN):
+User:  
+Priya: Which program or branch are you interested in at Aditya University?
+(Latency: 0.00s)
+
+Turn 7 [23:23:16] (en-IN):
+User:  Thank you
+Priya: Thank you for reaching out to Aditya University! Wishing you all the best for your admissions. Have a wonderful day!
+(Latency: 0.00s)
+
+============================================================
+CALL SUMMARY:
+- Total Duration: 33.8s
+- Turns Count: 7
+- Facts Discovered: {}
+- Questions Asked: ['student_name', 'program_interest', 'q_name', 'name_question', 'program_question', 'q_program']
+- Refusals: []
+============================================================

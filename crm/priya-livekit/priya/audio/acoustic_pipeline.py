@@ -228,7 +228,7 @@ class BargeInGate:
 
     REQUIRED_FRAMES = 6         # ~120ms at 20ms/frame
     NORMAL_THRESHOLD = 0.50     # Normal turn-taking threshold
-    BARGE_IN_THRESHOLD = 0.75   # Stricter threshold when Priya is speaking
+    BARGE_IN_THRESHOLD = 0.85   # Stricter threshold when Priya is speaking (PROJECT_IMPROVEMENT v2)
 
     def __init__(self):
         self.consecutive_speech = 0
@@ -237,11 +237,11 @@ class BargeInGate:
     def update(self, vad_prob: float, is_assistant_speaking: bool = False) -> bool:
         """
         Returns True only when barge-in should actually fire.
-        Threshold is elevated to 0.75 when assistant is speaking.
+        Threshold is elevated to 0.85 when assistant is speaking.
         """
         threshold = self.BARGE_IN_THRESHOLD if is_assistant_speaking else self.NORMAL_THRESHOLD
 
-        if vad_prob > threshold:
+        if vad_prob >= threshold:
             self.consecutive_speech += 1
         else:
             self.consecutive_speech = 0
@@ -355,24 +355,23 @@ class AcousticPipeline:
         # Step 1: Acoustic Echo Cancellation
         echo_cancelled = self.aec.cancel_echo(mic_frame)
 
-        # Step 2: SNR Pre-Filter Check
-        samples = np.frombuffer(echo_cancelled, dtype=np.int16).astype(np.float32) / 32768.0
+        # Step 2: Spectral Noise Suppression
+        noise_suppressed = self.noise_suppressor.suppress_noise(echo_cancelled, is_speech=True)
+
+        # Step 3: SNR Pre-Filter Check (discard < 8dB frames before VAD)
+        samples = np.frombuffer(noise_suppressed, dtype=np.int16).astype(np.float32) / 32768.0
         frame_rms = float(np.sqrt(np.mean(samples ** 2))) if len(samples) > 0 else 0.0
 
-        if not self.snr_gate.passes_snr_gate(echo_cancelled):
+        if not self.snr_gate.passes_snr_gate(noise_suppressed):
             # Frame is in noise floor — update rolling noise floor and skip VAD
             self.snr_gate.update_noise_floor(frame_rms)
-            clean_frame = self.noise_suppressor.suppress_noise(echo_cancelled, is_speech=False)
             self.barge_in_gate.consecutive_speech = 0
-            return clean_frame, False, 0.0
-
-        # Step 3: Spectral Noise Suppression
-        clean_frame = self.noise_suppressor.suppress_noise(echo_cancelled, is_speech=True)
+            return noise_suppressed, False, 0.0
 
         # Step 4: Calculate VAD Speech Probability
-        vad_prob = self._compute_vad_probability(clean_frame)
+        vad_prob = self._compute_vad_probability(noise_suppressed)
 
-        # Step 5: Update Debounce Gate
+        # Step 5: Update Debounce Gate (0.50 normal / 0.85 barge-in)
         barge_in_fired = self.barge_in_gate.update(
             vad_prob,
             is_assistant_speaking=self.is_assistant_speaking
@@ -380,9 +379,9 @@ class AcousticPipeline:
 
         if barge_in_fired:
             # Buffer audio for semantic confirmation
-            self.audio_buffer.extend(clean_frame)
+            self.audio_buffer.extend(noise_suppressed)
 
-        return clean_frame, barge_in_fired, vad_prob
+        return noise_suppressed, barge_in_fired, vad_prob
 
     def confirm_barge_in(self, partial_stt_text: str) -> bool:
         """
@@ -404,7 +403,7 @@ class AcousticPipeline:
             if frame_len in valid_sizes:
                 try:
                     is_speech = self.webrtc_vad.is_speech(frame_bytes, self.sample_rate)
-                    return 0.85 if is_speech else 0.15
+                    return 0.95 if is_speech else 0.15
                 except Exception:
                     pass
 
@@ -415,7 +414,7 @@ class AcousticPipeline:
             if rms < 0.01:
                 return 0.05
             elif rms > 0.06:
-                return 0.85
+                return 0.95
             else:
                 return float(np.clip(rms * 12.0, 0.1, 0.8))
         except Exception:

@@ -36,6 +36,8 @@ from direct_sarvam_tts import DirectSarvamTTS
 from agent import PatternRouter, _normalize_numbers_for_speech, INSTRUCTIONS
 from test_session_logger import TestSessionLogger, get_or_create_logger
 from priya.audio.acoustic_pipeline import AcousticPipeline
+from priya.language import resolve_mixed_language, build_language_system_prompt
+from session_store import GLOBAL_SESSION_STORE
 
 load_dotenv()
 logger = logging.getLogger("priya.direct_server")
@@ -110,6 +112,7 @@ class DirectCallSession:
         self.long_mgr = LongConversationManager(call_id=self.session_id)
         self.active_language = DEFAULT_LANG
         self.student_name = self.meta.get("student_name") or ""
+        self.is_exotel = os.getenv("TELEPHONY_CARRIER", "exotel").lower().strip() == "exotel"
 
         # Direct audio clients
         self.stt: Optional[DirectSarvamSTT] = None
@@ -195,11 +198,15 @@ class DirectCallSession:
 
         logger.info(f"[{self.session_id}] Caller ({language_code}): {transcript}")
         self.test_logger.log_stt(text=transcript, language=language_code)
-        if language_code and language_code in {"te-IN", "hi-IN", "en-IN", "ta-IN"}:
-            if language_code != self.active_language:
-                self.test_logger.log_language_switch(old_lang=self.active_language, new_lang=language_code)
-            self.active_language = language_code
-        await self.turn_queue.put((transcript, language_code))
+        # Apply code-mixed stability resolution
+        resolved_lang = resolve_mixed_language(language_code, transcript, self.active_language)
+        if resolved_lang and resolved_lang in {"te-IN", "hi-IN", "en-IN", "ta-IN"}:
+            if resolved_lang != self.active_language:
+                self.test_logger.log_language_switch(old_lang=self.active_language, new_lang=resolved_lang)
+                self.active_language = resolved_lang
+                self.tts.target_language_code = resolved_lang
+                GLOBAL_SESSION_STORE.update_state(self.session_id, language_code=resolved_lang)
+        await self.turn_queue.put((transcript, self.active_language))
 
     async def stop_speaking(self):
         """Cancel ongoing TTS playback and flush carrier audio buffer."""
@@ -225,22 +232,49 @@ class DirectCallSession:
         self.reporter.push_assistant_message(text)
 
         try:
+            pcm_buffer = bytearray()
             async for chunk in self.tts.synthesize_stream(text, language=self.active_language):
                 if not self.is_speaking or self.is_closed:
                     break
 
                 # Feed outgoing TTS chunk to AEC adaptive filter (converted to PCM)
-                pcm_ref = mulaw_to_pcm16(chunk)
+                pcm_ref = mulaw_to_pcm16(chunk) if len(chunk) < 320 else chunk
                 self.acoustic_pipeline.feed_tts_reference(pcm_ref)
 
-                payload = base64.b64encode(chunk).decode("utf-8")
+                if getattr(self, "is_exotel", False):
+                    # Exotel Voicebot requires raw 16-bit linear PCM little-endian aligned to 320 bytes
+                    pcm_buffer.extend(pcm_ref)
+                    while len(pcm_buffer) >= 640:
+                        send_chunk = bytes(pcm_buffer[:640])
+                        del pcm_buffer[:640]
+                        payload = base64.b64encode(send_chunk).decode("utf-8")
+                        await self.ws.send_json({
+                            "event": "media",
+                            "streamSid": self.stream_sid,
+                            "media": {"payload": payload}
+                        })
+                        await asyncio.sleep(0.001)
+                else:
+                    # Twilio requires 8-bit G.711 mu-law
+                    payload = base64.b64encode(chunk).decode("utf-8")
+                    await self.ws.send_json({
+                        "event": "media",
+                        "streamSid": self.stream_sid,
+                        "media": {"payload": payload}
+                    })
+                    await asyncio.sleep(0.001)
+
+            # Flush trailing audio for Exotel (padded to multiple of 320)
+            if getattr(self, "is_exotel", False) and len(pcm_buffer) > 0:
+                pad_len = (320 - (len(pcm_buffer) % 320)) % 320
+                if pad_len > 0:
+                    pcm_buffer.extend(b"\x00" * pad_len)
+                payload = base64.b64encode(bytes(pcm_buffer)).decode("utf-8")
                 await self.ws.send_json({
                     "event": "media",
                     "streamSid": self.stream_sid,
                     "media": {"payload": payload}
                 })
-                # Yield to event loop to keep latency tight
-                await asyncio.sleep(0.001)
         except asyncio.CancelledError:
             logger.debug("Playback cancelled by interruption")
         except Exception as e:
@@ -264,6 +298,7 @@ class DirectCallSession:
             # 1. Update 4-layer memory facts
             self.long_mgr.update_user_turn(transcript, language=lang)
             collected = self.long_mgr.fact_memory.facts
+            GLOBAL_SESSION_STORE.merge_facts(self.session_id, collected)
 
             # 2. Check for Goodbye with Goodbye Guard
             if is_goodbye(transcript):
@@ -314,7 +349,10 @@ class DirectCallSession:
                 continue
 
             # 4. Fast-Path Pattern Router (Sub-50ms cache)
-            cached_response = PatternRouter.match(transcript, collected, lang=lang)
+            from fast_path import try_fast_path as deterministic_fast_path
+            cached_response = deterministic_fast_path(transcript, language_code=lang)
+            if not cached_response:
+                cached_response = PatternRouter.match(transcript, collected, lang=lang)
             if cached_response:
                 elapsed_ms = (time.time() - t0) * 1000
                 logger.info(f"[{self.session_id}] [FAST-PATH] Hit in {elapsed_ms:.1f}ms: {cached_response[:40]}...")
@@ -356,8 +394,9 @@ class DirectCallSession:
 
         prov, client, model_name = get_llm_client()
         directives = self.long_mgr.build_turn_prompt(user_text, language=lang)
+        lang_prompt = build_language_system_prompt(lang)
 
-        system_prompt = f"{INSTRUCTIONS}\n\n# REALTIME DIRECTIVES FOR THIS TURN:\n{directives}"
+        system_prompt = f"{INSTRUCTIONS}\n\n# REALTIME DIRECTIVES FOR THIS TURN:\n{directives}\n\n{lang_prompt}"
         messages = [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_text},
@@ -388,9 +427,15 @@ class DirectCallSession:
             self.process_turns_task.cancel()
         if self.stt:
             await self.stt.close()
-        await self.tts.close()
-        self.reporter.finish()
+        if hasattr(self.tts, "close"):
+            await self.tts.close()
+        if hasattr(self.reporter, "aclose"):
+
+            await self.reporter.aclose()
+        elif hasattr(self.reporter, "finish"):
+            self.reporter.finish()
         self.test_logger.finalize(disposition="completed", notes="Direct carrier session concluded")
+
         logger.info(f"[{self.session_id}] Call session ended")
 
 
@@ -410,14 +455,25 @@ async def health_check():
     }
 
 
+@app.api_route("/", methods=["GET", "POST"])
+@app.api_route("/exoml", methods=["GET", "POST"])
+@app.api_route("/exotel-inbound", methods=["GET", "POST"])
 @app.api_route("/twiml", methods=["GET", "POST"])
-async def twiml_response(request: Request):
-    """Returns TwiML instructing Twilio to stream raw audio to our WebSocket."""
+async def stream_xml_response(request: Request):
+    """Returns JSON or ExoML/TwiML instructing Exotel or Twilio to stream raw audio to our WebSocket."""
     host = request.headers.get("host", f"localhost:{PORT}")
     ws_protocol = "wss" if request.url.scheme == "https" or "ngrok" in host else "ws"
     stream_url = f"{ws_protocol}://{host}/media-stream"
 
-    twiml = f"""<?xml version="1.0" encoding="UTF-8"?>
+    # If Exotel sends a GET to resolve the dynamic WebSocket URL, return the JSON it expects:
+    accept = request.headers.get("accept", "")
+    if "CallSid" in request.query_params or "json" in accept.lower() or request.url.path == "/":
+        return Response(
+            content=json.dumps({"url": stream_url}),
+            media_type="application/json"
+        )
+
+    xml_content = f"""<?xml version="1.0" encoding="UTF-8"?>
 <Response>
     <Connect>
         <Stream url="{stream_url}">
@@ -425,7 +481,8 @@ async def twiml_response(request: Request):
         </Stream>
     </Connect>
 </Response>"""
-    return Response(content=twiml, media_type="application/xml")
+    return Response(content=xml_content, media_type="application/xml")
+
 
 
 @app.websocket("/media-stream")
@@ -442,10 +499,15 @@ async def media_stream(ws: WebSocket):
         async for message in ws.iter_json():
             event = message.get("event")
 
+            # Handle Exotel/Twilio connection handshake
+            if event == "connected":
+                logger.info(f"Telephony carrier WebSocket handshake connected: protocol={message.get('protocol')}")
+                continue
+
             if event == "start":
                 start_data = message.get("start", {})
-                stream_sid = message.get("streamSid", "")
-                call_sid = start_data.get("callSid", "")
+                stream_sid = message.get("streamSid") or start_data.get("streamSid") or message.get("stream_sid", "")
+                call_sid = start_data.get("callSid") or message.get("callSid") or start_data.get("call_sid", "")
                 custom_params = start_data.get("customParameters", {})
                 logger.info(f"Call event 'start': callSid={call_sid}, streamSid={stream_sid}")
 
@@ -470,9 +532,13 @@ async def media_stream(ws: WebSocket):
                     continue
                 media_payload = message.get("media", {}).get("payload", "")
                 if media_payload:
-                    mulaw_chunk = base64.b64decode(media_payload)
-                    # Decode telephony mulaw to 16-bit PCM for acoustic pipeline
-                    pcm_chunk = mulaw_to_pcm16(mulaw_chunk)
+                    raw_chunk = base64.b64decode(media_payload)
+                    # Exotel sends 16-bit linear PCM little-endian (slin)
+                    # Twilio sends 8-bit G.711 mu-law
+                    if getattr(session, "is_exotel", False) or len(raw_chunk) % 320 == 0:
+                        pcm_chunk = raw_chunk
+                    else:
+                        pcm_chunk = mulaw_to_pcm16(raw_chunk)
 
                     # 7-step acoustic pipeline: AEC -> NS -> SNR Gate -> 2-Tier VAD -> Debounce
                     clean_pcm, barge_in_fired, vad_prob = session.acoustic_pipeline.process_frame(pcm_chunk)

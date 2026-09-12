@@ -60,6 +60,12 @@ class Reporter:
         finally:
             await self._http.close()
 
+    def finish(self) -> None:
+        """Non-async finish sentinel."""
+        if not self.enabled or not self._task:
+            return
+        self._queue.put_nowait(None)
+
     async def aclose(self) -> None:
         """Flush any queued events, then stop the worker. Call on agent shutdown."""
         if not self.enabled or not self._task:
@@ -69,3 +75,4 @@ class Reporter:
             await asyncio.wait_for(self._task, timeout=4)
         except Exception:  # noqa: BLE001
             pass
+

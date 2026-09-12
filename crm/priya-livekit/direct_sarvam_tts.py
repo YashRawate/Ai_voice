@@ -46,13 +46,16 @@ class DirectSarvamTTS:
         """Signal ongoing synthesis to abort (barge-in)."""
         self._is_cancelled = True
 
-    def reset_cancellation(self):
-        self._is_cancelled = False
+    async def close(self):
+        """Close internal aiohttp session."""
+        if self._session and not self._session.closed:
+            await self._session.close()
 
     async def _get_session(self) -> aiohttp.ClientSession:
         if self._session is None or self._session.closed:
             self._session = aiohttp.ClientSession()
         return self._session
+
 
     async def synthesize_stream(
         self,

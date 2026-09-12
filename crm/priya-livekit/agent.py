@@ -48,6 +48,7 @@ except ImportError:
 # 6-Layer Advanced Language Detection System Modules
 from audio_quality_gate import AudioQualityGate
 from priya.audio.acoustic_pipeline import AcousticPipeline
+from priya.language import resolve_mixed_language, build_language_system_prompt
 from conversation_context import ConversationContext
 from language_detector import LanguageDetector
 from explicit_switch_detector import ExplicitLanguageSwitchDetector
@@ -59,6 +60,7 @@ from question_engine import QuestionEngine
 from llm_with_history import LLMWithHistory
 from no_repetition import NoRepetitionEngine
 from test_session_logger import TestSessionLogger, get_or_create_logger
+from session_store import GLOBAL_SESSION_STORE
 
 load_dotenv()
 logger = logging.getLogger("priya")
@@ -827,7 +829,7 @@ def detect_language(text: str, current_lang: str = "en-IN", stt_lang: str = None
     # 5. STT Language Hint (if provided by Sarvam Saaras)
     if stt_lang:
         stt_code = LanguageHandler.get_language_code(stt_lang)
-        if stt_code in TTS_ALLOWED and stt_code != "unknown" and not re.search(r'^[a-zA-Z\s.,?!\']+$', t):
+        if stt_code in TTS_ALLOWED and stt_code != "unknown":
             return stt_code, f"stt_hint_{stt_code}"
 
     # 6. Default clean English
@@ -1717,6 +1719,8 @@ class Priya(Agent):
                         if k in self._DETAIL_LABELS and not self.collected.get(k):
                             self.collected[k] = str(v)
                 self.conv_session.collected = self.collected
+                if hasattr(self, "_session_id") and self._session_id:
+                    GLOBAL_SESSION_STORE.merge_facts(self._session_id, self.collected)
                 # Emit newly extracted slots to dashboard in real-time
                 if self._reporter:
                     for k, v in self.collected.items():
@@ -1764,7 +1768,10 @@ class Priya(Agent):
         if self._pattern_enabled and last_user_text:
             try:
                 t0 = time.time()
-                cached = PatternRouter.match(last_user_text, self.collected, lang=self._lang)
+                from fast_path import try_fast_path as deterministic_fast_path
+                cached = deterministic_fast_path(last_user_text, language_code=self._lang)
+                if not cached:
+                    cached = PatternRouter.match(last_user_text, self.collected, lang=self._lang)
                 if not cached:
                     cached = await LatencyOptimizer.try_fast_path(last_user_text, lang=self._lang)
                 if cached:
@@ -1884,6 +1891,7 @@ class Priya(Agent):
 
             # Language & Slang instructions
             if MULTILANG and not TRANSLATE_OUT:
+                turn_prompts.append(build_language_system_prompt(self._lang))
                 turn_prompts.append(f"LANGUAGE DIRECTIVE:\n{LanguageHandler.get_llm_instruction(self._lang)}")
                 u_text_low = last_user_text.lower() if last_user_text else ""
                 if self._lang == "te-IN":
@@ -2443,8 +2451,9 @@ async def entrypoint(ctx: JobContext):
                 return
 
             detected, reason = detect_language(text, current_lang=agent._lang, stt_lang=lang)
-            if detected != agent._lang and detected in TTS_ALLOWED:
-                agent.switch_language(detected, f"event_{reason}")
+            resolved = resolve_mixed_language(detected_lang=detected, transcript=text, session_lang=agent._lang)
+            if resolved != agent._lang and resolved in TTS_ALLOWED:
+                agent.switch_language(resolved, f"event_{reason}")
 
     # ── Dead-air guard ─────────────────────────────────────────────────────────
     # When a turn's LLM generation fails outright (both providers rate-limited at once),

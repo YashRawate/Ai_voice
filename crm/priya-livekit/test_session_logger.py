@@ -70,6 +70,8 @@ class TestSessionLogger:
         self.transcript: List[Dict[str, Any]] = []
         self.events: List[Dict[str, Any]] = []
 
+        _ACTIVE_LOGGERS[self.session_id] = self
+
         self._start_section()
 
     # ---------- internal helpers ----------

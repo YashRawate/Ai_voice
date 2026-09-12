@@ -16,6 +16,7 @@ from typing import Optional, Dict, Any
 from state import CallState
 from session_manager import SessionContext
 from test_session_logger import get_or_create_logger, TestSessionLogger
+from session_store import GLOBAL_SESSION_STORE
 
 logger = logging.getLogger("priya.session")
 
@@ -56,6 +57,18 @@ def start_new_call(
     ctx.collected = dict(initial_facts or {})
     ctx.stage = "GREETING"
     _ACTIVE_CALL_REGISTRY[sid] = ctx
+
+    # Sync state and facts with Redis/in-process SessionStore
+    GLOBAL_SESSION_STORE.update_state(
+        sid,
+        stage="GREETING",
+        next_field="student_name",
+        language_code=initial_language,
+        is_followup=False
+    )
+    if initial_facts:
+        GLOBAL_SESSION_STORE.merge_facts(sid, initial_facts)
+
     return ctx
 
 
@@ -88,6 +101,10 @@ def apply_language_switch(ctx: SessionContext, new_language: str, reason: str = 
         return
     old_lang = ctx.active_language
     ctx.active_language = new_language
+
+    # Structural guarantee: update ONLY state['language_code'] in the unified store
+    GLOBAL_SESSION_STORE.update_state(ctx.session_id, language_code=new_language)
+
     logger.info(
         "[LANGUAGE_SWITCH] sid=%s switched language: %s -> %s (reason: %s). Facts ledger (%d items) preserved.",
         ctx.session_id, old_lang, new_language, reason, len(ctx.collected)
@@ -100,6 +117,9 @@ def end_call_session(session_id: str, disposition: str = "completed", notes: str
     """Clean up call session on hangup/termination and finalize diagnostic logs."""
     test_logger = get_or_create_logger(session_id)
     test_logger.finalize(disposition=disposition, notes=notes)
+
+    # Clean up SessionStore keys
+    GLOBAL_SESSION_STORE.end_session(session_id)
 
     if session_id in _ACTIVE_CALL_REGISTRY:
         logger.info("[SESSION_END] Cleaning up session %s", session_id)

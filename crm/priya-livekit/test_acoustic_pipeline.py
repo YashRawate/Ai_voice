@@ -95,14 +95,14 @@ class TestAcousticPipeline(unittest.TestCase):
 
         # 3 frames of speech followed by silence should NOT trigger
         for _ in range(3):
-            self.assertFalse(gate.update(0.80, is_assistant_speaking=True))
+            self.assertFalse(gate.update(0.90, is_assistant_speaking=True))
         gate.update(0.10, is_assistant_speaking=True)  # silence resets counter
         self.assertEqual(gate.consecutive_speech, 0)
 
         # 6 consecutive frames of speech MUST trigger
         triggered = False
         for _ in range(6):
-            if gate.update(0.80, is_assistant_speaking=True):
+            if gate.update(0.90, is_assistant_speaking=True):
                 triggered = True
         self.assertTrue(triggered, "Debounce gate must trigger on 6 consecutive frames")
 

@@ -16,9 +16,18 @@ import sys
 import time
 import asyncio
 from dotenv import load_dotenv
+
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+        sys.stderr.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
+
 from livekit import api
 
 load_dotenv()
+
 
 
 async def dial_direct_twilio(number: str):
@@ -88,16 +97,66 @@ async def dial_livekit_sip(number: str):
         await lk.aclose()
 
 
+async def dial_direct_exotel(number: str):
+    """Dial caller directly via Exotel REST API with raw WebSocket stream (Sub-500ms)."""
+    import aiohttp
+
+    account_sid = os.getenv("EXOTEL_ACCOUNT_SID", "")
+    api_key = os.getenv("EXOTEL_API_KEY", "")
+    api_token = os.getenv("EXOTEL_API_TOKEN", "")
+    caller_id = os.getenv("EXOTEL_CALLER_ID", "")
+    public_url = os.getenv("DIRECT_PUBLIC_URL", "")
+
+    if not (account_sid and api_key and api_token and caller_id):
+        sys.exit("Direct Exotel dialing requires EXOTEL_ACCOUNT_SID, EXOTEL_API_KEY, EXOTEL_API_TOKEN, and EXOTEL_CALLER_ID in .env")
+
+    app_id = os.getenv("EXOTEL_APP_ID", "")
+    if app_id:
+        exoml_url = f"http://my.exotel.com/{account_sid}/exoml/start_voice/{app_id}"
+    else:
+        exoml_url = f"{public_url.rstrip('/')}/exoml" if public_url else "https://your-domain.ngrok-free.app/exoml"
+
+    api_url = f"https://api.exotel.com/v1/Accounts/{account_sid}/Calls/connect.json"
+    auth = aiohttp.BasicAuth(api_key, api_token)
+    data = {
+        "From": number,
+        "CallerId": caller_id,
+        "Url": exoml_url,
+        "CallType": "trans",
+    }
+
+    print(f"📞 [EXOTEL DIRECT] Dialing {number} via Exotel API -> ExoML: {exoml_url}...")
+    async with aiohttp.ClientSession(auth=auth) as session:
+        async with session.post(api_url, data=data) as resp:
+            if resp.status in (200, 201):
+                res_data = await resp.json()
+                call_sid = res_data.get("Call", {}).get("Sid")
+                print(f"✅ Exotel Call Initiated! Call SID: {call_sid} (Direct 1:1 Audio Active)")
+            else:
+                err = await resp.text()
+                print(f"❌ Exotel dial error ({resp.status}): {err}")
+                if "KYC" in err:
+                    print("\n⚠️  EXOTEL KYC REQUIRED FOR OUTBOUND API CALLS:")
+                    print("   TRAI regulations require KYC verification for automated outbound calling via Exotel.")
+                    print("   Option 1: Complete KYC in Exotel: https://my.exotel.com/exotel/settings/kyc")
+                    print("   Option 2: Use Exotel Dashboard [CALL] button (top-left) -> Advanced -> Select Flow: sss6a5 Landing Flow")
+
+
+
 async def main():
     number = sys.argv[1] if len(sys.argv) > 1 else os.getenv("CALL_TO", "")
     if not number:
         sys.exit("Give a number: python make_call.py +918249776759  (or set CALL_TO in .env)")
 
-    audio_pipeline = os.getenv("AUDIO_PIPELINE", "livekit").lower().strip()
-    use_livekit = os.getenv("USE_LIVEKIT", "true").lower().strip()
+    carrier = os.getenv("TELEPHONY_CARRIER", "exotel").lower().strip()
+    audio_pipeline = os.getenv("AUDIO_PIPELINE", "direct").lower().strip()
+    use_livekit = os.getenv("USE_LIVEKIT", "false").lower().strip()
 
     if audio_pipeline == "direct" or use_livekit == "false":
-        await dial_direct_twilio(number)
+        if carrier == "exotel":
+            await dial_direct_exotel(number)
+        else:
+            await dial_direct_twilio(number)
     else:
         await dial_livekit_sip(number)
 
