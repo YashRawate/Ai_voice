@@ -157,3 +157,4 @@ class DirectSarvamTTS:
     async def close(self):
         if self._session and not self._session.closed:
             await self._session.close()
+

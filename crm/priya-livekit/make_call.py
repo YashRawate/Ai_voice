@@ -43,19 +43,20 @@ async def dial_direct_twilio(number: str):
     if not (account_sid and auth_token and from_number):
         sys.exit("Direct outbound dialing requires TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, and TWILIO_PHONE_NUMBER in .env")
     
-    # If public URL is provided, stream to it; else construct default
-    stream_url = public_url if public_url else "wss://your-domain.ngrok-free.app/media-stream"
-    twiml = f'<Response><Connect><Stream url="{stream_url}"><Parameter name="agent" value="priya"/></Stream></Connect></Response>'
+    # Twilio trial accounts require Url pointing to TwiML endpoint
+    twiml_url = f"{public_url.rstrip('/')}/twiml" if public_url else "https://your-domain.ngrok-free.app/twiml"
     
     url = f"https://api.twilio.com/2010-04-01/Accounts/{account_sid}/Calls.json"
     auth = aiohttp.BasicAuth(account_sid, auth_token)
+
     data = {
         "To": number,
         "From": from_number,
-        "Twiml": twiml,
+        "Url": twiml_url,
     }
     
-    print(f"📞 [DIRECT MODE] Dialing {number} via Twilio REST API -> {stream_url}...")
+    print(f"📞 [TWILIO DIRECT] Dialing {number} via Twilio REST API -> {twiml_url}...")
+
     async with aiohttp.ClientSession(auth=auth) as session:
         async with session.post(url, data=data) as resp:
             if resp.status in (200, 201):

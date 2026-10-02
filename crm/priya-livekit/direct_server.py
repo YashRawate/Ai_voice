@@ -82,6 +82,9 @@ def get_llm_client():
             api_key=os.getenv("GROQ_API_KEY", ""),
             timeout=4.0,
         ), os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+    elif os.getenv("LLM_PROVIDER", "").lower().strip() == "catalyst":
+        from catalyst_llm import get_catalyst_client
+        return "catalyst", get_catalyst_client(), "glm-4.7-flash"
     else:
         return "openai", OpenAI(
             api_key=os.getenv("OPENAI_API_KEY", "dummy"),
@@ -475,6 +478,7 @@ async def stream_xml_response(request: Request):
 
     xml_content = f"""<?xml version="1.0" encoding="UTF-8"?>
 <Response>
+    <Say>Connecting to Priya, please wait.</Say>
     <Connect>
         <Stream url="{stream_url}">
             <Parameter name="agent" value="priya" />

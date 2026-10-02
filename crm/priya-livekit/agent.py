@@ -11,7 +11,17 @@ Run:
     python agent.py console     # talk to it from your terminal mic
     python agent.py dev         # run the worker (for LiveKit rooms / telephony)
 """
+import sys
 import os
+
+if sys.platform == "win32":
+    os.environ["PYTHONIOENCODING"] = "utf-8"
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+        sys.stderr.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
+
 import re
 import json
 import time
@@ -232,6 +242,7 @@ _ENV_KEY = {
     "bedrock": "BEDROCK_API_KEY",
     "anthropic": "ANTHROPIC_API_KEY",
     "azure": "AZURE_OPENAI_API_KEY",
+    "catalyst": "CATALYST_ENDPOINT_KEY",
 }
 
 
@@ -360,6 +371,14 @@ def _build_one(provider: str, api_key: str, model: str | None = None):
         if "nemotron" in or_model.lower() or "reasoning" in or_model.lower():
             or_kwargs["extra_body"] = {"reasoning": {"enabled": False}}
         return openai.LLM(**or_kwargs)
+    if provider == "catalyst":
+        from catalyst_llm import get_catalyst_client
+        return openai.LLM(
+            client=get_catalyst_client(),
+            model="glm-4.7-flash",
+            temperature=0.6,
+            max_completion_tokens=MAX_REPLY_TOKENS,
+        )
     if provider == "azure":
         az_endpoint = os.getenv("AZURE_OPENAI_ENDPOINT", "").rstrip("/")
         az_model = model or os.getenv("AZURE_OPENAI_DEPLOYMENT", "gpt-4.1-mini")
@@ -382,7 +401,7 @@ def _build_one(provider: str, api_key: str, model: str | None = None):
 
 def build_llm():
     """Build the LLM failover chain."""
-    valid_provs = {"groq", "gemini", "cerebras", "openrouter", "local", "huggingface", "bedrock", "anthropic", "azure"}
+    valid_provs = {"groq", "gemini", "cerebras", "openrouter", "local", "huggingface", "bedrock", "anthropic", "azure", "catalyst"}
     if LLM_PROVIDER not in valid_provs:
         logger.warning(f"unknown LLM_PROVIDER '{LLM_PROVIDER}' — defaulting to groq")
 

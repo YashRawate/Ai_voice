@@ -12,6 +12,8 @@ __pycache__/
 *.pytest_cache/
 .coverage
 htmlcov/
+transcripts/
+*.txt
 
 # Node.js
 node_modules/

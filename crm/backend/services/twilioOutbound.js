@@ -20,21 +20,33 @@ function getClient() {
  * connects, and POST to /webhook/call-status?session_id=<id> for status updates.
  */
 async function makeOutboundCall({ to, sessionId }) {
-  const serverUrl = process.env.SERVER_URL
-  if (!serverUrl) throw new Error('SERVER_URL not set in .env')
+  const publicUrl = process.env.DIRECT_PUBLIC_URL || process.env.PUBLIC_BACKEND_URL || process.env.SERVER_URL
 
-  const webhookUrl = `${serverUrl}/webhook/call-start?session_id=${sessionId}`
+  if (!publicUrl) throw new Error('SERVER_URL / DIRECT_PUBLIC_URL not set in .env')
+
+  // Route directly to Priya direct audio pipeline if DIRECT_PUBLIC_URL is configured
+  const webhookUrl = process.env.DIRECT_PUBLIC_URL
+    ? `${process.env.DIRECT_PUBLIC_URL.replace(/\/$/, '')}/twiml?session_id=${sessionId}`
+    : `${publicUrl}/webhook/call-start?session_id=${sessionId}`
+
   console.log('[Twilio] >>> Calling', to, 'with webhook:', webhookUrl)
 
   const client = getClient()
-  const call = await client.calls.create({
+  const callPayload = {
     to,
-    from:                  process.env.TWILIO_PHONE_NUMBER,
-    url:                   webhookUrl,
-    statusCallback:        `${serverUrl}/webhook/call-status?session_id=${sessionId}`,
-    statusCallbackMethod:  'POST',
-    statusCallbackEvent:   ['completed', 'failed', 'busy', 'no-answer'],
-  })
+    from: process.env.TWILIO_PHONE_NUMBER,
+    url: webhookUrl,
+  }
+
+  // Only add statusCallback if public backend is available
+  if (process.env.PUBLIC_BACKEND_URL && !process.env.PUBLIC_BACKEND_URL.includes('localhost')) {
+    callPayload.statusCallback = `${process.env.PUBLIC_BACKEND_URL}/webhook/call-status?session_id=${sessionId}`
+    callPayload.statusCallbackMethod = 'POST'
+    callPayload.statusCallbackEvent = ['completed', 'failed', 'busy', 'no-answer']
+  }
+
+  const call = await client.calls.create(callPayload)
+
 
   console.log('[Twilio] Call created:', call.sid, '| to:', to)
   return call
