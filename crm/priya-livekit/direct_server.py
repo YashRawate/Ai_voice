@@ -38,6 +38,7 @@ from test_session_logger import TestSessionLogger, get_or_create_logger
 from priya.audio.acoustic_pipeline import AcousticPipeline
 from priya.language import resolve_mixed_language, build_language_system_prompt
 from session_store import GLOBAL_SESSION_STORE
+from transcript_guards import classify_transcript, is_farewell, extract_name, dominant_script, INTERRUPT_WORDS, ALLOWED_SCRIPTS
 
 load_dotenv()
 logger = logging.getLogger("priya.direct_server")
@@ -176,6 +177,8 @@ class DirectCallSession:
         self.errors = 0
         self.turn_idx = 0
         self.processing = False
+        self.unclear_streak = 0
+        self.soft_close_asked = False
         self.last_audio_sent_time = 0.0
         self.playback_end_time = 0.0
 
@@ -250,15 +253,15 @@ class DirectCallSession:
 
         # If assistant is speaking, evaluate if partial speech is a genuine intentional barge-in
         if self.is_speaking or self.acoustic_pipeline.is_assistant_speaking:
-            if self.is_exotel:
-                if len(transcript.strip().split()) >= 1:
-                    logger.info(f"[{self.session_id}] Exotel caller interrupted Priya with partial speech: '{transcript}'")
-                    self.test_logger.log_interruption(reason="caller_barge_in", detail=f"Verified caller speech: '{transcript}'")
-                    await self.stop_speaking()
-            elif self.acoustic_pipeline.confirm_barge_in(transcript):
-                logger.info(f"[{self.session_id}] Multi-signal confirmed caller barge-in from partial STT: '{transcript}'")
+            words = transcript.strip().split()
+            is_interrupt_word = bool(INTERRUPT_WORDS.search(transcript))
+            # Must have >= 3 words to interrupt, or a critical interrupt word like "wait", "stop", "sorry"
+            if len(words) >= 3 or is_interrupt_word:
+                logger.info(f"[{self.session_id}] Caller interrupted Priya with partial speech: '{transcript}'")
                 self.test_logger.log_interruption(reason="caller_barge_in", detail=f"Verified caller speech: '{transcript}'")
                 await self.stop_speaking()
+            else:
+                logger.debug(f"[{self.session_id}] Partial speech under 3 words ignored during TTS: '{transcript}'")
 
     async def _handle_user_speech_start(self):
         """Barge-in: speech frames detected while Priya is playing audio."""
@@ -298,7 +301,11 @@ class DirectCallSession:
 
         # Multi-signal interruption confirmation: if Priya was speaking, handle barge-in
         if (self.is_speaking or self.acoustic_pipeline.is_assistant_speaking):
-            if self.is_exotel:
+            words = transcript.strip().split()
+            is_interrupt_word = bool(INTERRUPT_WORDS.search(transcript))
+            if len(words) < 3 and not is_interrupt_word:
+                logger.info(f"[{self.session_id}] Filtered short utterance under 3 words during speech: {transcript!r}")
+            elif self.is_exotel:
                 logger.info(f"[{self.session_id}] Exotel caller barge-in confirmed: '{transcript}'")
                 await self.stop_speaking()
             elif not self.acoustic_pipeline.confirm_barge_in(transcript):
@@ -315,7 +322,7 @@ class DirectCallSession:
         self.test_logger.log_stt(text=transcript, language=language_code)
 
         # Apply code-mixed stability resolution
-        resolved_lang = resolve_mixed_language(language_code, transcript, self.active_language)
+        resolved_lang = resolve_mixed_language(language_code, transcript, self.active_language, session_id=self.session_id)
         if resolved_lang and resolved_lang in {"te-IN", "hi-IN", "en-IN", "ta-IN"}:
             if resolved_lang != self.active_language:
                 self.test_logger.log_language_switch(old_lang=self.active_language, new_lang=resolved_lang)
@@ -329,6 +336,8 @@ class DirectCallSession:
 
     async def stop_speaking(self):
         """Cancel ongoing TTS playback and flush carrier audio buffer."""
+        if self.is_speaking:
+            logger.info(f"[{self.session_id}] [REPLY_TRUNCATED] Assistant speech interrupted")
         self.is_speaking = False
         self.acoustic_pipeline.set_assistant_speaking(False)
         if self.current_tts_task and not self.current_tts_task.done():
@@ -505,6 +514,46 @@ class DirectCallSession:
             self.processing = True
             logger.info(f"[{self.session_id}] [TURN_START] turn={turn_num} text='{transcript}'")
 
+            # Transcript Gate: decide if transcript really came from caller before state changes
+            awaiting_slot = None
+            if not self.long_mgr.fact_memory.has_fact("student_name"):
+                awaiting_slot = "name"
+            elif not self.long_mgr.fact_memory.has_fact("program_of_interest"):
+                awaiting_slot = "branch"
+            elif not self.long_mgr.fact_memory.has_fact("class_12_score"):
+                awaiting_slot = "percentage"
+
+            verdict, reason = classify_transcript(
+                transcript,
+                awaiting_slot=awaiting_slot,
+                agent_speaking=self.is_speaking or self.acoustic_pipeline.is_assistant_speaking,
+            )
+            logger.info(f"[{self.session_id}] [TRANSCRIPT_GATE] {verdict} ({reason}): {transcript!r}")
+
+            if verdict == "drop":
+                logger.info(f"[{self.session_id}] [TRANSCRIPT_GATE] Dropped transcript: {transcript!r} ({reason})")
+                self.processing = False
+                continue
+
+            if verdict == "unclear":
+                self.unclear_streak += 1
+                if self.unclear_streak == 1:
+                    logger.info(f"[{self.session_id}] [TRANSCRIPT_GATE] Unclear transcript streak 1 — asking to repeat")
+                    clarification = (
+                        "క్షమించండి, కాస్త శబ్దం వచ్చింది. మళ్లీ చెప్తారా?"
+                        if lang == "te-IN"
+                        else "माफ़ कीजियेगा, कुछ शोर आ रहा था। क्या आप दोबारा कह सकते हैं?"
+                        if lang == "hi-IN"
+                        else "Sorry, there's some background noise. Could you say that again?"
+                    )
+                    await self.speak_phrase(clarification, turn_num=turn_num)
+                else:
+                    logger.info(f"[{self.session_id}] [TRANSCRIPT_GATE] Unclear streak {self.unclear_streak} — staying quiet and listening")
+                self.processing = False
+                continue
+
+            self.unclear_streak = 0
+
             try:
                 await asyncio.wait_for(self.run_turn(transcript, lang, turn_num=turn_num), timeout=15.0)
             except asyncio.TimeoutError:
@@ -544,20 +593,34 @@ class DirectCallSession:
         collected = self.long_mgr.fact_memory.facts
         GLOBAL_SESSION_STORE.merge_facts(self.session_id, collected)
 
-        # 2. Check for Goodbye with Goodbye Guard
+        # 2. Check for Goodbye with Goodbye Guard & Soft Close
         if is_goodbye(transcript):
-            farewell = (
-                "ధన్యవాదాలు! మీ అడ్మిషన్ వివరాలు మా వాట్సాప్ ద్వారా పంపిస్తాము. హావ్ ఏ గ్రేట్ డే!"
-                if lang == "te-IN"
-                else "धन्यवाद! हम आपके एडमिशन की जानकारी व्हाट्सएप पर भेज देंगे। आपका दिन शुभ हो!"
-                if lang == "hi-IN"
-                else "Thank you for contacting Aditya University! We have sent the admission details to your number. Have a great day!"
-            )
-            self.test_logger.log_llm_reply(text=farewell, stage="GOODBYE", facts_snapshot=collected)
-            await self.speak_phrase(farewell, turn_num=turn_num)
-            await asyncio.sleep(1.0)
-            await self.close()
-            return
+            if self.long_mgr.is_explicit_bye(transcript) or getattr(self, "soft_close_asked", False):
+                farewell = (
+                    "ధన్యవాదాలు! మీ అడ్మిషన్ వివరాలు మా వాట్సాప్ ద్వారా పంపిస్తాము. హావ్ ఏ గ్రేట్ డే!"
+                    if lang == "te-IN"
+                    else "धन्यवाद! हम आपके एडमिशन की जानकारी व्हाट्सएप पर भेज देंगे। आपका दिन शुभ हो!"
+                    if lang == "hi-IN"
+                    else "Thank you for contacting Aditya University! We have sent the admission details to your number. Have a great day!"
+                )
+                self.test_logger.log_llm_reply(text=farewell, stage="GOODBYE", facts_snapshot=collected)
+                await self.speak_phrase(farewell, turn_num=turn_num)
+                await asyncio.sleep(1.0)
+                await self.close()
+                return
+            else:
+                self.soft_close_asked = True
+                soft_close_prompt = (
+                    "ఇంకేమైనా వివరాలు తెలుసుకోవాలనుకుంటున్నారా?"
+                    if lang == "te-IN"
+                    else "क्या मैं आपकी किसी और चीज़ में मदद कर सकती हूँ?"
+                    if lang == "hi-IN"
+                    else "Is there anything else I can help you with today?"
+                )
+                self.long_mgr.update_agent_turn(soft_close_prompt, language=lang)
+                self.test_logger.log_llm_reply(text=soft_close_prompt, stage="SOFT_CLOSE", facts_snapshot=collected)
+                await self.speak_phrase(soft_close_prompt, turn_num=turn_num)
+                return
 
         # 3. Check for admissions objections or conversion actions
         intent = detect_conversion_intent(transcript)

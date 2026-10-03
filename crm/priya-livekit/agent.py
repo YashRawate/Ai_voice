@@ -58,6 +58,7 @@ except ImportError:
 # 6-Layer Advanced Language Detection System Modules
 from audio_quality_gate import AudioQualityGate
 from priya.audio.acoustic_pipeline import AcousticPipeline
+from transcript_guards import classify_transcript, is_farewell, extract_name, dominant_script, INTERRUPT_WORDS, ALLOWED_SCRIPTS
 from priya.language import resolve_mixed_language, build_language_system_prompt
 from conversation_context import ConversationContext
 from language_detector import LanguageDetector
@@ -1754,12 +1755,59 @@ class Priya(Agent):
                     logger.info(f"[ECHO] Suppressed microphone echo of assistant speech: '{last_user_text}'")
                     return
 
+        # ── Transcript Gate: Decide if transcript really came from caller before state changes ──
+        if last_user_text:
+            awaiting_slot = None
+            if not self.collected.get("student_name"):
+                awaiting_slot = "name"
+            elif not self.collected.get("program_of_interest"):
+                awaiting_slot = "branch"
+            elif not self.collected.get("class_12_score"):
+                awaiting_slot = "percentage"
+
+            agent_speaking = getattr(self, "is_speaking", False)
+            if hasattr(self, "acoustic_pipeline"):
+                agent_speaking = agent_speaking or self.acoustic_pipeline.is_assistant_speaking
+
+            verdict, reason = classify_transcript(
+                last_user_text,
+                awaiting_slot=awaiting_slot,
+                agent_speaking=agent_speaking,
+            )
+            logger.info(f"[TRANSCRIPT_GATE] {verdict} ({reason}): {last_user_text!r}")
+
+            if verdict == "drop":
+                logger.info(f"[TRANSCRIPT_GATE] Dropped transcript: {last_user_text!r} ({reason})")
+                return
+
+            if verdict == "unclear":
+                self.unclear_streak = getattr(self, "unclear_streak", 0) + 1
+                if self.unclear_streak == 1:
+                    logger.info(f"[TRANSCRIPT_GATE] Unclear transcript streak 1 — asking to repeat")
+                    clarification = (
+                        "క్షమించండి, కాస్త శబ్దం వచ్చింది. మళ్లీ చెప్తారా?"
+                        if self._lang == "te-IN"
+                        else "माफ़ कीजियेगा, कुछ शोर आ रहा था। क्या आप दोबारा कह सकते हैं?"
+                        if self._lang == "hi-IN"
+                        else "Sorry, there's some background noise. Could you say that again?"
+                    )
+                    self.conv_session.add_turn("assistant", clarification, language=self._lang)
+                    yield clarification
+                else:
+                    logger.info(f"[TRANSCRIPT_GATE] Unclear streak {self.unclear_streak} — staying quiet and listening")
+                return
+
+            self.unclear_streak = 0
+
         # ── Language Detection & Voice Switch (Sync at start of turn) ────────
         if MULTILANG and last_user_text:
             try:
-                detected_lang, reason = detect_language(last_user_text, current_lang=self._lang)
-                if detected_lang != self._lang and detected_lang in TTS_ALLOWED:
-                    self.switch_language(detected_lang, f"turn_{reason}")
+                script = dominant_script(last_user_text)
+                if script in ALLOWED_SCRIPTS:
+                    detected_lang, reason = detect_language(last_user_text, current_lang=self._lang)
+                    resolved_lang = resolve_mixed_language(detected_lang, last_user_text, self._lang, session_id=getattr(self, "_session_id", "default"))
+                    if resolved_lang != self._lang and resolved_lang in TTS_ALLOWED:
+                        self.switch_language(resolved_lang, f"turn_{reason}")
             except Exception as e:  # noqa: BLE001
                 logger.debug(f"lang detect error: {e}")
 
@@ -1804,31 +1852,48 @@ class Priya(Agent):
             if hasattr(self, "lang_conversation_context"):
                 self.lang_conversation_context.add_turn("user", last_user_text, language=self._lang)
 
-        # ── Goodbye / Call Wrap-up Handling (Eliminates loop on Thank you / Bye) ──
-        if last_user_text and (self.conv_session.detect_goodbye(last_user_text) or any(g in last_user_text.lower() for g in ["thank you", "bye", "goodbye", "nahi", "bas", "that's all"])):
-            logger.info(f"[GOODBYE] Detected farewell from caller: '{last_user_text}'")
-            if self._lang == "te-IN":
-                farewell = "ఆదిత్య యూనివర్సిటీని సంప్రదించినందుకు ధన్యవాదాలు! మీ అడ్మిషన్స్ కోసం ఆల్ ది బెస్ట్. హావ్ ఏ గ్రేట్ డే!"
-            elif self._lang == "hi-IN":
-                farewell = "आदित्य यूनिवर्सिटी में संपर्क करने के लिए धन्यवाद! आपके एडमिशन के लिए शुभकामनाएं। आपका दिन शुभ हो!"
-            elif self._lang == "ta-IN":
-                farewell = "ஆதித்யா பல்கலைக்கழகத்தை தொடர்பு கொண்டதற்கு நன்றி! உங்கள் சேர்க்கைக்கு வாழ்த்துக்கள்."
+        # ── Goodbye / Call Wrap-up Handling (Strict is_farewell & Soft Close) ──
+        if last_user_text and is_farewell(last_user_text):
+            is_explicit = bool(re.search(r'\b(bye|goodbye|good bye|see you|talk (to you )?later)\b|(अलविदा|फिर मिलेंगे|బై|వస్తాను)', last_user_text, re.IGNORECASE))
+            soft_closed = getattr(self, "soft_close_asked", False)
+
+            if is_explicit or soft_closed:
+                logger.info(f"[GOODBYE] Confirmed farewell from caller: '{last_user_text}'")
+                if self._lang == "te-IN":
+                    farewell = "ఆదిత్య యూనివర్సిటీని సంప్రదించినందుకు ధన్యవాదాలు! మీ అడ్మిషన్స్ కోసం ఆల్ ది బెస్ట్. హావ్ ఏ గ్రేట్ డే!"
+                elif self._lang == "hi-IN":
+                    farewell = "आदित्य यूनिवर्सिटी में संपर्क करने के लिए धन्यवाद! आपके एडमिशन के लिए शुभकामनाएं। आपका दिन शुभ हो!"
+                elif self._lang == "ta-IN":
+                    farewell = "ஆதித்யா பல்கலைக்கழகத்தை தொடர்பு கொண்டதற்கு நன்றி! உங்கள் சேர்க்கைக்கு வாழ்த்துக்கள்."
+                else:
+                    farewell = "Thank you for reaching out to Aditya University! Wishing you all the best for your admissions. Have a wonderful day!"
+                self.conv_session.add_turn("assistant", farewell, language=self._lang)
+                # Save full conversation transcript
+                if hasattr(self, "conv_history") and self.conv_history:
+                    try:
+                        os.makedirs("transcripts", exist_ok=True)
+                        t_path = f"transcripts/{self.conv_history.call_id}.txt"
+                        with open(t_path, "w", encoding="utf-8") as f:
+                            f.write(self.conv_history.get_full_transcript())
+                        logger.info(f"[TRANSCRIPT] Saved full transcript to {t_path}")
+                    except Exception as ex:
+                        logger.debug(f"transcript save error: {ex}")
+                yield farewell
+                asyncio.create_task(self._hang_up_after_closing())
+                return
             else:
-                farewell = "Thank you for reaching out to Aditya University! Wishing you all the best for your admissions. Have a wonderful day!"
-            self.conv_session.add_turn("assistant", farewell, language=self._lang)
-            # Save full conversation transcript
-            if hasattr(self, "conv_history") and self.conv_history:
-                try:
-                    os.makedirs("transcripts", exist_ok=True)
-                    t_path = f"transcripts/{self.conv_history.call_id}.txt"
-                    with open(t_path, "w", encoding="utf-8") as f:
-                        f.write(self.conv_history.get_full_transcript())
-                    logger.info(f"[TRANSCRIPT] Saved full transcript to {t_path}")
-                except Exception as ex:
-                    logger.debug(f"transcript save error: {ex}")
-            yield farewell
-            asyncio.create_task(self._hang_up_after_closing())
-            return
+                self.soft_close_asked = True
+                logger.info(f"[GOODBYE] Soft close prompt triggered on non-explicit farewell: '{last_user_text}'")
+                soft_close_prompt = (
+                    "ఇంకేమైనా వివరాలు తెలుసుకోవాలనుకుంటున్నారా?"
+                    if self._lang == "te-IN"
+                    else "क्या मैं आपकी किसी और चीज़ में मदद कर सकती हूँ?"
+                    if self._lang == "hi-IN"
+                    else "Is there anything else I can help you with today?"
+                )
+                self.conv_session.add_turn("assistant", soft_close_prompt, language=self._lang)
+                yield soft_close_prompt
+                return
 
         # ── Pattern matching: instant response for simple factual questions ────
         # If matched, yield the cached response directly (~0ms) and skip the LLM entirely.
@@ -2479,13 +2544,20 @@ async def entrypoint(ctx: JobContext):
             "interruption": {
                 "enabled": True,
                 "mode": "vad",
-                "min_duration": float(os.getenv("MIN_INTERRUPTION_DURATION_MS", "400")) / 1000.0,  # 400ms confirmation gate
-                "min_words": int(os.getenv("INTERRUPTION_MIN_WORDS", "1")),
+                "min_duration": float(os.getenv("MIN_INTERRUPTION_DURATION_MS", "800")) / 1000.0,  # 800ms confirmation gate
+                "min_words": int(os.getenv("INTERRUPTION_MIN_WORDS", "3")),
                 "resume_false_interruption": True,
                 "discard_audio_if_uninterruptible": True,
             },
         },
     )
+
+    @session.on("agent_speech_interrupted")
+    def _on_speech_interrupted(ev):
+        item = getattr(ev, "chat_item", None)
+        spoken_text = getattr(ev, "interrupted_speech", "") or (getattr(item, "text_content", "") if item else "")
+        logger.info(f"[REPLY_TRUNCATED] intended={spoken_text!r} (interrupted)")
+        session_logger.log_interruption(reason="caller_barge_in", detail=f"speech interrupted: {spoken_text[:50]}")
 
     # ── Multilingual voice (only when MULTILANG=true) ──────────────────────────
     # STT auto-detects the language and the LLM replies in it; this switches the
@@ -2531,8 +2603,18 @@ async def entrypoint(ctx: JobContext):
             if not getattr(ev, "is_final", True) or not text:
                 return
 
+            verdict, reason = classify_transcript(text)
+            if verdict == "drop":
+                logger.info(f"[LANG_FOLLOW] Dropped non-caller transcript: {text!r} ({reason})")
+                return
+
+            script = dominant_script(text)
+            if script not in ALLOWED_SCRIPTS:
+                logger.info(f"[LANG_FOLLOW] Ignored unsupported script {script}: {text!r}")
+                return
+
             detected, reason = detect_language(text, current_lang=agent._lang, stt_lang=lang)
-            resolved = resolve_mixed_language(detected_lang=detected, transcript=text, session_lang=agent._lang)
+            resolved = resolve_mixed_language(detected_lang=detected, transcript=text, session_lang=agent._lang, session_id=agent._session_id)
             if resolved != agent._lang and resolved in TTS_ALLOWED:
                 agent.switch_language(resolved, f"event_{reason}")
 

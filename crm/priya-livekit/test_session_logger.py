@@ -69,6 +69,7 @@ class TestSessionLogger:
             "reconnect": 0,
             "error": 0,
         }
+        self.is_finalized = False
         self.transcript: List[Dict[str, Any]] = []
         self.events: List[Dict[str, Any]] = []
 
@@ -77,6 +78,18 @@ class TestSessionLogger:
         self._start_section()
 
     # ---------- internal helpers ----------
+
+    @staticmethod
+    def _mask_phone_number(text: str) -> str:
+        """Mask 10-digit or +91 phone numbers for privacy."""
+        if not text:
+            return text
+        def _repl(m):
+            s = m.group(0)
+            if len(s) >= 10:
+                return s[:3] + "****" + s[-4:]
+            return s
+        return re.sub(r'(\+?91[\-\s]?)?[6-9]\d{9}', _repl, str(text))
 
     def _get_next_test_number(self) -> int:
         """Scan base_dir for existing TEST_N files or folders and determine the next number."""
@@ -96,12 +109,13 @@ class TestSessionLogger:
         return round(time.time() - self.start_time, 3)
 
     def _append(self, text: str):
+        masked_text = self._mask_phone_number(text)
         # Write to crm/YASH_TEST/TEST_N.md
         with open(self.log_file, "a", encoding="utf-8") as f:
-            f.write(text + "\n")
+            f.write(masked_text + "\n")
         # Write copy to crm/YASH_TEST/TEST_N/TEST_N.md
         with open(self.folder_log_file, "a", encoding="utf-8") as f:
-            f.write(text + "\n")
+            f.write(masked_text + "\n")
 
         if self.console:
             try:
@@ -230,6 +244,10 @@ class TestSessionLogger:
     # ---------- finalize ----------
 
     def finalize(self, disposition: str = "completed", notes: str = "") -> str:
+        if self.is_finalized:
+            return self.log_file
+        self.is_finalized = True
+
         duration = self._elapsed()
         reinit_flag = "✅ OK" if self.event_counts["session_init"] == 1 else "🚨 CHECK — expected exactly 1"
 

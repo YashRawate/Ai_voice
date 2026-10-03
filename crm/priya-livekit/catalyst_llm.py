@@ -18,6 +18,10 @@ logger = logging.getLogger("catalyst_llm")
 logger.setLevel(logging.INFO)
 
 class CatalystAuthTransport(httpx.AsyncBaseTransport):
+    _cached_access_token: Optional[str] = None
+    _cached_token_expiry: float = 0.0
+    _cached_lock: Optional[asyncio.Lock] = None
+
     def __init__(self):
         self.endpoint_url = os.getenv("CATALYST_ENDPOINT_URL")
         self.endpoint_key = os.getenv("CATALYST_ENDPOINT_KEY")
@@ -25,17 +29,22 @@ class CatalystAuthTransport(httpx.AsyncBaseTransport):
         self.client_secret = os.getenv("CATALYST_CLIENT_SECRET")
         self.refresh_token = os.getenv("CATALYST_REFRESH_TOKEN")
         self.accounts_domain = os.getenv("CATALYST_ACCOUNTS_DOMAIN", "https://accounts.zoho.in").rstrip('/')
-        
-        self.access_token = None
-        self.token_expiry = 0
         self.inner_transport = httpx.AsyncHTTPTransport()
-        self._refresh_lock = asyncio.Lock()
+
+    @classmethod
+    def _get_lock(cls) -> asyncio.Lock:
+        if cls._cached_lock is None:
+            cls._cached_lock = asyncio.Lock()
+        return cls._cached_lock
 
     async def get_valid_token(self):
-        if time.time() > self.token_expiry - 60:
-            async with self._refresh_lock:
+        now = time.time()
+        if not CatalystAuthTransport._cached_access_token or now > CatalystAuthTransport._cached_token_expiry - 60:
+            lock = self._get_lock()
+            async with lock:
+                now = time.time()
                 # Double-check inside lock
-                if time.time() > self.token_expiry - 60:
+                if not CatalystAuthTransport._cached_access_token or now > CatalystAuthTransport._cached_token_expiry - 60:
                     logger.info("[CATALYST] Refreshing access token...")
                     token_url = f"{self.accounts_domain}/oauth/v2/token"
                     async with httpx.AsyncClient() as client:
@@ -50,10 +59,10 @@ class CatalystAuthTransport(httpx.AsyncBaseTransport):
                             resp.raise_for_status()
                         
                         data = resp.json()
-                        self.access_token = data.get("access_token")
-                        self.token_expiry = time.time() + data.get("expires_in", 3600)
-                        logger.info("[CATALYST] Access token refreshed successfully.")
-        return self.access_token
+                        CatalystAuthTransport._cached_access_token = data.get("access_token")
+                        CatalystAuthTransport._cached_token_expiry = time.time() + data.get("expires_in", 3600)
+                        logger.info("[CATALYST] Access token refreshed successfully. Valid for %ds.", data.get("expires_in", 3600))
+        return CatalystAuthTransport._cached_access_token
 
     async def handle_async_request(self, request: httpx.Request) -> httpx.Response:
         # Intercept OpenAI chat completions request
@@ -229,12 +238,17 @@ class CatalystAuthTransport(httpx.AsyncBaseTransport):
         # Fallback to standard transport for non-chat requests
         return await self.inner_transport.handle_async_request(request)
 
+_GLOBAL_CATALYST_CLIENT: Optional[AsyncOpenAI] = None
+
 def get_catalyst_client() -> AsyncOpenAI:
-    return AsyncOpenAI(
-        api_key="dummy-catalyst-key",
-        base_url="https://api.openai.com/v1",  # dummy, intercepted by transport
-        http_client=httpx.AsyncClient(transport=CatalystAuthTransport())
-    )
+    global _GLOBAL_CATALYST_CLIENT
+    if _GLOBAL_CATALYST_CLIENT is None:
+        _GLOBAL_CATALYST_CLIENT = AsyncOpenAI(
+            api_key="dummy-catalyst-key",
+            base_url="https://api.openai.com/v1",  # dummy, intercepted by transport
+            http_client=httpx.AsyncClient(transport=CatalystAuthTransport())
+        )
+    return _GLOBAL_CATALYST_CLIENT
 
 
 class ChatCatalyst(BaseChatModel):

@@ -18,6 +18,8 @@ import re
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Set
 
+from transcript_guards import is_farewell, extract_name
+
 logger = logging.getLogger("priya.long_conversation")
 
 
@@ -111,15 +113,63 @@ class FactMemory:
         "cbse", "icse", "state", "board", "inter", "intermediate", "the", "a", "an", "all", "city"
     }
 
+    CANONICAL_KEYS = {
+        "name": "student_name",
+        "student_name": "student_name",
+        "program": "program_of_interest",
+        "program_of_interest": "program_of_interest",
+        "course": "program_of_interest",
+        "score": "class_12_score",
+        "marks": "class_12_score",
+        "class_12_score": "class_12_score",
+        "city": "current_city",
+        "current_city": "current_city",
+        "location": "current_city",
+        "exam": "entrance_exams_taken",
+        "entrance_exams_taken": "entrance_exams_taken",
+        "college": "college",
+    }
+
     def __init__(self):
         self.facts: Dict[str, Any] = {}
+        self.audit_log: List[Dict[str, Any]] = []
 
-    def update_fact(self, key: str, value: Any):
-        """Manually update or set a fact."""
-        self.facts[key] = value
+    def update_fact(self, key: str, value: Any, source: str = "manual"):
+        """Update or insert a fact into fact_memory with canonical key mapping, duplicate purging, and audit logging."""
+        if value is None or str(value).lower() in {"none", "null", "undefined", ""}:
+            return
+
+        canon_key = self.CANONICAL_KEYS.get(key, key)
+        old_val = self.facts.get(canon_key)
+        self.facts[canon_key] = value
+
+        # Purge legacy duplicate keys
+        if canon_key == "student_name":
+            self.facts.pop("name", None)
+        elif canon_key == "program_of_interest":
+            self.facts.pop("program", None)
+            self.facts.pop("course", None)
+        elif canon_key == "class_12_score":
+            self.facts.pop("score", None)
+            self.facts.pop("marks", None)
+        elif canon_key == "current_city":
+            self.facts.pop("city", None)
+            self.facts.pop("location", None)
+        elif canon_key == "entrance_exams_taken":
+            self.facts.pop("exam", None)
+
+        if old_val != value:
+            logger.info(f"[FACT_AUDIT] key={canon_key} old={old_val} new={value} source={source!r}")
+            self.audit_log.append({
+                "key": canon_key,
+                "old": old_val,
+                "new": value,
+                "source": source,
+                "timestamp": datetime.now().isoformat()
+            })
 
     def extract_from_input(self, user_input: str) -> Dict[str, Any]:
-        """Extract all identifiable facts from caller text."""
+        """Extract all identifiable facts from caller text using canonical keys and guards."""
         if not user_input or not user_input.strip():
             return {}
 
@@ -127,21 +177,15 @@ class FactMemory:
         text_lower = text.lower()
         extracted: Dict[str, Any] = {}
 
-        # 1. Name extraction (multilingual: English, Telugu, Hindi)
-        if "name" not in self.facts:
-            name_match = re.search(
-                r'(?:my\s*name\s*is|i\s*am|i\'m|this\s*is|call\s*me|naa\s*peru|mera\s*naam|నా\s*పేరు|నాపేరు|మేరా\s*నామ్|मेरा\s*नाम)\s+([a-zA-Z\u0C00-\u0C7F\u0900-\u097F]{3,20})',
-                text,
-                re.IGNORECASE
-            )
-            if name_match:
-                candidate = name_match.group(1).capitalize()
-                if candidate.lower() not in self.INVALID_NAMES and not candidate.lower().endswith("ing"):
-                    extracted["name"] = candidate
-                    self.facts["name"] = candidate
+        # 1. Name extraction with extract_name guard
+        if "student_name" not in self.facts and "name" not in self.facts:
+            candidate = extract_name(text, awaiting_name=True)
+            if candidate:
+                self.update_fact("student_name", candidate, source=text)
+                extracted["student_name"] = candidate
 
         # 2. Score extraction (12th / Intermediate percentage)
-        if "score" not in self.facts:
+        if "class_12_score" not in self.facts and "score" not in self.facts:
             score_match = re.search(r'(\d{1,2}(?:\.\d+)?)\s*(?:%|percent|percentage)', text_lower)
             if not score_match:
                 score_match = re.search(r'(?:scored|got|have|marks|score(?:\s+is)?)\s+(\d{1,2}(?:\.\d+)?)', text_lower)
@@ -153,13 +197,13 @@ class FactMemory:
                     val = float(score_match.group(1))
                     if 35.0 <= val <= 100.0:
                         score_str = f"{val:g}%"
-                        extracted["score"] = score_str
-                        self.facts["score"] = score_str
+                        self.update_fact("class_12_score", score_str, source=text)
+                        extracted["class_12_score"] = score_str
                 except (ValueError, IndexError):
                     pass
 
         # 3. Program / Branch extraction
-        if "program" not in self.facts:
+        if "program_of_interest" not in self.facts and "program" not in self.facts:
             program_keywords = [
                 ("B.Tech CSE (Data Science)", [r'\b(data\s*science|cse\s*data\s*science|ds)\b', 'డేటా సైన్స్', 'डेटा साइंस']),
                 ("B.Tech AI/ML", [r'\b(aiml|ai\s*[\/&]?\s*ml|ai\s*and\s*ml|ai&ml|artificial\s*intelligence|machine\s*learning)\b', r'ai\/ml', 'ఏఐ', 'आर्टिफिशियल']),
@@ -181,15 +225,15 @@ class FactMemory:
                 matched = False
                 for pat in patterns:
                     if re.search(pat, text_lower, re.IGNORECASE) or pat in text:
-                        extracted["program"] = prog_name
-                        self.facts["program"] = prog_name
+                        self.update_fact("program_of_interest", prog_name, source=text)
+                        extracted["program_of_interest"] = prog_name
                         matched = True
                         break
                 if matched:
                     break
 
-        # 4. City / Location extraction
-        if "city" not in self.facts:
+        # 4. City / Location extraction (reject "None", "null", or fillers)
+        if "current_city" not in self.facts and "city" not in self.facts:
             city_patterns = [
                 r'(?:from|live\s*in|living\s*in|stay\s*in|native\s*(?:is|place\s*is)?|location\s*(?:is)?)\s+([A-Za-z]{3,20})',
                 r'([A-Za-z]{3,20})\s+(?:lo\s*untunnanu|lo\s*untamu|lo\s*unta|nunchi|se\s*bol\s*raha|se\s*hoon|se\s*hu)',
@@ -199,13 +243,16 @@ class FactMemory:
                 c_match = re.search(c_pat, text_lower, re.IGNORECASE)
                 if c_match:
                     city_cand = c_match.group(1).capitalize()
-                    if city_cand.lower() not in self.INVALID_NAMES and city_cand.lower() not in self.INVALID_CITIES:
-                        extracted["city"] = city_cand
-                        self.facts["city"] = city_cand
+                    cand_lower = city_cand.lower()
+                    if (cand_lower not in self.INVALID_NAMES 
+                        and cand_lower not in self.INVALID_CITIES 
+                        and cand_lower not in {"none", "null", "undefined", "nil", "na", "city"}):
+                        self.update_fact("current_city", city_cand, source=text)
+                        extracted["current_city"] = city_cand
                         break
 
         # 5. Entrance exam extraction
-        if "exam" not in self.facts:
+        if "entrance_exams_taken" not in self.facts and "exam" not in self.facts:
             exams_map = {
                 "JEE": r'\b(jee|jee\s*mains?|jee\s*advanced|iit)\b',
                 "AP_EAPCET": r'\b(ap\s*eapcet|ap\s*eamcet|eapcet|eamcet|apeapcet|apeamcet)\b',
@@ -217,16 +264,16 @@ class FactMemory:
             detected = [k for k, p in exams_map.items() if re.search(p, text_lower)]
             if detected:
                 exam_val = ", ".join(detected)
-                extracted["exam"] = exam_val
-                self.facts["exam"] = exam_val
+                self.update_fact("entrance_exams_taken", exam_val, source=text)
+                extracted["entrance_exams_taken"] = exam_val
 
         # 6. Preferences
         if any(w in text_lower for w in ["hostel", "accommodation", "room", "mess"]):
-            self.facts["hostel_interest"] = "Yes"
+            self.update_fact("hostel_interest", "Yes", source=text)
             extracted["hostel_interest"] = "Yes"
 
         if any(w in text_lower for w in ["scholarship", "fee waiver", "concession"]):
-            self.facts["scholarship_interest"] = "Yes"
+            self.update_fact("scholarship_interest", "Yes", source=text)
             extracted["scholarship_interest"] = "Yes"
 
         return extracted
@@ -243,13 +290,18 @@ class FactMemory:
         return formatted.strip()
 
     def has_fact(self, key: str) -> bool:
-        return key in self.facts and bool(self.facts[key])
+        canon_key = self.CANONICAL_KEYS.get(key, key)
+        return (canon_key in self.facts and bool(self.facts[canon_key])) or (key in self.facts and bool(self.facts[key]))
 
     def get_fact(self, key: str, default: Any = None) -> Any:
+        canon_key = self.CANONICAL_KEYS.get(key, key)
+        if canon_key in self.facts:
+            return self.facts[canon_key]
         return self.facts.get(key, default)
 
     def update(self, new_facts: Dict[str, Any]):
-        self.facts.update(new_facts)
+        for k, v in new_facts.items():
+            self.update_fact(k, v)
 
 
 # =====================================================================
@@ -583,6 +635,7 @@ class LongConversationManager:
         self.history = self.conversation_history
         self.dialogue_state = DialogueState()
         self.state = self.dialogue_state
+        self.soft_close_asked: bool = False
 
     def get_facts(self) -> Dict[str, Any]:
         """Return copy of currently known facts."""
@@ -704,9 +757,9 @@ class LongConversationManager:
             "context_prompt": self.build_context(user_input, language=language),
         }
 
-    def record_fact(self, key: str, value: Any):
-        """Update or insert a fact into fact_memory and sync dialogue state."""
-        self.fact_memory.facts[key] = value
+    def record_fact(self, key: str, value: Any, source: str = "manual"):
+        """Update or insert a fact into fact_memory with canonical mapping and sync dialogue state."""
+        self.fact_memory.update_fact(key, value, source=source)
         self.dialogue_state.sync_with_facts(self.fact_memory.facts)
 
     def update_user_turn(self, user_text: str, language: str = "en-IN"):
@@ -823,24 +876,26 @@ Respond naturally to the caller."""
         return context
 
     def is_goodbye(self, text: str) -> bool:
-        """Detect goodbye or wrap-up signals across English, Hindi, Telugu, Tamil."""
+        """Detect goodbye or wrap-up signals across English, Hindi, Telugu, Tamil using strict is_farewell."""
         if not text:
             return False
         clean = text.strip()
         conv_intent = self.detect_conversion_intent(clean)
-        # If user expresses conversion action (e.g. "Done, send me the link", "Register me please"):
-        # Only treat as goodbye if there is also an explicit final thank you / farewell ("... Thank you! Bye")
+        # If user expresses conversion action, only treat as goodbye if there is also an explicit final farewell
         if conv_intent:
             explicit_farewell = bool(re.search(
-                r'\b(thank\s*you|thanks|bye|goodbye)\b|(ధన్యవాదాలు|థాంక్స్|బై|ధన్యవాదం|धन्यवाद|शुक्रिया|अलविदा|நன்றி)',
+                r'\b(bye|goodbye|good bye)\b|(ధన్యవాదాలు|థాంక్స్|బై|ధన్యవాదం|अलविदा|நன்றி)',
                 clean, re.IGNORECASE
             ))
             return explicit_farewell
 
-        # Fast exit on natural wrap-up phrases (under 15 words)
-        if len(clean.split()) <= 15 and self.GOODBYE_RE.search(clean):
-            return True
-        return False
+        return is_farewell(clean)
+
+    def is_explicit_bye(self, text: str) -> bool:
+        """Returns True if the caller gave an unambiguous final farewell (e.g. 'bye', 'goodbye', 'अलविदा')."""
+        if not text:
+            return False
+        return bool(re.search(r'\b(bye|goodbye|good bye|see you|talk (to you )?later)\b|(अलविदा|फिर मिलेंगे|బై|వస్తాను)', text, re.IGNORECASE))
 
     def get_summary(self) -> Dict[str, Any]:
         """Return complete call audit summary."""

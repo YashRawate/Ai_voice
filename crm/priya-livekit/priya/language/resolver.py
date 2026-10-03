@@ -74,19 +74,26 @@ def normalize_lang_code(code: Optional[str]) -> str:
     return code if code in SUPPORTED_LANGS else "en-IN"
 
 
-def resolve_mixed_language(detected_lang: Optional[str], transcript: str, session_lang: str = "en-IN") -> str:
+from transcript_guards import dominant_script, ALLOWED_SCRIPTS
+
+_SWITCH_STREAKS: Dict[str, Dict[str, Any]] = {}
+
+
+def resolve_mixed_language(detected_lang: Optional[str], transcript: str, session_lang: str = "en-IN", session_id: str = "default") -> str:
     """
-    Policy: once an Indic language is established for the session, minor code-mixing
-    or short neutral utterances do NOT flip it back to English.
+    Policy: once a language is established for the session, minor code-mixing,
+    short utterances, or background chatter do NOT flip the language.
     
     Only switch on:
-    1. Explicit user language switch command ('speak in English', 'हिंदी में बात करो').
-    2. A sufficiently long, confident utterance in a different language.
+    1. Explicit user language switch command ('speak in English', 'हिंदी में बात करो', 'Telugu lo matladandi').
+    2. Supported script (LATIN, DEVANAGARI, TELUGU).
+    3. 2 consecutive long utterances (>= 4 words) in the new language.
 
     Args:
         detected_lang: Raw detected language from STT or audio/script detector.
         transcript: Spoken text transcription.
         session_lang: Currently locked conversation language for the session.
+        session_id: Session identifier to track hysteresis streaks.
 
     Returns:
         Resolved language code ('en-IN', 'hi-IN', 'te-IN', or 'ta-IN').
@@ -95,45 +102,62 @@ def resolve_mixed_language(detected_lang: Optional[str], transcript: str, sessio
     norm_session = normalize_lang_code(session_lang)
     norm_detected = normalize_lang_code(detected_lang)
 
-    # 1. Explicit User Request (Highest Priority — 100% confidence)
+    # 1. Explicit User Request (Highest Priority — 100% confidence, immediate)
     if text:
         explicit = _EXPLICIT_DETECTOR.detect_explicit_switch(text)
         if explicit.is_explicit_switch and explicit.target_language in SUPPORTED_LANGS:
             logger.info(f"[LANG_RESOLVER] Explicit switch request detected: {norm_session} -> {explicit.target_language}")
+            _SWITCH_STREAKS.pop(session_id, None)
             return explicit.target_language
 
-    # If detection agrees with current session language, keep it
+    # If detection agrees with current session language, keep it and reset any pending switch streak
     if norm_detected == norm_session:
+        _SWITCH_STREAKS.pop(session_id, None)
         return norm_session
 
-    # 2. Short Utterance Guard (< 15 characters)
-    # Short responses like 'okay', 'yes', 'fee kitna', 'batao' must not flip the session language
-    if len(text) < 15:
-        logger.debug(f"[LANG_RESOLVER] Short utterance ({len(text)} chars) — preserving session lang '{norm_session}'")
+    # 2. Supported Script Check: Never switch to/from an unsupported script (e.g. Bengali)
+    script = dominant_script(text)
+    if script is not None and script not in ALLOWED_SCRIPTS:
+        logger.info(f"[LANG_RESOLVER] Unsupported script '{script}' in utterance — holding locked lang '{norm_session}'")
         return norm_session
 
-    # 3. Code-Mixed Speech Stability Guard
+    # 3. Short Utterance Guard (< 4 words or < 15 characters)
+    words = re.findall(r'\w+', text)
+    if len(words) < 4 or len(text) < 15:
+        logger.debug(f"[LANG_RESOLVER] Short utterance ({len(words)} words, {len(text)} chars) — preserving session lang '{norm_session}'")
+        return norm_session
+
+    # 4. Code-Mixed Speech Stability Guard
     # If session is already in Hindi/Telugu/Tamil, do not flip to English because of English loanwords
     if norm_session in {"hi-IN", "te-IN", "ta-IN"} and norm_detected == "en-IN":
-        # Check if the sentence has Indic markers or code-mixed loanwords
-        words = set(re.sub(r'[^a-zA-Z\s]', '', text.lower()).split())
+        word_set = set(w.lower() for w in words)
         has_indic_words = bool(_INDIC_MARKERS.search(text))
-        has_loanwords = bool(words & _LOANWORDS)
-
-        # Native script presence
+        has_loanwords = bool(word_set & _LOANWORDS)
         has_indic_script = bool(re.search(r'[\u0900-\u097F\u0C00-\u0C7F\u0B80-\u0BFF]', text))
 
         if has_indic_script or has_indic_words or has_loanwords:
-            logger.info(f"[LANG_RESOLVER] Code-mixed speech detected with Indic markers — holding locked lang '{norm_session}'")
+            logger.info(f"[LANG_RESOLVER] Code-mixed speech with Indic markers — holding locked lang '{norm_session}'")
             return norm_session
 
-        # Only switch to English if utterance is long (>= 25 chars) and purely conversational English
         if len(text) < 25:
             logger.info(f"[LANG_RESOLVER] Ambiguous English utterance (<25 chars) — holding locked lang '{norm_session}'")
             return norm_session
 
-    # 4. Genuine, confident language switch
-    logger.info(f"[LANG_RESOLVER] Confirmed language switch: {norm_session} -> {norm_detected}")
+    # 5. Consecutive Long Utterance Requirement (requires 2 consecutive turns in candidate language)
+    streak_data = _SWITCH_STREAKS.get(session_id, {"candidate": "", "count": 0})
+    if streak_data.get("candidate") == norm_detected:
+        streak_data["count"] += 1
+    else:
+        streak_data = {"candidate": norm_detected, "count": 1}
+    _SWITCH_STREAKS[session_id] = streak_data
+
+    if streak_data["count"] < 2:
+        logger.info(f"[LANG_RESOLVER] Pending language switch to {norm_detected} (streak 1/2, need 2 consecutive) — holding '{norm_session}'")
+        return norm_session
+
+    # Confirmed after 2 consecutive turns
+    _SWITCH_STREAKS.pop(session_id, None)
+    logger.info(f"[LANG_RESOLVER] Confirmed language switch (2 consecutive long turns): {norm_session} -> {norm_detected}")
     return norm_detected
 
 
