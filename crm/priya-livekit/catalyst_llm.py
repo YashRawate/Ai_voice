@@ -4,8 +4,14 @@ import time
 import httpx
 import logging
 import asyncio
+from typing import Optional, List, Any
+import concurrent.futures
 from openai import AsyncOpenAI
 from dotenv import load_dotenv
+
+from langchain_core.language_models.chat_models import BaseChatModel
+from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, BaseMessage
+from langchain_core.outputs import ChatResult, ChatGeneration
 
 load_dotenv()
 logger = logging.getLogger("catalyst_llm")
@@ -229,12 +235,6 @@ def get_catalyst_client() -> AsyncOpenAI:
         base_url="https://api.openai.com/v1",  # dummy, intercepted by transport
         http_client=httpx.AsyncClient(transport=CatalystAuthTransport())
     )
-
-
-from typing import Optional, List, Any
-from langchain_core.language_models.chat_models import BaseChatModel
-from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, BaseMessage
-from langchain_core.outputs import ChatResult, ChatGeneration
 
 
 class ChatCatalyst(BaseChatModel):

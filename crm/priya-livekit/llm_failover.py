@@ -63,7 +63,7 @@ def build_langchain_llm(tools: Optional[List[Any]] = None) -> BaseChatModel:
     gemini_key = os.getenv("GEMINI_API_KEY")
     if gemini_key:
         try:
-            from langchain_google_genai import ChatGoogleGenerativeAI
+            from langchain_google_genai import ChatGoogleGenerativeAI  # type: ignore
             gemini_llm = ChatGoogleGenerativeAI(
                 google_api_key=gemini_key,
                 model=os.getenv("GEMINI_MODEL", "gemini-1.5-flash"),
@@ -77,7 +77,7 @@ def build_langchain_llm(tools: Optional[List[Any]] = None) -> BaseChatModel:
 
     # 4. Fallback 3: Local Ollama / Mock fallback
     try:
-        from langchain_community.chat_models import ChatOllama
+        from langchain_community.chat_models import ChatOllama  # type: ignore
         local_llm = ChatOllama(
             base_url=os.getenv("LOCAL_BASE_URL", "http://localhost:11434"),
             model=os.getenv("LOCAL_MODEL", "qwen2.5:3b"),
