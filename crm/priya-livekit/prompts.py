@@ -63,19 +63,41 @@ def build_prompt_template() -> ChatPromptTemplate:
 
 
 def format_system_prompt(facts: dict, stage: str, next_field: str, language_code: str = "en-IN") -> str:
-    """Format single unified system prompt string for any LLM caller."""
-    facts_str = "\n".join(f"• {k}: {v}" for k, v in facts.items() if v and not str(k).startswith("_")) if facts else "(none yet)"
+    """Format single unified system prompt string with structured user profile and memory rules."""
+    facts = facts or {}
+    name = facts.get("student_name") or facts.get("name")
+    prog = facts.get("program_of_interest") or facts.get("program")
+    marks = facts.get("class_12_score") or facts.get("marks")
+    city = facts.get("current_city") or facts.get("city")
+    college = facts.get("college") or facts.get("school")
+    visit = facts.get("visit_datetime") or facts.get("engagement_choice")
+
+    profile_lines = [
+        f"• Name: {name} (Collected: {'Yes' if name else 'No'})",
+        f"• Program: {prog} (Collected: {'Yes' if prog else 'No'})",
+        f"• 12th Marks / Score: {marks} (Collected: {'Yes' if marks else 'No'})",
+        f"• City / Location: {city} (Collected: {'Yes' if city else 'No'})",
+        f"• Previous College/School: {college} (Collected: {'Yes' if college else 'No'})",
+        f"• Campus Visit: {visit} (Collected: {'Yes' if visit else 'No'})",
+    ]
+    structured_profile_str = "\n".join(profile_lines)
     lang_style = LANGUAGE_STYLE.get(language_code, LANGUAGE_STYLE.get("en-IN", ""))
+
     return (
         CORE_IDENTITY_AND_RULES +
-        f"\n\nKNOWN FACTS (never re-ask these):\n{facts_str}\n\n"
-        f"CURRENT STAGE: {stage}\nFIELD TO COLLECT THIS TURN: {next_field or '(all required fields collected)'}\n\n"
+        f"\n\n# STRUCTURED USER PROFILE (SOURCE OF TRUTH — NEVER RE-ASK COLLECTED FIELDS):\n{structured_profile_str}\n\n"
+        f"CURRENT STAGE: {stage}\nNEXT MISSING FIELD TO COLLECT: {next_field or '(all required fields collected)'}\n\n"
         f"UNIVERSITY FACT SHEET:\n{FACT_SHEET}\n\n"
         f"LANGUAGE STYLE (respond in this language — all facts and history still apply):\n{lang_style}\n\n"
-        "ANTI-REPETITION MANDATE:\n"
-        "Never ask for information already present in KNOWN FACTS above.\n"
-        "If student name is known, address them by name and NEVER ask for their name.\n"
-        "If program is known, do not ask what branch/program they want.\n"
-        "If marks or exam scores are known, do not ask for them again."
+        "# PERSISTENT MEMORY & CALL RULES:\n"
+        "1. NEVER ask for information already marked as '(Collected: Yes)' above.\n"
+        "2. If student name is known, address them by name and NEVER ask for their name.\n"
+        "3. If program is known, do not ask what course/branch they want.\n"
+        "4. If marks or scores are known, do not ask for them again.\n"
+        "5. If user provides multiple pieces of information in one turn, acknowledge and accept all of them.\n"
+        "6. If user corrects information, adopt the latest confirmed information.\n"
+        "7. Answer any direct question or concern FIRST, then smoothly guide toward the next missing field.\n"
+        "8. Keep spoken response under 25 words with exactly ONE question."
     )
+
 

@@ -46,6 +46,10 @@ class DirectSarvamTTS:
         """Signal ongoing synthesis to abort (barge-in)."""
         self._is_cancelled = True
 
+    def reset_cancellation(self):
+        """Reset cancellation flag before starting a new synthesis."""
+        self._is_cancelled = False
+
     async def close(self):
         """Close internal aiohttp session."""
         if self._session and not self._session.closed:
@@ -81,6 +85,7 @@ class DirectSarvamTTS:
         ws = None
         try:
             ws = await session.ws_connect(SARVAM_TTS_WS_URL, headers=headers, timeout=2.5)
+            logger.info("TTS: using WebSocket streaming path")
             # Send config
             config_msg = {
                 "type": "config",
@@ -99,25 +104,36 @@ class DirectSarvamTTS:
             await ws.send_str(json.dumps({"type": "text", "data": {"text": text.strip()}}))
             await ws.send_str(json.dumps({"type": "flush"}))
 
-            # Receive audio chunks
-            async for msg in ws:
-                if self._is_cancelled:
-                    logger.debug("TTS synthesis cancelled by barge-in")
-                    break
+            # Receive audio chunks (wait max 3.5s for first chunk, 0.75s between subsequent chunks)
+            chunk_count = 0
+            while not self._is_cancelled:
+                try:
+                    timeout = 3.5 if chunk_count == 0 else 0.75
+                    msg = await asyncio.wait_for(ws.receive(), timeout=timeout)
+                except asyncio.TimeoutError:
+                    if chunk_count > 0:
+                        logger.debug(f"TTS WS: received {chunk_count} chunks, synthesis complete")
+                        break
+                    else:
+                        logger.warning("TTS WS: initial chunk timeout, falling back to REST")
+                        raise
+
                 if msg.type == aiohttp.WSMsgType.TEXT:
                     resp = json.loads(msg.data)
-                    msg_type = resp.get("type")
+                    msg_type = resp.get("type") or resp.get("event")
                     if msg_type == "audio":
                         raw_b64 = resp.get("data", {}).get("audio", "")
                         if raw_b64:
+                            chunk_count += 1
                             yield base64.b64decode(raw_b64)
-                    elif msg_type == "done" or msg_type == "flush":
+                    elif msg_type in ("done", "flush", "end"):
+                        logger.debug(f"TTS WS: received '{msg_type}', stream complete")
                         break
                 elif msg.type in (aiohttp.WSMsgType.CLOSED, aiohttp.WSMsgType.ERROR):
                     break
             return
         except Exception as e:
-            logger.debug(f"TTS WebSocket streaming unavailable ({e}); falling back to REST")
+            logger.warning(f"TTS WebSocket streaming unavailable ({e}); falling back to REST")
         finally:
             if ws and not ws.closed:
                 await ws.close()
@@ -126,6 +142,7 @@ class DirectSarvamTTS:
         if self._is_cancelled:
             return
 
+        logger.warning("TTS: using REST fallback (WebSocket unavailable) — expect higher latency")
         try:
             payload = {
                 "inputs": [text.strip()],
@@ -147,7 +164,13 @@ class DirectSarvamTTS:
                     data = await resp.json()
                     audios = data.get("audios", [])
                     if audios and not self._is_cancelled:
-                        yield base64.b64decode(audios[0])
+                        raw = base64.b64decode(audios[0])
+                        # Strip WAV header if present (RIFF signature = bytes 0-3 'RIFF')
+                        # Sarvam REST returns WAV-wrapped mulaw; header is always 44 bytes
+                        if raw[:4] == b'RIFF':
+                            logger.debug("TTS REST: stripping 44-byte WAV header from mulaw response")
+                            raw = raw[44:]
+                        yield raw
                 else:
                     err_txt = await resp.text()
                     logger.warning(f"Sarvam REST TTS error {resp.status}: {err_txt}")

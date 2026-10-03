@@ -48,7 +48,7 @@ from latency import LatencyTracker  # logs per-turn EOU/LLM/TTS latency to laten
 from translate import translate_out, prewarm as translate_prewarm, aclose as translate_aclose  # Sarvam translate-out
 from mcp_client import mcp_bridge  # Model Context Protocol bridge for CRM and admissions tools
 from fillers import get_filler  # Context-aware filler phrases for slow path (Azure)
-from session_manager import GLOBAL_SESSION_STORE, SessionContext, ConversationTurn, is_garbled_input, DialogueSlotManager  # Session context, slot extraction & anti-repetition
+from session_manager import GLOBAL_SESSION_STORE, SessionContext, ConversationTurn, is_garbled_input, DialogueSlotManager, is_valid_user_speech  # Session context, slot extraction & anti-repetition
 from latency_optimizer import LatencyOptimizer  # Fast-path cache and latency optimization engine
 try:
     from azure_store import AZURE_APPCONFIG, AZURE_COSMOS_STORE, AZURE_AI_SEARCH
@@ -1416,11 +1416,12 @@ class PatternRouter:
 class Priya(Agent):
     def __init__(self, student_name: str = "", reporter: Reporter | None = None,
                  job_ctx: JobContext | None = None, collected: dict | None = None,
-                 followup: bool = False, last_summary: str = "") -> None:
+                 followup: bool = False, last_summary: str = "", phone_number: str = "") -> None:
         # Per-call personalisation injected from the CRM (via dispatch metadata): if we
         # already know the prospect's name, tell Priya so she greets them by it and skips
         # asking. Everything else (prompt, voice, tools) is unchanged.
         self._followup = followup
+        self._phone_number = phone_number
         # Retrieve live system prompt from Azure App Config if active, else default
         app_prompt = AZURE_APPCONFIG.get_setting("priya/system_prompt") if AZURE_APPCONFIG else None
         instructions = app_prompt or INSTRUCTIONS
@@ -1437,10 +1438,10 @@ class Priya(Agent):
         super().__init__(
             instructions=instructions,
             vad=silero.VAD.load(
-                activation_threshold=0.65,
-                min_speech_duration=0.25,
-                min_silence_duration=0.45,
-                prefix_padding_duration=0.30
+                activation_threshold=float(os.getenv("USER_VAD_THRESHOLD", "0.65")),
+                min_speech_duration=float(os.getenv("MIN_SPEECH_DURATION_MS", "350")) / 1000.0,
+                min_silence_duration=float(os.getenv("END_OF_SPEECH_SILENCE_MS", "650")) / 1000.0,
+                prefix_padding_duration=0.20
             ),
             stt=sarvam.STT(
                 model="saaras:v3",
@@ -1479,6 +1480,10 @@ class Priya(Agent):
         if collected:
             self.conv_session.collected.update({k: v for k, v in collected.items() if v})
         self.collected = self.conv_session.collected
+        from structured_memory import StructuredCallState, GLOBAL_USER_STORE
+        self.structured_state = StructuredCallState(call_id=room_name, phone_number=self._phone_number)
+        if self.collected:
+            self.structured_state.merge_facts(self.collected)
         # Full Conversation History & Intelligent Prompting Architecture
         self.conv_history: ConversationHistory = getattr(self.conv_session, "history", None) or ConversationHistory(call_id=room_name)
         if self.collected:
@@ -1652,6 +1657,22 @@ class Priya(Agent):
                 "and I wanted to follow up. Is this a good time?")
 
     async def on_user_turn_completed(self, turn_ctx, new_message):
+        # Noise Gate: drop non-speech noise bursts
+        raw_text = getattr(new_message, 'text_content', '') or getattr(new_message, 'content', '') or ''
+        if raw_text and not is_valid_user_speech(raw_text):
+            logger.info(f"[NOISE_GATE] User turn rejected as non-speech noise: '{raw_text}'")
+            return
+
+        # Semantic Interruption Gate: Check if user spoke a passive backchannel during assistant speech
+        if hasattr(self, "acoustic_pipeline") and hasattr(self.acoustic_pipeline, "interruption_controller"):
+            if self.acoustic_pipeline.is_assistant_speaking and raw_text:
+                is_meaningful, reason = self.acoustic_pipeline.interruption_controller.turn_validator.is_meaningful_turn(
+                    raw_text, is_assistant_speaking=True
+                )
+                if not is_meaningful:
+                    logger.info(f"[INTERRUPTION_REJECTED] Suppressed passive backchannel/turn during assistant speech: '{raw_text}' ({reason})")
+                    return
+
         # Bound the history sent to the LLM (system prompt is separate and kept). Keeps
         # prompt_tokens roughly flat across a long call instead of growing every turn.
         if MAX_HISTORY_ITEMS > 0:
@@ -1700,6 +1721,21 @@ class Priya(Agent):
         except Exception as e:  # noqa: BLE001
             logger.debug(f"extract text error: {e}")
 
+        # ── Noise Gate: Drop coughs, breathing, clicks, and non-speech artifacts ──
+        if last_user_text and not is_valid_user_speech(last_user_text):
+            logger.info(f"[NOISE_GATE] Dropped non-speech noise artifact: '{last_user_text}'")
+            return
+
+        # ── Backchannel / Interruption Check: Drop passive acknowledgement fillers if assistant is speaking ──
+        if hasattr(self, "acoustic_pipeline") and hasattr(self.acoustic_pipeline, "interruption_controller"):
+            if self.acoustic_pipeline.is_assistant_speaking and last_user_text:
+                is_meaningful, reason = self.acoustic_pipeline.interruption_controller.turn_validator.is_meaningful_turn(
+                    last_user_text, is_assistant_speaking=True
+                )
+                if not is_meaningful:
+                    logger.info(f"[INTERRUPTION_REJECTED] LLM turn skipped for passive backchannel: '{last_user_text}' ({reason})")
+                    return
+
         # ── Echo Suppression: Drop microphone capture of Priya's own speaker output ──
         _CONVERSATIONAL_WHITELIST = {
             "hello", "hi", "hey", "yes", "yeah", "yep", "sure", "ok", "okay",
@@ -1745,9 +1781,22 @@ class Priya(Agent):
                     for k, v in self.collected.items():
                         if k not in prev_collected or prev_collected[k] != v:
                             self._reporter.emit(type="detail", field=k, value=v)
+                self.structured_state.merge_facts(self.collected)
+                if self._phone_number:
+                    from structured_memory import GLOBAL_USER_STORE
+                    GLOBAL_USER_STORE.save_profile(self._phone_number, self.collected)
                 logger.info(f"[SLOT] Current profile: {self.collected}")
             except Exception as e:  # noqa: BLE001
                 logger.debug(f"slot extraction error: {e}")
+
+        # ── "I Already Told You" Intercept & Immediate Recovery ──────────────
+        if last_user_text:
+            already_told_ack = DialogueSlotManager.detect_already_told(last_user_text, self.collected)
+            if already_told_ack:
+                logger.info(f"[ALREADY_TOLD] Intercepted statement, acknowledging known fact: '{already_told_ack}'")
+                self.conv_session.add_turn("assistant", already_told_ack, language=self._lang)
+                yield already_told_ack
+                return
 
         # ── Session turn logging ─────────────────────────────────────────────
         if last_user_text:
@@ -2383,6 +2432,18 @@ async def entrypoint(ctx: JobContext):
     prior_collected = meta.get("collected") if isinstance(meta.get("collected"), dict) else {}
     is_followup     = bool(meta.get("followup"))
     last_summary    = str(meta.get("last_summary") or "")
+
+    # Look up persistent profile by caller phone number across all previous calls
+    phone_number = meta.get("phone") or os.getenv("CALL_TO", "")
+    from structured_memory import GLOBAL_USER_STORE
+    persisted_profile = GLOBAL_USER_STORE.get_profile(phone_number)
+    if persisted_profile:
+        logger.info(f"[PERSISTENT_MEMORY] Loaded cross-call profile for {phone_number}: {persisted_profile.get('name')}")
+        prior_collected = {**persisted_profile, **prior_collected}
+        if not student_name and persisted_profile.get("name"):
+            student_name = persisted_profile.get("name")
+        is_followup = True
+
     if is_followup and not student_name:
         student_name = prior_collected.get("student_name") or ""
 
@@ -2393,16 +2454,17 @@ async def entrypoint(ctx: JobContext):
     await mcp_bridge.start()
 
     agent = Priya(student_name=student_name, reporter=reporter, job_ctx=ctx,
-                  collected=prior_collected, followup=is_followup, last_summary=last_summary)
+                  collected=prior_collected, followup=is_followup, last_summary=last_summary,
+                  phone_number=phone_number)
     agent._session_id = test_session_id
 
-    # Low-latency Silero Neural VAD with two-tier threshold and anti-barge-in debounce
+    # Low-latency Silero Neural VAD with noise-resistant thresholds & two-stage barge-in confirmation
     session = AgentSession(
         vad=silero.VAD.load(
-            activation_threshold=0.75,
-            min_speech_duration=0.20,
-            min_silence_duration=0.25,
-            prefix_padding_duration=0.15
+            activation_threshold=float(os.getenv("VAD_SPEECH_THRESHOLD", "0.75")),
+            min_speech_duration=float(os.getenv("MIN_SPEECH_DURATION_MS", "350")) / 1000.0,
+            min_silence_duration=float(os.getenv("END_OF_SPEECH_SILENCE_MS", "650")) / 1000.0,
+            prefix_padding_duration=0.20
         ),
         conn_options=SessionConnectOptions(
             llm_conn_options=APIConnectOptions(max_retry=1, retry_interval=0.5, timeout=4.0),
@@ -2417,8 +2479,8 @@ async def entrypoint(ctx: JobContext):
             "interruption": {
                 "enabled": True,
                 "mode": "vad",
-                "min_duration": float(os.getenv("INTERRUPTION_MIN_DURATION", "0.0")),  # BargeInGate owns timing decision
-                "min_words": 0,
+                "min_duration": float(os.getenv("MIN_INTERRUPTION_DURATION_MS", "400")) / 1000.0,  # 400ms confirmation gate
+                "min_words": int(os.getenv("INTERRUPTION_MIN_WORDS", "1")),
                 "resume_false_interruption": True,
                 "discard_audio_if_uninterruptible": True,
             },

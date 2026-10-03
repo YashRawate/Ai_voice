@@ -43,6 +43,15 @@ class Reporter:
         except Exception as e:  # noqa: BLE001
             logger.warning(f"reporter enqueue failed: {e}")
 
+    def push_assistant_message(self, text: str) -> None:
+        self.emit(type="transcript", role="assistant", text=text)
+
+    def push_user_message(self, text: str) -> None:
+        self.emit(type="transcript", role="user", text=text)
+
+    def push_detail(self, field: str, value: any) -> None:
+        self.emit(type="detail", field=field, value=value)
+
     async def _run(self) -> None:
         self._http = aiohttp.ClientSession()
         try:

@@ -136,15 +136,17 @@ class DirectCallSession:
         self.is_closed = False
         self.turn_queue = asyncio.Queue()
         self.process_turns_task: Optional[asyncio.Task] = None
+        self.silence_heartbeat_task: Optional[asyncio.Task] = None
 
     async def initialize(self):
         """Connect STT and initialize turn processor (Called EXACTLY ONCE on new call)."""
         logger.info(f"[{self.session_id}] [SESSION_INIT] Initializing new call session")
         self.stt = DirectSarvamSTT(
             api_key=SARVAM_KEY,
-            language_code="unknown",  # auto-detect
+            language_code="auto",
             sample_rate=8000,
-            encoding="mulaw",        # direct telephony mulaw streaming
+            encoding="linear16",
+            on_partial=self._handle_stt_partial,
             on_final=self._handle_stt_final,
             on_speech_start=self._handle_user_speech_start,
         )
@@ -158,6 +160,10 @@ class DirectCallSession:
             else "Hello! This is Priya from Aditya University Admissions Office. May I know your name, please?"
         )
         await self.speak_phrase(greeting)
+
+        # Start silence heartbeat to keep Exotel WebSocket alive between turns
+        if self.is_exotel:
+            self.silence_heartbeat_task = asyncio.create_task(self._silence_heartbeat())
 
     async def reconnect_transport(self, ws: WebSocket, stream_sid: str):
         """
@@ -175,9 +181,31 @@ class DirectCallSession:
                 logger.warning(f"[{self.session_id}] STT reconnect warning: {e}")
                 self.test_logger.log_error(f"STT reconnect failed: {e}")
 
+    async def _handle_stt_partial(self, transcript: str, language_code: str):
+        """Streaming partial transcript received during user speech."""
+        if not transcript.strip():
+            return
+
+        # If assistant is speaking, evaluate if partial speech is a genuine intentional barge-in
+        if self.is_speaking or self.acoustic_pipeline.is_assistant_speaking:
+            if self.is_exotel:
+                if len(transcript.strip().split()) >= 1:
+                    logger.info(f"[{self.session_id}] Exotel caller interrupted Priya with partial speech: '{transcript}'")
+                    self.test_logger.log_interruption(reason="caller_barge_in", detail=f"Verified caller speech: '{transcript}'")
+                    await self.stop_speaking()
+            elif self.acoustic_pipeline.confirm_barge_in(transcript):
+                logger.info(f"[{self.session_id}] Multi-signal confirmed caller barge-in from partial STT: '{transcript}'")
+                self.test_logger.log_interruption(reason="caller_barge_in", detail=f"Verified caller speech: '{transcript}'")
+                await self.stop_speaking()
+
     async def _handle_user_speech_start(self):
-        """Barge-in: caller started speaking while Priya is playing audio."""
+        """Barge-in: speech frames detected while Priya is playing audio."""
         if not self.is_speaking:
+            return
+
+        if self.is_exotel:
+            # Exotel PSTN: Sarvam VAD detected caller speech start
+            logger.info(f"[{self.session_id}] Exotel caller speech start detected during TTS")
             return
 
         # Debounce gate check: require consecutive speech frames, reject single-frame noise bursts
@@ -185,8 +213,13 @@ class DirectCallSession:
             logger.info(f"[{self.session_id}] Pre-debounce speech start ignored (protecting against noise burst)")
             return
 
+        # VAD ALONE MUST NEVER DIRECTLY CANCEL TTS.
+        if not self.acoustic_pipeline.confirm_barge_in(partial_stt_text=""):
+            logger.debug(f"[{self.session_id}] Speech start held pending STT verification or rejected by acoustic filter")
+            return
+
         logger.info(f"[{self.session_id}] Barge-in confirmed by acoustic pipeline — interrupting Priya")
-        self.test_logger.log_interruption(reason="caller_barge_in", detail="Caller spoke over TTS (debounced)")
+        self.test_logger.log_interruption(reason="caller_barge_in", detail="Caller spoke over TTS (debounced & verified)")
         await self.stop_speaking()
 
     async def _handle_stt_final(self, transcript: str, language_code: str):
@@ -194,12 +227,23 @@ class DirectCallSession:
         if not transcript.strip():
             return
 
-        # Semantic confirmation: if Priya was speaking, filter out junk fillers and coughs
-        if (self.is_speaking or self.acoustic_pipeline.is_assistant_speaking) and not self.acoustic_pipeline.confirm_barge_in(transcript):
-            logger.info(f"[{self.session_id}] Semantic gate filtered false barge-in: '{transcript}'")
-            return
+        # Multi-signal interruption confirmation: if Priya was speaking, filter out backchannels, noise, media, and other speakers
+        if (self.is_speaking or self.acoustic_pipeline.is_assistant_speaking):
+            if self.is_exotel:
+                logger.info(f"[{self.session_id}] Exotel caller barge-in confirmed: '{transcript}'")
+                await self.stop_speaking()
+            elif not self.acoustic_pipeline.confirm_barge_in(transcript):
+                logger.info(f"[{self.session_id}] Interruption controller filtered false barge-in: '{transcript}'")
+                return
+            else:
+                await self.stop_speaking()
+
+        # Enroll verified caller speech profile during clean caller turns
+        if not self.is_speaking and not self.acoustic_pipeline.is_assistant_speaking:
+            self.acoustic_pipeline.enroll_caller()
 
         logger.info(f"[{self.session_id}] Caller ({language_code}): {transcript}")
+        print(f"\n🎙️ [CALLER]: {transcript} (Language: {language_code})\n", flush=True)
         self.test_logger.log_stt(text=transcript, language=language_code)
         # Apply code-mixed stability resolution
         resolved_lang = resolve_mixed_language(language_code, transcript, self.active_language)
@@ -230,6 +274,7 @@ class DirectCallSession:
             return
 
         text = _normalize_numbers_for_speech(text, lang=self.active_language)
+        print(f"\n🤖 [PRIYA]: {text}\n", flush=True)
         self.is_speaking = True
         self.acoustic_pipeline.set_assistant_speaking(True)
         self.reporter.push_assistant_message(text)
@@ -240,34 +285,38 @@ class DirectCallSession:
                 if not self.is_speaking or self.is_closed:
                     break
 
-                # Feed outgoing TTS chunk to AEC adaptive filter (converted to PCM)
-                pcm_ref = mulaw_to_pcm16(chunk) if len(chunk) < 320 else chunk
+                # Decode Sarvam mu-law to 16-bit linear PCM
+                pcm_ref = mulaw_to_pcm16(chunk)
                 self.acoustic_pipeline.feed_tts_reference(pcm_ref)
 
                 if getattr(self, "is_exotel", False):
-                    # Exotel Voicebot requires raw 16-bit linear PCM little-endian aligned to 320 bytes
+                    # Exotel buffers audio internally and paces playback.
+                    # Send in 1600-byte (100ms) chunks as fast as possible — no artificial sleep.
                     pcm_buffer.extend(pcm_ref)
-                    while len(pcm_buffer) >= 640:
-                        send_chunk = bytes(pcm_buffer[:640])
-                        del pcm_buffer[:640]
+                    while len(pcm_buffer) >= 1600:
+                        send_chunk = bytes(pcm_buffer[:1600])
+                        del pcm_buffer[:1600]
                         payload = base64.b64encode(send_chunk).decode("utf-8")
                         await self.ws.send_json({
                             "event": "media",
+                            "stream_sid": self.stream_sid,
                             "streamSid": self.stream_sid,
                             "media": {"payload": payload}
                         })
-                        await asyncio.sleep(0.001)
+                        if not self.is_speaking or self.is_closed:
+                            break
                 else:
                     # Twilio requires 8-bit G.711 mu-law
                     payload = base64.b64encode(chunk).decode("utf-8")
                     await self.ws.send_json({
                         "event": "media",
+                        "stream_sid": self.stream_sid,
                         "streamSid": self.stream_sid,
                         "media": {"payload": payload}
                     })
-                    await asyncio.sleep(0.001)
+                    await asyncio.sleep(0.035)
 
-            # Flush trailing audio for Exotel (padded to multiple of 320)
+            # Flush remaining audio for Exotel (padded to multiple of 320)
             if getattr(self, "is_exotel", False) and len(pcm_buffer) > 0:
                 pad_len = (320 - (len(pcm_buffer) % 320)) % 320
                 if pad_len > 0:
@@ -275,9 +324,11 @@ class DirectCallSession:
                 payload = base64.b64encode(bytes(pcm_buffer)).decode("utf-8")
                 await self.ws.send_json({
                     "event": "media",
+                    "stream_sid": self.stream_sid,
                     "streamSid": self.stream_sid,
                     "media": {"payload": payload}
                 })
+                pcm_buffer.clear()
         except asyncio.CancelledError:
             logger.debug("Playback cancelled by interruption")
         except Exception as e:
@@ -421,11 +472,41 @@ class DirectCallSession:
             self.test_logger.log_error("LLM generation exception", exc=e)
             return "Aditya University offers excellent B.Tech programs with up to 50% merit scholarships. Would you like me to share our admission link on WhatsApp?"
 
+    async def _silence_heartbeat(self):
+        """
+        Sends 320 bytes of silent PCM (100ms of silence at 8kHz/16-bit) every 200ms.
+        Keeps the Exotel WebSocket connection alive between turns.
+        Exotel closes connections after ~60s of no audio from server.
+        """
+        SILENCE_FRAME = b"\x00" * 320  # 320 bytes = 100ms silence at 8kHz 16-bit mono
+        payload = __import__("base64").b64encode(SILENCE_FRAME).decode("utf-8")
+        logger.info(f"[{self.session_id}] Silence heartbeat started (Exotel keepalive)")
+        try:
+            while not self.is_closed:
+                # Only send silence when Priya is NOT speaking (avoid overlapping with TTS)
+                if not self.is_speaking and self.stream_sid:
+                    try:
+                        await self.ws.send_json({
+                            "event": "media",
+                            "stream_sid": self.stream_sid,
+                            "streamSid": self.stream_sid,
+                            "media": {"payload": payload}
+                        })
+                    except Exception:
+                        # WebSocket closed — stop heartbeat
+                        break
+                await asyncio.sleep(0.2)  # Send every 200ms
+        except asyncio.CancelledError:
+            pass
+        logger.debug(f"[{self.session_id}] Silence heartbeat stopped")
+
     async def close(self):
         """Terminate call session."""
         if self.is_closed:
             return
         self.is_closed = True
+        if self.silence_heartbeat_task:
+            self.silence_heartbeat_task.cancel()
         if self.process_turns_task:
             self.process_turns_task.cancel()
         if self.stt:
@@ -468,9 +549,9 @@ async def stream_xml_response(request: Request):
     ws_protocol = "wss" if request.url.scheme == "https" or "ngrok" in host else "ws"
     stream_url = f"{ws_protocol}://{host}/media-stream"
 
-    # If Exotel sends a GET to resolve the dynamic WebSocket URL, return the JSON it expects:
+    # Return JSON only if explicitly requested, otherwise return ExoML/TwiML
     accept = request.headers.get("accept", "")
-    if "CallSid" in request.query_params or "json" in accept.lower() or request.url.path == "/":
+    if request.url.path == "/json" or "application/json" in accept.lower():
         return Response(
             content=json.dumps({"url": stream_url}),
             media_type="application/json"
@@ -478,7 +559,6 @@ async def stream_xml_response(request: Request):
 
     xml_content = f"""<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-    <Say>Connecting to Priya, please wait.</Say>
     <Connect>
         <Stream url="{stream_url}">
             <Parameter name="agent" value="priya" />
@@ -510,8 +590,20 @@ async def media_stream(ws: WebSocket):
 
             if event == "start":
                 start_data = message.get("start", {})
-                stream_sid = message.get("streamSid") or start_data.get("streamSid") or message.get("stream_sid", "")
-                call_sid = start_data.get("callSid") or message.get("callSid") or start_data.get("call_sid", "")
+                stream_sid = (
+                    message.get("stream_sid")
+                    or start_data.get("stream_sid")
+                    or message.get("streamSid")
+                    or start_data.get("streamSid")
+                    or ""
+                )
+                call_sid = (
+                    message.get("call_sid")
+                    or start_data.get("call_sid")
+                    or message.get("callSid")
+                    or start_data.get("callSid")
+                    or ""
+                )
                 custom_params = start_data.get("customParameters", {})
                 logger.info(f"Call event 'start': callSid={call_sid}, streamSid={stream_sid}")
 
@@ -537,24 +629,23 @@ async def media_stream(ws: WebSocket):
                 media_payload = message.get("media", {}).get("payload", "")
                 if media_payload:
                     raw_chunk = base64.b64decode(media_payload)
-                    # Exotel sends 16-bit linear PCM little-endian (slin)
+                    # Exotel sends 16-bit linear PCM little-endian (slin16 8kHz)
                     # Twilio sends 8-bit G.711 mu-law
-                    if getattr(session, "is_exotel", False) or len(raw_chunk) % 320 == 0:
+                    if getattr(session, "is_exotel", False):
                         pcm_chunk = raw_chunk
+                        # For Exotel PSTN: bypass heavy acoustic pipeline.
+                        # Sarvam STT has its own built-in VAD — send raw PCM directly.
+                        if session.stt:
+                            await session.stt.send_audio(pcm_chunk)
                     else:
                         pcm_chunk = mulaw_to_pcm16(raw_chunk)
-
-                    # 7-step acoustic pipeline: AEC -> NS -> SNR Gate -> 2-Tier VAD -> Debounce
-                    clean_pcm, barge_in_fired, vad_prob = session.acoustic_pipeline.process_frame(pcm_chunk)
-
-                    if session.is_speaking and barge_in_fired:
-                        logger.info(f"[{session.session_id}] Acoustic pipeline triggered debounced barge-in (prob={vad_prob:.2f})")
-                        asyncio.create_task(session._handle_user_speech_start())
-
-                    # Encode clean PCM back to mulaw before passing to STT
-                    clean_mulaw = pcm16_to_mulaw(clean_pcm)
-                    if session.stt:
-                        await session.stt.send_audio(clean_mulaw)
+                        # For Twilio/browser: run through full 7-step acoustic pipeline
+                        clean_pcm, barge_in_fired, vad_prob = session.acoustic_pipeline.process_frame(pcm_chunk)
+                        if session.is_speaking and barge_in_fired:
+                            logger.info(f"[{session.session_id}] Barge-in fired (prob={vad_prob:.2f})")
+                            asyncio.create_task(session._handle_user_speech_start())
+                        if session.stt:
+                            await session.stt.send_audio(clean_pcm)
 
             elif event == "stop":
                 logger.info(f"Carrier sent stop event for stream {stream_sid}")
@@ -578,4 +669,10 @@ if __name__ == "__main__":
     print(f"  STARTING PRIYA DIRECT AUDIO PIPELINE SERVER (Port {PORT})")
     print(f"  Bypassing LiveKit Cloud -> Direct 1:1 In-Process Media Stream")
     print("=" * 65)
-    uvicorn.run(app, host=HOST, port=PORT)
+    uvicorn.run(
+        app,
+        host=HOST,
+        port=PORT,
+        ws_ping_interval=20,   # send WebSocket ping every 20s
+        ws_ping_timeout=300,   # wait up to 5 minutes for pong before closing
+    )

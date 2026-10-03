@@ -60,22 +60,17 @@ class DirectSarvamSTT:
 
     def _build_ws_url(self) -> str:
         params: Dict[str, str] = {
-            "language_code": self.language_code,
-            "stream_type": "audio",
-            "endpointing": self.endpointing,
-            "encoding": self.encoding,
+            "language_code": self.language_code if self.language_code != "unknown" else "auto",
+            "stream_type": "fast",
+            "model": "saaras:v4",
+            "encoding": self.encoding if self.encoding in ("linear16", "mulaw") else "linear16",
             "sample_rate": str(self.sample_rate),
-            "model": self.model,
             "mode": "transcribe",
+            "turn_detection": "vad",
             "return_timestamps": "false",
         }
         if self.prompt:
             params["prompt"] = self.prompt
-        if self.endpointing == "vad":
-            params["threshold"] = "0.65"
-            params["min_speech_duration_ms"] = "200"
-            params["silence_duration_ms"] = "350"
-            params["prefix_padding_ms"] = "150"
 
         return f"{SARVAM_STT_WS_URL}?{urlencode(params)}"
 
@@ -133,22 +128,27 @@ class DirectSarvamSTT:
             self._is_connected = False
 
     async def _handle_event(self, data: Dict[str, Any]):
-        event = data.get("event")
-        if event == "vad.speech_start":
+        event = data.get("event") or data.get("type", "")
+        logger.debug(f"Sarvam STT event: {event} | {data}")
+
+        if event in ("vad.speech_start", "speech_start"):
+            logger.info("Sarvam STT: user speech detected (speech_start)")
             if self.on_speech_start:
                 await self.on_speech_start()
-        elif event == "vad.speech_end":
+        elif event in ("vad.speech_end", "speech_end"):
+            logger.info("Sarvam STT: user speech ended (speech_end)")
             if self.on_speech_end:
                 await self.on_speech_end()
-        elif event == "transcript.partial":
-            text = (data.get("transcript") or "").strip()
-            lang = data.get("language_code", self.language_code)
+        elif "partial" in event:
+            text = (data.get("text") or data.get("transcript") or data.get("data", {}).get("text") or data.get("data", {}).get("transcript") or "").strip()
+            lang = data.get("language_code") or data.get("language") or data.get("data", {}).get("language_code") or self.language_code
             if text and self.on_partial:
                 await self.on_partial(text, lang)
-        elif event == "transcript.final":
-            text = (data.get("transcript") or "").strip()
-            lang = data.get("language_code", self.language_code)
+        elif "final" in event or event == "transcript":
+            text = (data.get("text") or data.get("transcript") or data.get("data", {}).get("text") or data.get("data", {}).get("transcript") or "").strip()
+            lang = data.get("language_code") or data.get("language") or data.get("data", {}).get("language_code") or self.language_code
             if text and self.on_final:
+                logger.info(f"Sarvam STT finalized utterance: '{text}' (lang={lang})")
                 await self.on_final(text, lang)
 
     async def close(self):

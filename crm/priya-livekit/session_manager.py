@@ -71,6 +71,28 @@ def is_garbled_input(text: str, confidence: float = 1.0) -> bool:
     return False
 
 
+def is_valid_user_speech(transcript: str, min_chars: int = 1) -> bool:
+    """
+    Validates STT transcript against noise bursts, breathing, coughs, and artifacts.
+    Rejects non-speech noise so Priya never gets falsely interrupted.
+    Supports genuine short words ('Yes', 'No', 'Wait', 'Stop', 'Haan', 'Sare').
+    """
+    if not transcript or not transcript.strip():
+        return False
+    clean = transcript.strip().lower()
+    junk_patterns = {
+        "", "[noise]", "[music]", "[silence]", "[cough]", "[laughter]", 
+        "[applause]", "[sigh]", "[snort]", "[pant]", "[throat-clearing]",
+        "...", ".", "..", "?", "!", "-", "--", "---", "*", "_", "mhm", "uh", "um"
+    }
+    if clean in junk_patterns:
+        return False
+    # Ensure there is at least one alphanumeric or Indian-script character (Hindi, Telugu, Tamil, etc.)
+    if not re.search(r'[a-zA-Z0-9\u0900-\u097F\u0C00-\u0C7F\u0B80-\u0BFF]', clean):
+        return False
+    return True
+
+
 class SessionContext:
     """Represents a single active caller session."""
 
@@ -360,15 +382,22 @@ class DialogueSlotManager:
         updated = dict(current_dict)
         t_low = text.lower().strip()
 
-        # 1. EXTRACT SCORES
+        # Detect explicit correction intent
+        is_correction = bool(re.search(r'\b(actually|sorry|not|no|instead|correction|galti\s*se|change|kaadhu|nenu\s*kaadu)\b', t_low))
+
+        # 1. EXTRACT SCORES (supports corrections like 'Actually I scored 82%')
         for pattern in cls.SCORE_PATTERNS:
             match = re.search(pattern, t_low)
             if match:
                 try:
                     score_val = float(match.group(1))
                     if 35.0 <= score_val <= 100.0:
+                        old_score = updated.get("class_12_score")
                         updated["class_12_score"] = f"{score_val}%"
-                        logger.info(f"[SLOT] Extracted score: {score_val}%")
+                        if is_correction and old_score and old_score != f"{score_val}%":
+                            logger.info(f"[CORRECTION] Updated score from {old_score} to {score_val}%")
+                        else:
+                            logger.info(f"[SLOT] Extracted score: {score_val}%")
                         break
                 except (ValueError, IndexError):
                     pass
@@ -381,13 +410,16 @@ class DialogueSlotManager:
                     updated["entrance_exams_taken"] = f"{current_exams}, {exam_name}".strip(", ")
                     logger.info(f"[SLOT] Extracted exam: {exam_name}")
 
-        # 3. EXTRACT PROGRAMS
+        # 3. EXTRACT PROGRAMS (supports corrections like 'Actually I want AI/ML')
         for prog_name, pattern in cls.PROGRAM_PATTERNS.items():
             if re.search(pattern, t_low) or re.search(pattern, text):
-                # Don't overwrite more specific specialization if already present
-                if not updated.get("program_of_interest"):
+                if is_correction or not updated.get("program_of_interest"):
+                    old_prog = updated.get("program_of_interest")
                     updated["program_of_interest"] = prog_name
-                    logger.info(f"[SLOT] Extracted program: {prog_name}")
+                    if is_correction and old_prog and old_prog != prog_name:
+                        logger.info(f"[CORRECTION] Updated program from {old_prog} to {prog_name}")
+                    else:
+                        logger.info(f"[SLOT] Extracted program: {prog_name}")
                     break
 
         # 4. EXTRACT NAMES & SUPPORT CORRECTIONS
@@ -416,8 +448,12 @@ class DialogueSlotManager:
                 and not cand_low.endswith("ing")
             ):
                 # Explicit statement or correction overrides any previous slot guess
+                old_name = updated.get("student_name")
                 updated["student_name"] = candidate
-                logger.info(f"[SLOT] Extracted explicit/corrected name: {candidate}")
+                if old_name and old_name != candidate:
+                    logger.info(f"[CORRECTION] Updated name from {old_name} to {candidate}")
+                else:
+                    logger.info(f"[SLOT] Extracted explicit/corrected name: {candidate}")
         elif not updated.get("student_name") and not updated.get("program_of_interest") and len(text.strip().split()) in (1, 2, 3):
             # Standalone candidate
             cand = text.strip().strip(".,!?:;\"'")
@@ -435,7 +471,7 @@ class DialogueSlotManager:
                 logger.info(f"[SLOT] Extracted standalone name: {cand}")
 
         # 5. EXTRACT CITY / LOCATION
-        if not updated.get("current_city"):
+        if is_correction or not updated.get("current_city"):
             for c_pat in cls.CITY_PATTERNS:
                 c_match = re.search(c_pat, t_low, re.IGNORECASE)
                 if c_match:
@@ -445,5 +481,49 @@ class DialogueSlotManager:
                         logger.info(f"[SLOT] Extracted city: {city_candidate}")
                         break
 
+        # 6. EXTRACT COLLEGE / SCHOOL
+        if is_correction or not updated.get("college"):
+            college_match = re.search(
+                r'(?:studied\s*in|completed\s*in|from|at|in)?\s*([A-Za-z0-9\s]{2,25}?)\s+(?:junior\s*college|college|polytechnic|institute)',
+                t_low,
+                re.IGNORECASE
+            )
+            if college_match:
+                raw_cand = college_match.group(1).strip()
+                # Clean leading prepositions
+                raw_cand = re.sub(r'^(from|at|in|my|the|\d+(?:th)?)\s+', '', raw_cand, flags=re.I).strip()
+                if raw_cand and len(raw_cand) >= 2 and raw_cand.lower() not in cls.INVALID_NAMES and raw_cand.lower() not in cls.INVALID_CITIES:
+                    college_cand = raw_cand.title() + " College"
+                    updated["college"] = college_cand
+                    logger.info(f"[SLOT] Extracted college: {college_cand}")
+
         return updated
+
+    @classmethod
+    def detect_already_told(cls, text: str, slots: Dict[str, Any]) -> Optional[str]:
+        """
+        Detects if caller is reacting to a redundant question:
+        e.g. 'I already told you my name', 'Maine already apna course bataya tha'
+        Returns a friendly acknowledgment referencing the known fact.
+        """
+        if not text:
+            return None
+        t_low = text.lower()
+        if re.search(r'\b(already\b.*?\b(told|said|gave|mentioned|bataya|bola|cheppanu|cheppa)|i\s*told\s*you|cheppanu\s*kada|already\s*cheppa)\b', t_low):
+            name = slots.get("student_name") or slots.get("name")
+            prog = slots.get("program_of_interest") or slots.get("program")
+            marks = slots.get("class_12_score") or slots.get("marks")
+
+            # Check what they're referring to
+            if any(w in t_low for w in ["name", "naam", "peru"]) and name:
+                return f"You're right, {name}! Let's continue."
+            elif any(w in t_low for w in ["course", "program", "branch", "cse", "btech"]) and prog:
+                return f"Yes, you mentioned {prog}. Let's proceed."
+            elif any(w in t_low for w in ["marks", "percentage", "score", "percent"]) and marks:
+                return f"Yes, {marks} in 12th! Let's continue."
+            elif name:
+                return f"You're right, {name}! My apologies, let's move ahead."
+            else:
+                return "You're right, let's continue."
+        return None
 

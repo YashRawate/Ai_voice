@@ -30,6 +30,7 @@ except ImportError:
     WEBRTCVAD_AVAILABLE = False
 
 from .delay_calibration import estimate_delay_samples, estimate_delay_ms
+from .interruption_controller import InterruptionController, InterruptionDecision
 
 logger = logging.getLogger("priya.acoustic_pipeline")
 
@@ -306,6 +307,7 @@ class AcousticPipeline:
         self.snr_gate = SNRGate()
         self.barge_in_gate = BargeInGate()
         self.semantic_gate = SemanticConfirmationGate(min_chars=4)
+        self.interruption_controller = InterruptionController(sample_rate=sample_rate)
 
         # WebRTC VAD instance if available
         self.webrtc_vad = None
@@ -316,6 +318,8 @@ class AcousticPipeline:
                 pass
 
         self.audio_buffer = bytearray()
+        self.caller_turn_buffer = bytearray()
+        self.recent_mic_buffer = collections.deque(maxlen=50)
         self.is_assistant_speaking = False
 
     def calibrate_delay(self, reference_bytes: bytes, mic_bytes: bytes) -> float:
@@ -334,9 +338,17 @@ class AcousticPipeline:
     def set_assistant_speaking(self, speaking: bool):
         """Notify pipeline whether Priya is actively playing speech."""
         self.is_assistant_speaking = speaking
+        self.interruption_controller.set_assistant_speaking(speaking)
         if not speaking:
             self.barge_in_gate.reset()
             self.audio_buffer.clear()
+
+    def enroll_caller(self, audio_bytes: Optional[bytes] = None):
+        """Enrolls verified caller speech into the speaker verification profile."""
+        data = audio_bytes if audio_bytes is not None else bytes(self.caller_turn_buffer)
+        if data and len(data) >= (self.sample_rate // 2):
+            self.interruption_controller.enroll_caller_turn(data)
+            self.caller_turn_buffer.clear()
 
     def process_frame(self, mic_frame: bytes) -> Tuple[bytes, bool, float]:
         """
@@ -358,6 +370,9 @@ class AcousticPipeline:
         # Step 2: Spectral Noise Suppression
         noise_suppressed = self.noise_suppressor.suppress_noise(echo_cancelled, is_speech=True)
 
+        # Rolling buffer of recent mic frames (~1 second)
+        self.recent_mic_buffer.append(noise_suppressed)
+
         # Step 3: SNR Pre-Filter Check (discard < 8dB frames before VAD)
         samples = np.frombuffer(noise_suppressed, dtype=np.int16).astype(np.float32) / 32768.0
         frame_rms = float(np.sqrt(np.mean(samples ** 2))) if len(samples) > 0 else 0.0
@@ -377,18 +392,42 @@ class AcousticPipeline:
             is_assistant_speaking=self.is_assistant_speaking
         )
 
-        if barge_in_fired:
-            # Buffer audio for semantic confirmation
-            self.audio_buffer.extend(noise_suppressed)
+        if not self.is_assistant_speaking:
+            if vad_prob >= 0.50:
+                self.caller_turn_buffer.extend(noise_suppressed)
+                max_bytes = 10 * self.sample_rate * 2
+                if len(self.caller_turn_buffer) > max_bytes:
+                    self.caller_turn_buffer = bytearray(self.caller_turn_buffer[-max_bytes:])
+        else:
+            if vad_prob >= 0.40 or barge_in_fired:
+                self.audio_buffer.extend(noise_suppressed)
+                max_interruption_bytes = 3 * self.sample_rate * 2
+                if len(self.audio_buffer) > max_interruption_bytes:
+                    self.audio_buffer = bytearray(self.audio_buffer[-max_interruption_bytes:])
 
         return noise_suppressed, barge_in_fired, vad_prob
 
-    def confirm_barge_in(self, partial_stt_text: str) -> bool:
+    def confirm_barge_in(self, partial_stt_text: str = "", audio_bytes: Optional[bytes] = None) -> bool:
         """
-        Evaluates whether debounced speech trigger is a genuine interruption.
+        Evaluates whether debounced speech trigger is a genuine caller interruption
+        via multi-signal analysis (Speaker Verification + Media Detection + Semantic Turn Gate).
         Returns True to stop TTS, False to ignore and keep speaking.
         """
-        return self.semantic_gate.is_confirmed_speech(partial_stt_text)
+        buffer_to_check = audio_bytes if audio_bytes is not None else bytes(self.audio_buffer)
+        if not buffer_to_check and self.recent_mic_buffer:
+            buffer_to_check = b"".join(self.recent_mic_buffer)
+
+        duration_ms = (len(buffer_to_check) / (2 * self.sample_rate)) * 1000.0 if buffer_to_check else 400.0
+        words_count = len(partial_stt_text.strip().split()) if partial_stt_text else 0
+        # If STT transcript contains multiple words, speech duration is at least ~200ms per word
+        effective_duration_ms = max(duration_ms, words_count * 200.0)
+
+        decision = self.interruption_controller.evaluate(
+            audio_bytes=buffer_to_check,
+            transcript=partial_stt_text,
+            speech_duration_ms=effective_duration_ms
+        )
+        return decision.should_interrupt
 
     def _compute_vad_probability(self, frame_bytes: bytes) -> float:
         """Computes voice activity probability (0.0 to 1.0)."""
