@@ -60,6 +60,7 @@ class TestSessionLogger:
 
         self.start_time = time.time()
         self.turn_count = 0
+        self.spoken_replies_count = 0
         self.event_counts = {
             "interruption": 0,
             "session_init": 0,
@@ -148,6 +149,7 @@ class TestSessionLogger:
         facts_snapshot: Optional[Dict[str, Any]] = None
     ):
         self.turn_count += 1
+        self.spoken_replies_count += 1
         entry = {
             "type": "llm_reply",
             "t": self._elapsed(),
@@ -230,6 +232,12 @@ class TestSessionLogger:
         duration = self._elapsed()
         reinit_flag = "✅ OK" if self.event_counts["session_init"] == 1 else "🚨 CHECK — expected exactly 1"
 
+        turns_without_reply = max(0, self.turn_count - self.spoken_replies_count)
+        if turns_without_reply > 0:
+            self.event_counts["error"] += turns_without_reply
+            if disposition == "completed":
+                disposition = "degraded" if self.spoken_replies_count > 0 else "failed"
+
         summary = f"""
 ### Summary — {self.test_id}
 
@@ -238,6 +246,8 @@ class TestSessionLogger:
 | Duration | {duration}s |
 | Disposition | {disposition} |
 | Turns | {self.turn_count} |
+| Turns without reply | {turns_without_reply} |
+| Spoken replies | {self.spoken_replies_count} |
 | Interruptions | {self.event_counts['interruption']} |
 | Session re-inits | {self.event_counts['session_init']} ({reinit_flag}) |
 | Language switches | {self.event_counts['language_switch']} |

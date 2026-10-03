@@ -15,6 +15,7 @@ htmlcov/
 transcripts/
 *.txt
 *.db
+*.wav
 
 # Node.js
 node_modules/

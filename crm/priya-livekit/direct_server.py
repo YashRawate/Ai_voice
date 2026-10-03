@@ -93,6 +93,53 @@ def get_llm_client():
 
 
 
+# ── Background Task Supervisor ────────────────────────────────────────────────
+def spawn(coro, name: str, session: Any = None) -> asyncio.Task:
+    """Supervised task launcher that logs unhandled exceptions and increments error count."""
+    task = asyncio.create_task(coro, name=name)
+    def _done(t: asyncio.Task):
+        if t.cancelled():
+            return
+        exc = t.exception()
+        if exc:
+            sid = getattr(session, "session_id", "system")
+            logger.error(f"[{sid}] TASK CRASHED name={name}: {exc}", exc_info=exc)
+            if session and hasattr(session, "errors"):
+                session.errors += 1
+            if session and hasattr(session, "test_logger"):
+                session.test_logger.log_error(f"Task {name} crashed: {exc}", exc=exc)
+    task.add_done_callback(_done)
+    return task
+
+
+# ── Pre-cached Admissions Greeting PCM ─────────────────────────────────────────
+DEFAULT_GREETING_TEXT = "Hello! This is Priya from Aditya University Admissions Office. May I know your name, please?"
+_CACHED_GREETING_PCM: Optional[bytes] = None
+
+async def prewarm_greeting():
+    """Pre-synthesize greeting PCM to cache so initial greeting plays in <20ms."""
+    global _CACHED_GREETING_PCM
+    if _CACHED_GREETING_PCM is not None:
+        return
+    try:
+        tts = DirectSarvamTTS(
+            api_key=SARVAM_KEY,
+            speaker=SARVAM_SPEAKER,
+            language_code="en-IN",
+            pace=TTS_PACE,
+            sample_rate=8000,
+            output_audio_codec="linear16",
+        )
+        chunks = []
+        async for c in tts.synthesize_stream(DEFAULT_GREETING_TEXT, language="en-IN"):
+            chunks.append(c)
+        _CACHED_GREETING_PCM = b"".join(chunks)
+        await tts.close()
+        logger.info(f"[GREETING_CACHE] Pre-cached {len(_CACHED_GREETING_PCM)} bytes of greeting audio")
+    except Exception as e:
+        logger.warning(f"[GREETING_CACHE] Prewarm greeting failed: {e}")
+
+
 # ── Active Call Session Context ───────────────────────────────────────────────
 class DirectCallSession:
     """Manages a single 1:1 call lifecycle with direct raw audio."""
@@ -117,6 +164,13 @@ class DirectCallSession:
         self.student_name = self.meta.get("student_name") or ""
         self.is_exotel = os.getenv("TELEPHONY_CARRIER", "exotel").lower().strip() == "exotel"
 
+        # Supervised Turn & State Management
+        self.errors = 0
+        self.turn_idx = 0
+        self.processing = False
+        self.last_audio_sent_time = 0.0
+        self.playback_end_time = 0.0
+
         # Direct audio clients
         self.stt: Optional[DirectSarvamSTT] = None
         self.tts = DirectSarvamTTS(
@@ -128,7 +182,7 @@ class DirectCallSession:
             output_audio_codec="mulaw",
         )
 
-        # 7-Step Anti-Barge-In Acoustic Pipeline (AEC -> NS -> SNR -> 2-Tier VAD -> Debounce -> Semantic)
+        # 7-Step Anti-Barge-In Acoustic Pipeline
         self.acoustic_pipeline = AcousticPipeline(sample_rate=8000)
 
         self.is_speaking = False
@@ -151,19 +205,19 @@ class DirectCallSession:
             on_speech_start=self._handle_user_speech_start,
         )
         await self.stt.connect()
-        self.process_turns_task = asyncio.create_task(self._turn_worker())
+        self.process_turns_task = spawn(self._turn_worker(), "turn_worker", self)
 
-        # Speak warm initial admissions greeting (ONLY on first initialization)
+        # Speak warm initial admissions greeting (pre-cached or generated)
         greeting = (
             f"Hello! I am Priya from Aditya University Admissions. Am I speaking with {self.student_name}?"
             if self.student_name
-            else "Hello! This is Priya from Aditya University Admissions Office. May I know your name, please?"
+            else DEFAULT_GREETING_TEXT
         )
-        await self.speak_phrase(greeting)
+        await self.speak_greeting(greeting)
 
         # Start silence heartbeat to keep Exotel WebSocket alive between turns
         if self.is_exotel:
-            self.silence_heartbeat_task = asyncio.create_task(self._silence_heartbeat())
+            self.silence_heartbeat_task = spawn(self._silence_heartbeat(), "silence_heartbeat", self)
 
     async def reconnect_transport(self, ws: WebSocket, stream_sid: str):
         """
@@ -227,14 +281,20 @@ class DirectCallSession:
         if not transcript.strip():
             return
 
-        # Multi-signal interruption confirmation: if Priya was speaking, filter out backchannels, noise, media, and other speakers
+        gate_flags = {
+            "speaking": self.is_speaking,
+            "processing": self.processing,
+            "assistant_speaking": self.acoustic_pipeline.is_assistant_speaking,
+        }
+        logger.info(f"[{self.session_id}] [STT_FINAL] text='{transcript}' lang={language_code} state={self.long_mgr.dialogue_state.current_state} gate_flags={gate_flags}")
+
+        # Multi-signal interruption confirmation: if Priya was speaking, handle barge-in
         if (self.is_speaking or self.acoustic_pipeline.is_assistant_speaking):
             if self.is_exotel:
                 logger.info(f"[{self.session_id}] Exotel caller barge-in confirmed: '{transcript}'")
                 await self.stop_speaking()
             elif not self.acoustic_pipeline.confirm_barge_in(transcript):
                 logger.info(f"[{self.session_id}] Interruption controller filtered false barge-in: '{transcript}'")
-                return
             else:
                 await self.stop_speaking()
 
@@ -245,6 +305,7 @@ class DirectCallSession:
         logger.info(f"[{self.session_id}] Caller ({language_code}): {transcript}")
         print(f"\n🎙️ [CALLER]: {transcript} (Language: {language_code})\n", flush=True)
         self.test_logger.log_stt(text=transcript, language=language_code)
+
         # Apply code-mixed stability resolution
         resolved_lang = resolve_mixed_language(language_code, transcript, self.active_language)
         if resolved_lang and resolved_lang in {"te-IN", "hi-IN", "en-IN", "ta-IN"}:
@@ -253,11 +314,15 @@ class DirectCallSession:
                 self.active_language = resolved_lang
                 self.tts.target_language_code = resolved_lang
                 GLOBAL_SESSION_STORE.update_state(self.session_id, language_code=resolved_lang)
+
+        # RULE: ALWAYS enqueue into turn_queue — NEVER drop a final transcript!
         await self.turn_queue.put((transcript, self.active_language))
+        logger.info(f"[{self.session_id}] [TURN_ENQUEUED] text='{transcript}' (queue_size={self.turn_queue.qsize()})")
 
     async def stop_speaking(self):
         """Cancel ongoing TTS playback and flush carrier audio buffer."""
         self.is_speaking = False
+        self.acoustic_pipeline.set_assistant_speaking(False)
         if self.current_tts_task and not self.current_tts_task.done():
             self.current_tts_task.cancel()
         self.tts.cancel()
@@ -268,8 +333,55 @@ class DirectCallSession:
             except Exception:
                 pass
 
-    async def speak_phrase(self, text: str):
-        """Synthesize text and stream raw mulaw frames to caller."""
+    async def speak_greeting(self, greeting_text: str):
+        """Plays the warm greeting with pre-caching support and full instrumentation."""
+        global _CACHED_GREETING_PCM
+        t0 = time.monotonic()
+        logger.info(f"[{self.session_id}] [GREETING_TTS_REQ] text='{greeting_text}'")
+        if not self.student_name and _CACHED_GREETING_PCM:
+            logger.info(f"[{self.session_id}] [GREETING_FIRST_BYTE] 0.01s (from memory cache)")
+            logger.info(f"[{self.session_id}] [AUDIO_SENT] first_frame")
+            print(f"\n🤖 [PRIYA]: {greeting_text}\n", flush=True)
+            self.reporter.push_assistant_message(greeting_text)
+            await self._stream_raw_pcm(_CACHED_GREETING_PCM, label="greeting")
+            logger.info(f"[{self.session_id}] [GREETING_PLAYBACK_END] in {time.monotonic() - t0:.2f}s")
+        else:
+            await self.speak_phrase(greeting_text, turn_num=0, is_greeting=True)
+            logger.info(f"[{self.session_id}] [GREETING_PLAYBACK_END] in {time.monotonic() - t0:.2f}s")
+
+    async def _stream_raw_pcm(self, pcm_bytes: bytes, label: str = "cached"):
+        """Streams pre-cached linear16 PCM directly to carrier."""
+        if not pcm_bytes or self.is_closed:
+            return
+        self.is_speaking = True
+        self.acoustic_pipeline.set_assistant_speaking(True)
+        bytes_sent = 0
+        try:
+            chunk_size = 1600
+            for i in range(0, len(pcm_bytes), chunk_size):
+                if not self.is_speaking or self.is_closed:
+                    break
+                chunk = pcm_bytes[i:i+chunk_size]
+                if len(chunk) < chunk_size:
+                    chunk += b"\x00" * (chunk_size - len(chunk))
+                bytes_sent += len(chunk)
+                self.last_audio_sent_time = time.monotonic()
+                payload = base64.b64encode(chunk).decode("utf-8")
+                await self.ws.send_json({
+                    "event": "media",
+                    "stream_sid": self.stream_sid,
+                    "streamSid": self.stream_sid,
+                    "media": {"payload": payload}
+                })
+                await asyncio.sleep(0.09)  # ~100ms per 1600 bytes
+        except Exception as e:
+            logger.warning(f"[{self.session_id}] Raw PCM stream error ({label}): {e}")
+        finally:
+            self.is_speaking = False
+            self.acoustic_pipeline.set_assistant_speaking(False)
+
+    async def speak_phrase(self, text: str, turn_num: int = 0, is_greeting: bool = False):
+        """Synthesize text and stream raw mulaw/linear frames to caller with stage logs and safety valve."""
         if not text or self.is_closed:
             return
 
@@ -279,23 +391,35 @@ class DirectCallSession:
         self.acoustic_pipeline.set_assistant_speaking(True)
         self.reporter.push_assistant_message(text)
 
+        tag = "GREETING" if is_greeting else "TTS"
+        t_req = time.monotonic()
+        logger.info(f"[{self.session_id}] [{tag}_REQ] sentence='{text}'")
+        first_byte_logged = False
+        bytes_sent = 0
+
         try:
             pcm_buffer = bytearray()
             async for chunk in self.tts.synthesize_stream(text, language=self.active_language):
                 if not self.is_speaking or self.is_closed:
                     break
 
+                if not first_byte_logged:
+                    first_byte_logged = True
+                    fb_sec = time.monotonic() - t_req
+                    logger.info(f"[{self.session_id}] [{tag}_FIRST_BYTE] {fb_sec:.2f}s")
+                    logger.info(f"[{self.session_id}] [AUDIO_SENT] first_frame")
+
                 # Decode Sarvam mu-law to 16-bit linear PCM
                 pcm_ref = mulaw_to_pcm16(chunk)
                 self.acoustic_pipeline.feed_tts_reference(pcm_ref)
 
                 if getattr(self, "is_exotel", False):
-                    # Exotel buffers audio internally and paces playback.
-                    # Send in 1600-byte (100ms) chunks as fast as possible — no artificial sleep.
                     pcm_buffer.extend(pcm_ref)
                     while len(pcm_buffer) >= 1600:
                         send_chunk = bytes(pcm_buffer[:1600])
                         del pcm_buffer[:1600]
+                        bytes_sent += len(send_chunk)
+                        self.last_audio_sent_time = time.monotonic()
                         payload = base64.b64encode(send_chunk).decode("utf-8")
                         await self.ws.send_json({
                             "event": "media",
@@ -306,7 +430,8 @@ class DirectCallSession:
                         if not self.is_speaking or self.is_closed:
                             break
                 else:
-                    # Twilio requires 8-bit G.711 mu-law
+                    bytes_sent += len(chunk)
+                    self.last_audio_sent_time = time.monotonic()
                     payload = base64.b64encode(chunk).decode("utf-8")
                     await self.ws.send_json({
                         "event": "media",
@@ -321,6 +446,8 @@ class DirectCallSession:
                 pad_len = (320 - (len(pcm_buffer) % 320)) % 320
                 if pad_len > 0:
                     pcm_buffer.extend(b"\x00" * pad_len)
+                bytes_sent += len(pcm_buffer)
+                self.last_audio_sent_time = time.monotonic()
                 payload = base64.b64encode(bytes(pcm_buffer)).decode("utf-8")
                 await self.ws.send_json({
                     "event": "media",
@@ -329,100 +456,162 @@ class DirectCallSession:
                     "media": {"payload": payload}
                 })
                 pcm_buffer.clear()
+
+            expected_play_duration = bytes_sent / 16000.0 if bytes_sent > 0 else 0.5
+            self.playback_end_time = time.monotonic() + expected_play_duration
+            logger.info(f"[{self.session_id}] [PLAYBACK_END] turn={turn_num} (sent {bytes_sent} bytes, ~{expected_play_duration:.2f}s)")
         except asyncio.CancelledError:
-            logger.debug("Playback cancelled by interruption")
+            logger.debug(f"[{self.session_id}] Playback cancelled by interruption")
         except Exception as e:
-            logger.error(f"TTS synthesis error: {e}")
+            logger.error(f"[{self.session_id}] TTS synthesis error: {e}")
             self.test_logger.log_error("TTS synthesis failed", exc=e)
         finally:
             self.is_speaking = False
             self.acoustic_pipeline.set_assistant_speaking(False)
 
     async def _turn_worker(self):
-        """Background worker that pulls user utterances and triggers responses."""
+        """Background worker that pulls user utterances and triggers responses with timeout protection."""
         while not self.is_closed:
             try:
                 transcript, lang = await self.turn_queue.get()
             except asyncio.CancelledError:
                 break
-
-            t0 = time.time()
-            self.reporter.push_user_message(transcript)
-
-            # 1. Update 4-layer memory facts
-            self.long_mgr.update_user_turn(transcript, language=lang)
-            collected = self.long_mgr.fact_memory.facts
-            GLOBAL_SESSION_STORE.merge_facts(self.session_id, collected)
-
-            # 2. Check for Goodbye with Goodbye Guard
-            if is_goodbye(transcript):
-                farewell = (
-                    "ధన్యవాదాలు! మీ అడ్మిషన్ వివరాలు మా వాట్సాప్ ద్వారా పంపిస్తాము. హావ్ ఏ గ్రేట్ డే!"
-                    if lang == "te-IN"
-                    else "धन्यवाद! हम आपके एडमिशन की जानकारी व्हाट्सएप पर भेज देंगे। आपका दिन शुभ हो!"
-                    if lang == "hi-IN"
-                    else "Thank you for contacting Aditya University! We have sent the admission details to your number. Have a great day!"
-                )
-                self.test_logger.log_llm_reply(text=farewell, stage="GOODBYE", facts_snapshot=collected)
-                await self.speak_phrase(farewell)
-                await asyncio.sleep(1.0)
-                await self.close()
-                break
-
-            # 3. Check for admissions objections or conversion actions
-            intent = detect_conversion_intent(transcript)
-            objection = detect_objection(transcript)
-
-            if intent == "book_campus_visit":
-                self.long_mgr.record_fact("engagement_choice", "campus_visit")
-                self.long_mgr.record_fact("visit_datetime", "Saturday 10:00 AM")
-                self.reporter.push_detail("visit_datetime", "Saturday 10:00 AM")
-                reply = (
-                    "పర్ఫెక్ట్ అండి! ఈ శనివారం ఉదయం 10 గంటలకు మీ క్యాంపస్ విజిట్ కన్ఫర్మ్ చేశాము. "
-                    "మీ తల్లిదండ్రులతో కలిసి రండి, ల్యాబ్స్ మరియు ఫెసిలిటీస్ చూపిస్తాము. మీకు లొకేషన్ లింక్ వాట్సాప్ చేయనా?"
-                    if lang == "te-IN"
-                    else "Perfect! We have scheduled your VIP campus visit for this Saturday at 10:00 AM. "
-                    "Please bring your parents along. Shall I send the campus map on WhatsApp?"
-                )
-                self.test_logger.log_llm_reply(text=reply, stage="CONVERT", facts_snapshot=collected)
-                await self.speak_phrase(reply)
-                continue
-            elif intent == "send_application_link":
-                self.long_mgr.record_fact("engagement_choice", "application_link")
-                self.long_mgr.record_fact("call_outcome", "interested")
-                self.reporter.push_detail("call_outcome", "interested")
-                reply = (
-                    "తప్పకుండా అండి! ఆదిత్య యూనివర్సిటీ ప్రొవిజనల్ అడ్మిషన్ అప్లికేషన్ లింక్ మీ వాట్సాప్ నంబర్‌కు పంపించాము. "
-                    "ఫారమ్ పూర్తి చేసి సీటు రిజర్వ్ చేసుకోండి. ఇంకేమైనా సందేహాలు ఉన్నాయా?"
-                    if lang == "te-IN"
-                    else "Certainly! I have dispatched your priority provisional admission link to your WhatsApp number. "
-                    "Would you like any assistance with scholarship details?"
-                )
-                self.test_logger.log_llm_reply(text=reply, stage="CONVERT", facts_snapshot=collected)
-                await self.speak_phrase(reply)
+            except Exception as e:
+                logger.error(f"[{self.session_id}] Turn queue get error: {e}")
                 continue
 
-            # 4. Fast-Path Pattern Router (Sub-50ms cache)
-            from fast_path import try_fast_path as deterministic_fast_path
-            cached_response = deterministic_fast_path(transcript, language_code=lang)
-            if not cached_response:
-                cached_response = PatternRouter.match(transcript, collected, lang=lang)
-            if cached_response:
-                elapsed_ms = (time.time() - t0) * 1000
-                logger.info(f"[{self.session_id}] [FAST-PATH] Hit in {elapsed_ms:.1f}ms: {cached_response[:40]}...")
-                self.long_mgr.update_agent_turn(cached_response, language=lang)
-                self.test_logger.log_llm_reply(text=cached_response, stage="FAST_PATH", facts_snapshot=collected)
-                await self.speak_phrase(cached_response)
-                continue
+            # Merge back-to-back transcripts if user spoke multiple phrases
+            merged = [transcript]
+            while not self.turn_queue.empty():
+                try:
+                    next_text, next_lang = self.turn_queue.get_nowait()
+                    merged.append(next_text)
+                    lang = next_lang
+                except asyncio.QueueEmpty:
+                    break
+            transcript = " ".join(merged).strip()
 
-            # 5. LLM Consultative Closer Generation
-            reply = await self._generate_llm_response(transcript, lang)
+            self.turn_idx += 1
+            turn_num = self.turn_idx
+            t0 = time.monotonic()
+            self.processing = True
+            logger.info(f"[{self.session_id}] [TURN_START] turn={turn_num} text='{transcript}'")
+
+            try:
+                await asyncio.wait_for(self.run_turn(transcript, lang, turn_num=turn_num), timeout=15.0)
+            except asyncio.TimeoutError:
+                logger.error(f"[{self.session_id}] TURN TIMEOUT after 15s turn={turn_num}")
+                self.errors += 1
+                self.test_logger.log_error(f"Turn {turn_num} timed out after 15s")
+                await self.speak_fallback(turn_num=turn_num, lang=lang)
+            except Exception as e:
+                logger.exception(f"[{self.session_id}] TURN FAILED turn={turn_num}: {e}")
+                self.errors += 1
+                self.test_logger.log_error(f"Turn {turn_num} failed: {e}", exc=e)
+                await self.speak_fallback(turn_num=turn_num, lang=lang)
+            finally:
+                self.processing = False
+                self.is_speaking = False
+                logger.info(f"[{self.session_id}] [TURN_END] turn={turn_num} total={time.monotonic() - t0:.2f}s")
+
+    async def speak_fallback(self, turn_num: int = 0, lang: str = "en-IN"):
+        """Speak brief polite recovery phrase on timeout or failure to keep call alive."""
+        fallback = (
+            "క్షమించండి, మీ వాయిస్ సరిగ్గా వినబడలేదు. మళ్లీ చెప్తారా?"
+            if lang == "te-IN"
+            else "माफ़ कीजियेगा, आपकी आवाज़ स्पष्ट नहीं आई। क्या आप दोबारा कह सकते हैं?"
+            if lang == "hi-IN"
+            else "Sorry, could you say that once more? I want to make sure I assist you correctly."
+        )
+        self.test_logger.log_llm_reply(text=fallback, stage="FALLBACK", facts_snapshot=self.long_mgr.fact_memory.facts)
+        await self.speak_phrase(fallback, turn_num=turn_num)
+
+    async def run_turn(self, transcript: str, lang: str, turn_num: int):
+        """Execute complete conversational turn with memory, routing, and speech."""
+        t0 = time.monotonic()
+        self.reporter.push_user_message(transcript)
+
+        # 1. Update 4-layer memory facts
+        self.long_mgr.update_user_turn(transcript, language=lang)
+        collected = self.long_mgr.fact_memory.facts
+        GLOBAL_SESSION_STORE.merge_facts(self.session_id, collected)
+
+        # 2. Check for Goodbye with Goodbye Guard
+        if is_goodbye(transcript):
+            farewell = (
+                "ధన్యవాదాలు! మీ అడ్మిషన్ వివరాలు మా వాట్సాప్ ద్వారా పంపిస్తాము. హావ్ ఏ గ్రేట్ డే!"
+                if lang == "te-IN"
+                else "धन्यवाद! हम आपके एडमिशन की जानकारी व्हाट्सएप पर भेज देंगे। आपका दिन शुभ हो!"
+                if lang == "hi-IN"
+                else "Thank you for contacting Aditya University! We have sent the admission details to your number. Have a great day!"
+            )
+            self.test_logger.log_llm_reply(text=farewell, stage="GOODBYE", facts_snapshot=collected)
+            await self.speak_phrase(farewell, turn_num=turn_num)
+            await asyncio.sleep(1.0)
+            await self.close()
+            return
+
+        # 3. Check for admissions objections or conversion actions
+        intent = detect_conversion_intent(transcript)
+        objection = detect_objection(transcript)
+
+        if intent == "book_campus_visit":
+            self.long_mgr.record_fact("engagement_choice", "campus_visit")
+            self.long_mgr.record_fact("visit_datetime", "Saturday 10:00 AM")
+            self.reporter.push_detail("visit_datetime", "Saturday 10:00 AM")
+            reply = (
+                "పర్ఫెక్ట్ అండి! ఈ శనివారం ఉదయం 10 గంటలకు మీ క్యాంపస్ విజిట్ కన్ఫర్మ్ చేశాము. "
+                "మీ తల్లిదండ్రులతో కలిసి రండి, ల్యాబ్స్ మరియు ఫెసిలిటీస్ చూపిస్తాము. మీకు లొకేషన్ లింక్ వాట్సాప్ చేయనా?"
+                if lang == "te-IN"
+                else "Perfect! We have scheduled your VIP campus visit for this Saturday at 10:00 AM. "
+                "Please bring your parents along. Shall I send the campus map on WhatsApp?"
+            )
             self.long_mgr.update_agent_turn(reply, language=lang)
-            self.test_logger.log_llm_reply(text=reply, stage="CONSULT", facts_snapshot=collected)
-            await self.speak_phrase(reply)
+            self.test_logger.log_llm_reply(text=reply, stage="CONVERT", facts_snapshot=collected)
+            await self.speak_phrase(reply, turn_num=turn_num)
+            return
 
-    async def _generate_llm_response(self, user_text: str, lang: str) -> str:
-        """Call LLM with dynamic conversion directives or LangGraph state machine."""
+        elif intent == "send_application_link":
+            self.long_mgr.record_fact("engagement_choice", "application_link")
+            self.long_mgr.record_fact("call_outcome", "interested")
+            self.reporter.push_detail("call_outcome", "interested")
+            reply = (
+                "తప్పకుండా అండి! ఆదిత్య యూనివర్సిటీ ప్రొవిజనల్ అడ్మిషన్ అప్లికేషన్ లింక్ మీ వాట్సాప్ నంబర్‌కు పంపించాము. "
+                "ఫారమ్ పూర్తి చేసి సీటు రిజర్వ్ చేసుకోండి. ఇంకేమైనా సందేహాలు ఉన్నాయా?"
+                if lang == "te-IN"
+                else "Certainly! I have dispatched your priority provisional admission link to your WhatsApp number. "
+                "Would you like any assistance with scholarship details?"
+            )
+            self.long_mgr.update_agent_turn(reply, language=lang)
+            self.test_logger.log_llm_reply(text=reply, stage="CONVERT", facts_snapshot=collected)
+            await self.speak_phrase(reply, turn_num=turn_num)
+            return
+
+        # 4. Fast-Path Pattern Router (Sub-50ms cache)
+        from fast_path import try_fast_path as deterministic_fast_path
+        cached_response = deterministic_fast_path(transcript, language_code=lang)
+        if not cached_response:
+            cached_response = PatternRouter.match(transcript, collected, lang=lang)
+        if cached_response:
+            elapsed_ms = (time.monotonic() - t0) * 1000
+            logger.info(f"[{self.session_id}] [FAST-PATH] Hit in {elapsed_ms:.1f}ms: {cached_response[:40]}...")
+            self.long_mgr.update_agent_turn(cached_response, language=lang)
+            self.test_logger.log_llm_reply(text=cached_response, stage="FAST_PATH", facts_snapshot=collected)
+            await self.speak_phrase(cached_response, turn_num=turn_num)
+            return
+
+        # 5. LLM Consultative Generation
+        reply = await self._generate_llm_response(transcript, lang, turn_num=turn_num)
+        self.long_mgr.update_agent_turn(reply, language=lang)
+        self.test_logger.log_llm_reply(text=reply, stage="CONSULT", facts_snapshot=collected)
+        await self.speak_phrase(reply, turn_num=turn_num)
+
+    async def _generate_llm_response(self, user_text: str, lang: str, turn_num: int = 1) -> str:
+        """Call LLM with dynamic conversion directives or LangGraph state machine with first-token timing."""
+        t_llm = time.monotonic()
+        prov, client, model_name = get_llm_client()
+        logger.info(f"[{self.session_id}] [LLM_REQ] provider={prov} model={model_name}")
+
         if USE_LANGGRAPH and _LANGGRAPH_APP is not None:
             try:
                 config = {"configurable": {"thread_id": self.session_id}}
@@ -434,7 +623,12 @@ class DirectCallSession:
                     "stage": "GREETING",
                     "next_field": "student_name",
                 }
-                res = _LANGGRAPH_APP.invoke(graph_input, config=config)
+                # Run graph in thread executor to guarantee non-blocking asyncio loop
+                loop = asyncio.get_running_loop()
+                res = await asyncio.wait_for(
+                    loop.run_in_executor(None, lambda: _LANGGRAPH_APP.invoke(graph_input, config=config)),
+                    timeout=5.5
+                )
                 if "facts" in res:
                     for k, v in res["facts"].items():
                         self.long_mgr.record_fact(k, v)
@@ -442,14 +636,14 @@ class DirectCallSession:
                 content = getattr(ai_msg, "content", str(ai_msg)).strip()
                 content = content.replace("*", "").replace("#", "").strip()
                 if content:
+                    logger.info(f"[{self.session_id}] [LLM_FIRST_TOKEN] {time.monotonic() - t_llm:.2f}s (via LangGraph)")
                     return content
             except Exception as e:
-                logger.warning(f"LangGraph execution exception, falling back to direct LLM: {e}")
+                logger.warning(f"[{self.session_id}] LangGraph execution exception ({e}), falling back to direct LLM")
 
-        prov, client, model_name = get_llm_client()
+        # Direct LLM call fallback
         directives = self.long_mgr.build_turn_prompt(user_text, language=lang)
         lang_prompt = build_language_system_prompt(lang)
-
         system_prompt = f"{INSTRUCTIONS}\n\n# REALTIME DIRECTIVES FOR THIS TURN:\n{directives}\n\n{lang_prompt}"
         messages = [
             {"role": "system", "content": system_prompt},
@@ -457,34 +651,45 @@ class DirectCallSession:
         ]
 
         try:
-            resp = client.chat.completions.create(
-                model=model_name,
-                messages=messages,
-                max_tokens=60,
-                temperature=0.6,
+            loop = asyncio.get_running_loop()
+            resp = await asyncio.wait_for(
+                loop.run_in_executor(
+                    None,
+                    lambda: client.chat.completions.create(
+                        model=model_name,
+                        messages=messages,
+                        max_tokens=75,
+                        temperature=0.6,
+                    )
+                ),
+                timeout=4.5
             )
-            content = resp.choices[0].message.content.strip()
-            # Clean up markdown / quotes
-            content = content.replace("*", "").replace("#", "").strip()
+            content = resp.choices[0].message.content.strip().replace("*", "").replace("#", "").strip()
+            logger.info(f"[{self.session_id}] [LLM_FIRST_TOKEN] {time.monotonic() - t_llm:.2f}s (via {prov})")
             return content
         except Exception as e:
-            logger.error(f"LLM generation failed: {e}")
-            self.test_logger.log_error("LLM generation exception", exc=e)
+            logger.error(f"[{self.session_id}] Direct LLM generation failed: {e}")
+            self.test_logger.log_error(f"LLM generation failed: {e}", exc=e)
             return "Aditya University offers excellent B.Tech programs with up to 50% merit scholarships. Would you like me to share our admission link on WhatsApp?"
 
     async def _silence_heartbeat(self):
         """
-        Sends 320 bytes of silent PCM (100ms of silence at 8kHz/16-bit) every 200ms.
-        Keeps the Exotel WebSocket connection alive between turns.
-        Exotel closes connections after ~60s of no audio from server.
+        Sends 320 bytes of silent PCM every 300ms, ONLY when line is completely idle.
+        Never interleaves with speech or while a turn is actively processing.
         """
-        SILENCE_FRAME = b"\x00" * 320  # 320 bytes = 100ms silence at 8kHz 16-bit mono
-        payload = __import__("base64").b64encode(SILENCE_FRAME).decode("utf-8")
-        logger.info(f"[{self.session_id}] Silence heartbeat started (Exotel keepalive)")
+        SILENCE_FRAME = b"\x00" * 320
+        payload = base64.b64encode(SILENCE_FRAME).decode("utf-8")
+        logger.info(f"[{self.session_id}] Silence heartbeat started (idle keepalive)")
         try:
             while not self.is_closed:
-                # Only send silence when Priya is NOT speaking (avoid overlapping with TTS)
-                if not self.is_speaking and self.stream_sid:
+                now = time.monotonic()
+                is_idle = (
+                    not self.is_speaking
+                    and not self.processing
+                    and (now - self.last_audio_sent_time > 1.2)
+                    and (now > self.playback_end_time)
+                )
+                if is_idle and self.stream_sid:
                     try:
                         await self.ws.send_json({
                             "event": "media",
@@ -493,9 +698,8 @@ class DirectCallSession:
                             "media": {"payload": payload}
                         })
                     except Exception:
-                        # WebSocket closed — stop heartbeat
                         break
-                await asyncio.sleep(0.2)  # Send every 200ms
+                await asyncio.sleep(0.3)
         except asyncio.CancelledError:
             pass
         logger.debug(f"[{self.session_id}] Silence heartbeat stopped")
@@ -527,6 +731,11 @@ ACTIVE_DIRECT_SESSIONS: Dict[str, "DirectCallSession"] = {}
 
 
 # ── Webhook & WebSocket Endpoints ─────────────────────────────────────────────
+
+@app.on_event("startup")
+async def on_startup():
+    spawn(prewarm_greeting(), "prewarm_greeting")
+
 
 @app.get("/health")
 async def health_check():

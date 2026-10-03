@@ -43,7 +43,12 @@ class SessionStore:
         self._redis_enabled = REDIS_AVAILABLE
         self._fallback_store: Dict[str, Dict[str, Any]] = {}
 
-        if self._redis_enabled:
+        enable_redis = os.getenv("REDIS_URL") or os.getenv("ENABLE_REDIS_MEMORY", "false").lower() == "true"
+        if not enable_redis or not self._redis_enabled:
+            self._redis_enabled = False
+            self._redis_client = None
+            logger.info("[SESSION_STORE] Using in-memory session store")
+        else:
             try:
                 self._redis_client = redis.from_url(
                     self._url,

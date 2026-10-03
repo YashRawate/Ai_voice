@@ -34,6 +34,7 @@ def build_langchain_llm(tools: Optional[List[Any]] = None) -> BaseChatModel:
                 api_version=os.getenv("AZURE_OPENAI_API_VERSION", "2024-08-01-preview"),
                 temperature=0.4,
                 max_tokens=int(os.getenv("MAX_REPLY_TOKENS", "100")),
+                request_timeout=3.5,
             )
             models.append(azure_llm)
             logger.info("Configured AzureChatOpenAI as primary LLM")
@@ -45,14 +46,16 @@ def build_langchain_llm(tools: Optional[List[Any]] = None) -> BaseChatModel:
     if groq_key:
         try:
             from langchain_groq import ChatGroq
+            groq_model = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
             groq_llm = ChatGroq(
                 api_key=groq_key,
-                model_name=os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile"),
+                model_name=groq_model,
                 temperature=0.4,
                 max_tokens=int(os.getenv("MAX_REPLY_TOKENS", "100")),
+                request_timeout=3.0,
             )
             models.append(groq_llm)
-            logger.info("Configured ChatGroq as fallback LLM")
+            logger.info(f"Configured ChatGroq as fallback LLM ({groq_model})")
         except Exception as e:
             logger.warning(f"Could not initialize ChatGroq: {e}")
 
@@ -106,4 +109,4 @@ def build_langchain_llm(tools: Optional[List[Any]] = None) -> BaseChatModel:
 
     primary = models[0]
     fallbacks = models[1:]
-    return primary.with_fallbacks(fallbacks)
+    return primary.with_fallbacks(fallbacks, exceptions_to_handle=(Exception,))

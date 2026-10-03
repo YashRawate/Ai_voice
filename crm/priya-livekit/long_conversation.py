@@ -704,6 +704,14 @@ class LongConversationManager:
             "context_prompt": self.build_context(user_input, language=language),
         }
 
+    def update_user_turn(self, user_text: str, language: str = "en-IN"):
+        """Convenience method to record a user turn."""
+        return self.record_turn(user_text=user_text, role="user", language=language)
+
+    def update_agent_turn(self, agent_text: str, language: str = "en-IN"):
+        """Convenience method to record an assistant turn."""
+        return self.record_turn(agent_text=agent_text, role="assistant", language=language)
+
     def record_turn(
         self,
         user_input: str = "",
