@@ -229,3 +229,62 @@ def get_catalyst_client() -> AsyncOpenAI:
         base_url="https://api.openai.com/v1",  # dummy, intercepted by transport
         http_client=httpx.AsyncClient(transport=CatalystAuthTransport())
     )
+
+
+from typing import Optional, List, Any
+from langchain_core.language_models.chat_models import BaseChatModel
+from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, BaseMessage
+from langchain_core.outputs import ChatResult, ChatGeneration
+
+
+class ChatCatalyst(BaseChatModel):
+    model_name: str = "glm-4.7-flash"
+    temperature: float = 0.4
+    max_tokens: int = 100
+
+    def _convert_messages(self, messages: List[BaseMessage]) -> List[dict]:
+        msgs = []
+        for m in messages:
+            if isinstance(m, HumanMessage):
+                role = "user"
+            elif isinstance(m, SystemMessage) or getattr(m, "type", "") == "system":
+                role = "system"
+            else:
+                role = "assistant"
+            msgs.append({"role": role, "content": str(m.content)})
+        return msgs
+
+    def _generate(
+        self,
+        messages: List[BaseMessage],
+        stop: Optional[List[str]] = None,
+        run_manager: Any = None,
+        **kwargs: Any,
+    ) -> ChatResult:
+        import concurrent.futures
+        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+            return executor.submit(
+                lambda: asyncio.run(self._agenerate(messages, stop=stop, run_manager=run_manager, **kwargs))
+            ).result()
+
+    async def _agenerate(
+        self,
+        messages: List[BaseMessage],
+        stop: Optional[List[str]] = None,
+        run_manager: Any = None,
+        **kwargs: Any,
+    ) -> ChatResult:
+        client = get_catalyst_client()
+        msgs = self._convert_messages(messages)
+        resp = await client.chat.completions.create(
+            model=self.model_name,
+            messages=msgs,
+            max_tokens=self.max_tokens,
+            temperature=self.temperature,
+        )
+        content = resp.choices[0].message.content or ""
+        return ChatResult(generations=[ChatGeneration(message=AIMessage(content=content))])
+
+    @property
+    def _llm_type(self) -> str:
+        return "catalyst"

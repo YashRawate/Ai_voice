@@ -87,9 +87,34 @@ def build_langchain_llm(tools: Optional[List[Any]] = None) -> BaseChatModel:
     except Exception:
         pass
 
+    # 5. Zoho Catalyst QuickML
+    if os.getenv("CATALYST_ENDPOINT_URL") and os.getenv("CATALYST_CLIENT_ID"):
+        try:
+            from catalyst_llm import ChatCatalyst
+            cat_llm = ChatCatalyst(
+                model_name="glm-4.7-flash",
+                temperature=0.4,
+                max_tokens=int(os.getenv("MAX_REPLY_TOKENS", "100")),
+            )
+            models.append(cat_llm)
+            logger.info("Configured ChatCatalyst as LLM (glm-4.7-flash)")
+        except Exception as e:
+            logger.warning(f"Could not initialize ChatCatalyst: {e}")
+
     # Prioritize preferred provider
     preferred = os.getenv("LLM_PROVIDER", "").lower().strip()
-    if preferred == "groq":
+    if preferred == "catalyst":
+        cat_models = [m for m in models if "ChatCatalyst" in type(m).__name__]
+        other_models = [m for m in models if "ChatCatalyst" not in type(m).__name__]
+        if cat_models:
+            # If user explicitly requested only catalyst, restrict to catalyst
+            if os.getenv("LLM_FALLBACK", "").strip().lower() in ("", "none", "false"):
+                models = cat_models
+                logger.info("Operating in Catalyst-only LLM mode (no fallbacks)")
+            else:
+                models = cat_models + other_models
+                logger.info("Configured ChatCatalyst as primary LLM")
+    elif preferred == "groq":
         models.sort(key=lambda m: 0 if "ChatGroq" in type(m).__name__ else 1)
 
     if not models:

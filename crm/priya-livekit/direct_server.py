@@ -68,18 +68,21 @@ except Exception as _ex:
 
 
 def get_llm_client():
-    """Build OpenAI / AzureOpenAI / Groq client based on .env."""
+    """Build OpenAI / AzureOpenAI / Groq / Catalyst client based on .env."""
     preferred = os.getenv("LLM_PROVIDER", "").lower().strip()
     groq_key = os.getenv("GROQ_API_KEY")
     groq_model = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
 
-    if preferred == "groq" and groq_key:
+    if preferred == "catalyst":
+        from catalyst_llm import get_catalyst_client
+        return "catalyst", get_catalyst_client(), "glm-4.7-flash"
+    elif preferred == "groq" and groq_key:
         return "groq", OpenAI(
             base_url="https://api.groq.com/openai/v1",
             api_key=groq_key,
             timeout=3.0,
         ), groq_model
-    elif os.getenv("AZURE_OPENAI_API_KEY") and os.getenv("AZURE_OPENAI_ENDPOINT") and preferred != "groq":
+    elif preferred == "azure" and os.getenv("AZURE_OPENAI_API_KEY") and os.getenv("AZURE_OPENAI_ENDPOINT"):
         return "azure", AzureOpenAI(
             azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT", "").rstrip("/"),
             api_key=os.getenv("AZURE_OPENAI_API_KEY", ""),
@@ -92,14 +95,9 @@ def get_llm_client():
             api_key=groq_key,
             timeout=3.0,
         ), groq_model
-    elif preferred == "catalyst":
+    else:
         from catalyst_llm import get_catalyst_client
         return "catalyst", get_catalyst_client(), "glm-4.7-flash"
-    else:
-        return "openai", OpenAI(
-            api_key=os.getenv("OPENAI_API_KEY", "dummy"),
-            timeout=4.0,
-        ), "gpt-4o-mini"
 
 
 
@@ -661,19 +659,30 @@ class DirectCallSession:
         ]
 
         try:
-            loop = asyncio.get_running_loop()
-            resp = await asyncio.wait_for(
-                loop.run_in_executor(
-                    None,
-                    lambda: client.chat.completions.create(
+            if prov == "catalyst":
+                resp = await asyncio.wait_for(
+                    client.chat.completions.create(
                         model=model_name,
                         messages=messages,
                         max_tokens=75,
                         temperature=0.6,
-                    )
-                ),
-                timeout=4.5
-            )
+                    ),
+                    timeout=5.0
+                )
+            else:
+                loop = asyncio.get_running_loop()
+                resp = await asyncio.wait_for(
+                    loop.run_in_executor(
+                        None,
+                        lambda: client.chat.completions.create(
+                            model=model_name,
+                            messages=messages,
+                            max_tokens=75,
+                            temperature=0.6,
+                        )
+                    ),
+                    timeout=4.5
+                )
             content = resp.choices[0].message.content.strip().replace("*", "").replace("#", "").strip()
             logger.info(f"[{self.session_id}] [LLM_FIRST_TOKEN] {time.monotonic() - t_llm:.2f}s (via {prov})")
             return content
