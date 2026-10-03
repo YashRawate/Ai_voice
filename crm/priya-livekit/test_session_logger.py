@@ -60,6 +60,7 @@ class TestSessionLogger:
 
         self.start_time = time.time()
         self.turn_count = 0
+        self.caller_turns_count = 0
         self.spoken_replies_count = 0
         self.event_counts = {
             "interruption": 0,
@@ -129,6 +130,7 @@ class TestSessionLogger:
         raw_audio_snr: Optional[float] = None
     ):
         self.turn_count += 1
+        self.caller_turns_count += 1
         entry = {
             "type": "stt",
             "t": self._elapsed(),
@@ -148,7 +150,6 @@ class TestSessionLogger:
         stage: Optional[str] = None,
         facts_snapshot: Optional[Dict[str, Any]] = None
     ):
-        self.turn_count += 1
         self.spoken_replies_count += 1
         entry = {
             "type": "llm_reply",
@@ -232,7 +233,7 @@ class TestSessionLogger:
         duration = self._elapsed()
         reinit_flag = "✅ OK" if self.event_counts["session_init"] == 1 else "🚨 CHECK — expected exactly 1"
 
-        turns_without_reply = max(0, self.turn_count - self.spoken_replies_count)
+        turns_without_reply = max(0, self.caller_turns_count - self.spoken_replies_count)
         if turns_without_reply > 0:
             self.event_counts["error"] += turns_without_reply
             if disposition == "completed":
