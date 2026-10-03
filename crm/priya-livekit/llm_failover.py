@@ -87,6 +87,11 @@ def build_langchain_llm(tools: Optional[List[Any]] = None) -> BaseChatModel:
     except Exception:
         pass
 
+    # Prioritize preferred provider
+    preferred = os.getenv("LLM_PROVIDER", "").lower().strip()
+    if preferred == "groq":
+        models.sort(key=lambda m: 0 if "ChatGroq" in type(m).__name__ else 1)
+
     if not models:
         # Minimal dummy model for testing/dry-run environments
         from langchain_core.language_models.fake_chat_models import FakeMessagesListChatModel

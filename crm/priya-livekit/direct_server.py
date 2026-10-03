@@ -68,21 +68,31 @@ except Exception as _ex:
 
 
 def get_llm_client():
-    """Build OpenAI / AzureOpenAI client based on .env."""
-    if os.getenv("AZURE_OPENAI_API_KEY") and os.getenv("AZURE_OPENAI_ENDPOINT"):
+    """Build OpenAI / AzureOpenAI / Groq client based on .env."""
+    preferred = os.getenv("LLM_PROVIDER", "").lower().strip()
+    groq_key = os.getenv("GROQ_API_KEY")
+    groq_model = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
+
+    if preferred == "groq" and groq_key:
+        return "groq", OpenAI(
+            base_url="https://api.groq.com/openai/v1",
+            api_key=groq_key,
+            timeout=3.0,
+        ), groq_model
+    elif os.getenv("AZURE_OPENAI_API_KEY") and os.getenv("AZURE_OPENAI_ENDPOINT") and preferred != "groq":
         return "azure", AzureOpenAI(
             azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT", "").rstrip("/"),
             api_key=os.getenv("AZURE_OPENAI_API_KEY", ""),
             api_version=os.getenv("AZURE_OPENAI_API_VERSION", "2024-10-21"),
-            timeout=4.0,
+            timeout=3.0,
         ), os.getenv("AZURE_OPENAI_DEPLOYMENT", "gpt-4.1-mini")
-    elif os.getenv("GROQ_API_KEY"):
+    elif groq_key:
         return "groq", OpenAI(
             base_url="https://api.groq.com/openai/v1",
-            api_key=os.getenv("GROQ_API_KEY", ""),
-            timeout=4.0,
-        ), os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
-    elif os.getenv("LLM_PROVIDER", "").lower().strip() == "catalyst":
+            api_key=groq_key,
+            timeout=3.0,
+        ), groq_model
+    elif preferred == "catalyst":
         from catalyst_llm import get_catalyst_client
         return "catalyst", get_catalyst_client(), "glm-4.7-flash"
     else:

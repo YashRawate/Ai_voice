@@ -704,6 +704,11 @@ class LongConversationManager:
             "context_prompt": self.build_context(user_input, language=language),
         }
 
+    def record_fact(self, key: str, value: Any):
+        """Update or insert a fact into fact_memory and sync dialogue state."""
+        self.fact_memory.facts[key] = value
+        self.dialogue_state.sync_with_facts(self.fact_memory.facts)
+
     def update_user_turn(self, user_text: str, language: str = "en-IN"):
         """Convenience method to record a user turn."""
         return self.record_turn(user_text=user_text, role="user", language=language)
